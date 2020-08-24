@@ -1,4 +1,10 @@
 import Vue from 'vue';
+
+//plugins
+import vuetify from '../plugins/vuetify'
+
+import './styles/main.css'
+
 import App from './App';
 import store from '../store';
 import router from './router';
@@ -12,5 +18,6 @@ new Vue({
   el: '#app',
   store,
   router,
+  vuetify,
   render: h => h(App),
 });

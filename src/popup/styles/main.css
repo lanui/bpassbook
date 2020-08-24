@@ -1,0 +1,14 @@
+
+html,body {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color:#4d4d4d;
+  background: #fff;
+  font-size: 16px;
+  width: 357px;
+  height:  600px;
+  margin: 0;
+  padding: 0;
+  overflow-x:hidden;
+}
