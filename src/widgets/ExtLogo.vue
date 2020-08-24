@@ -1,5 +1,5 @@
 <template>
-  <v-avatar size="32px">
+  <v-avatar tile size="32px">
     <img :src="extIcon" alt="BPassword">
   </v-avatar>
 </template>
