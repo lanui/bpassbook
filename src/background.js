@@ -2,4 +2,6 @@ import store from './store';
 
 global.browser = require('webextension-polyfill');
 
-//alert(`Hello ${store.getters.foo}!`);
+global.$store = store
+
+// alert(`Hello ${store.getters.foo}!`);

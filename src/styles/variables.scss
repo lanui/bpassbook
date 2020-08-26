@@ -2,3 +2,25 @@
 @charset "utf-8";
 $font-size-root: 14px;
 $blockquote-font-size: 16px;
+
+
+::-webkit-scrollbar {
+  width: .25rem;
+  height: .3rem;
+  background: hsla(0, 0%, 100%, 0.6);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background-color: rgba(95,95,95,.4);
+  transition: all .2s;
+  border-radius: .4rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(95,95,95, .7);
+}

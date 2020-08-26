@@ -1,14 +1,16 @@
 <template>
-  <v-app-bar app :dense="true" clipped-right light>
+  <v-app-bar app :dense="dense" clipped-right light>
     <top-icon />
 
-    <v-container align="center" class="networks-wrapper" dense>
+    <v-container :dense="dense"
+      align="center" class="networks-wrapper" >
       <v-select rounded outlined dense
         :height="24"
         :color="networkColor"
         v-model="chainId"
         light
         item-color="grey"
+        @change="networkChanged"
         :items="networks" >
         <v-icon slot="prepend-inner"
           size="22px" :color="networkColor" dense
@@ -18,8 +20,8 @@
       </v-select>
     </v-container>
     <v-spacer></v-spacer>
-    <v-btn icon dense>
-      <v-icon>
+    <v-btn icon :dense="dense" @click="togglerDrawer">
+      <v-icon size="20px" color="light-blue accent-4">
         mdi-dots-vertical
       </v-icon>
     </v-btn>
@@ -28,6 +30,7 @@
 
 <script>
 import TopIcon from '@/widgets/ExtLogo.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'PopupTopBar',
@@ -35,6 +38,12 @@ export default {
     TopIcon
   },
   computed: {
+    ...mapState([
+      'rdrawer',
+      'dense',
+      'networks'
+    ]),
+
     networkColor(){
       //233, 21, 80  rgba(3, 135, 137, 0.7)
       const nw = this.networks.find((n) => n.value === this.chainId)
@@ -44,14 +53,30 @@ export default {
   data() {
     return {
       chainId: 3,
-      networks: [
-        {
-          text: 'Ropsten',value:3,color:'rgba(233, 21, 80, 0.7)'
-        },
-        {
-          text:"Mainnet",value:1,color:'rgba(3, 135, 137, 0.7)'
-        }
-      ]
+      // networks: [
+      //   {
+      //     text: 'Ropsten',value:3,color:'rgba(233, 21, 80, 0.7)'
+      //   },
+      //   {
+      //     text:"Mainnet",value:1,color:'rgba(3, 135, 137, 0.7)'
+      //   }
+      // ]
+    }
+  },
+  methods: {
+    networkChanged(id) {
+      console.log(id)
+      //alert(id)
+
+      this.$store.dispatch('setChainId',id)
+    },
+    togglerDrawer(){
+      const rdrawer = this.rdrawer
+      const drawerEl = this.$parent.$refs['rightDrawer']
+
+      const flag = rdrawer && drawerEl.$el.classList.contains('v-navigation-drawer--close') ? true : !rdrawer
+      console.log('>>>>',rdrawer,flag)
+      this.$store.dispatch('changeRightDrawer',!rdrawer)
     }
   },
 

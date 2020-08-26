@@ -1,1 +1,3 @@
 export const UPDATE_FOO = 'UPDATE_FOO';
+export const UPDATE_CHAINID = 'UPDATE_CHAINID'
+export const UPDATE_RDRAWER = 'UPDATE_RDRAWER'
