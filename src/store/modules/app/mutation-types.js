@@ -1,0 +1,3 @@
+export const UPDATE_LDRAWER = "UPDATE_LDRAWER"
+export const UPDATE_DENSE = "UPDATE_DENSE"
+export const UPDATE_MINI = "UPDATE_MINI_VARIANT"
