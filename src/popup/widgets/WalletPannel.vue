@@ -12,7 +12,8 @@
         </div>
       </v-col>
       <v-col class="px-0 py-2">
-        <v-btn icon color="grey lighten-5" outlined rounded ripple x-large>
+        <v-btn @click.stop="openExtURL"
+          icon color="grey lighten-5" outlined rounded ripple x-large>
           <v-icon dark>mdi-ethereum</v-icon>
         </v-btn>
       </v-col>
@@ -44,6 +45,18 @@ export default {
   },
   data() {
     return {};
+  },
+  methods: {
+    openExtURL(){
+      const subpath = 'app/app.html'
+      const url = this.$browser.extension.getURL(subpath)
+      console.log(subpath)
+      console.log(this.$browser.tabs)
+
+      chrome.tabs.create({active:true,url:url},function(tab) {
+        console.log(tab)
+      })
+    }
   },
 };
 </script>

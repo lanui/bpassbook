@@ -7,12 +7,14 @@ import * as actions from './actions';
 
 // modules
 import p3 from './modules/p3'
+import app from './modules/app'
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
     p3,
+    app,
   },
   state: {
     dense:true,

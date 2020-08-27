@@ -18,6 +18,7 @@ const config = {
     'background': R(src, './background.js'),
     'popup/popup': R(src, './popup/popup.js'),
     'options/options': R(src, './options/options.js'),
+    'app/app':R(src,'./app/app.js')
   },
   output: {
     path: dist,
@@ -27,6 +28,7 @@ const config = {
     extensions: ['.js', '.vue'],
     alias: {
       '@':src,
+      '@app':R(src,'app'),
       '@popup': R(src,'popup'),
     }
   },
@@ -128,6 +130,7 @@ const config = {
     new CopyPlugin({
       patterns: [
         { from: R(src, 'icons'), to: R(dist, 'icons'), globOptions: { ignore: ['**/icon.xcf'] } },
+        { from: R(src, 'app/app.html'), to: R(dist, 'app/app.html'), transform: transformHtml },
         { from: R(src, 'popup/popup.html'), to: R(dist, 'popup/popup.html'), transform: transformHtml },
         { from: R(src, 'options/options.html'), to: (dist, 'options/options.html'), transform: transformHtml },
         {

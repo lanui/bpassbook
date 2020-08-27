@@ -4,7 +4,7 @@
     <main-container />
     <v-navigation-drawer @click="drawerClick"
       ref="rightDrawer"
-      absolute :value="rdrawer" :right="true" >
+      absolute :value="rdrawer" :right="true" style="height:550px;top:50px;">
       <v-list :dense="dense" class="py-0" >
         <v-list-item
           v-for="(nav,idx) in navMenus"
@@ -28,6 +28,8 @@ import { mapState } from 'vuex'
 import TopBar from '@popup/widgets/TopBar.vue';
 import MainContainer from '@popup/views/MainContainer.vue';
 import DrawerWalletPannel from '@/popup/widgets/DrawerWalletPannel.vue'
+import {navs} from '@/commrouter/navs'
+
 export default {
   name: 'PopupMainLayout',
   components: {
@@ -41,32 +43,7 @@ export default {
   data() {
     return {
       drawer: true,
-      navMenus: [
-        {
-          key: 'walletMgr',
-          text: '钱包',
-          path: '',
-          icon: 'mdi-wallet-giftcard',
-        },
-        {
-          key: 'passbook',
-          text: '密码本',
-          path: '',
-          icon: 'mdi-form-textbox-password',
-        },
-        {
-          key: 'buyBts',
-          text: '购买钻石',
-          path: '',
-          icon: 'mdi-diamond-stone',
-        },
-        {
-          key: 'settings',
-          text: '设置',
-          path: '',
-          icon: 'mdi-cog',
-        },
-      ],
+      navMenus: navs.filter(nav => nav.roles.includes('p3'))
     };
   },
   methods: {
@@ -80,4 +57,7 @@ export default {
 };
 </script>
 <style>
+aside.v-navigation-drawer {
+  top:50px;
+}
 </style>

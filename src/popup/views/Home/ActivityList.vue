@@ -156,7 +156,11 @@ export default {
         chainId:3,
         type:'tx'
       })
-      alert(url)
+      if(chrome){
+        chrome.tabs.create({active:true,url:url},function(tab){
+
+        })
+      }
     }
 
   },
