@@ -37,3 +37,5 @@
 -------+ store                                // vuex
 -------+ styles                               // global scss
 ```
+
+## Test
