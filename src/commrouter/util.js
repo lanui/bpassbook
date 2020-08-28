@@ -1,35 +1,66 @@
 
 
-export function convertRoute2Nav(route, navs,rootpath) {
-  rootpath = rootpath ? `${rootpath}/${route.path}` : route.path
-  console.log(">>>>>", rootpath)
-  if (route.children && route.children.length){
+export const routes2navs = (routes) => {
+  if (!routes || !routes.length) return []
+  let _routes = Object.assign([], routes)
 
-    for (let i = 0; i < route.children.length;i++){
-      const subRoute = route.children[i]
-      convertRoute2Nav(subRoute, navs, rootpath)
-    }
-  }else {
-    pushNav(route, navs, rootpath)
+  _routes = _recursiveDel(_routes, '', null)
+
+  return _expending(_routes,[])
+
+  function _recursiveDel(rs, rootpath, parent) {
+    rs = rs.map(r => {
+      r = Object.assign({}, r)
+      let fullpath = rootpath ? (rootpath === '/' ? `${rootpath}${r.path}` : `${rootpath}/${r.path}`) : r.path
+      r.path = fullpath
+
+      delete r.component
+
+      let breadcrumbs = []
+      if (parent && parent.breadcrumbs) breadcrumbs = [...parent.breadcrumbs]
+      r.breadcrumbs = breadcrumbs
+
+      if (r.meta) {
+        if (r.meta.sort) r.sort = r.meta.sort
+        if (r.meta.icon) r.icon = r.meta.icon
+        if (r.meta.i18n) {
+          r.i18n = r.meta.i18n
+          r.breadcrumbs.push(Object.assign({ i18n: r.i18n, path: fullpath}))
+        }
+        if (r.meta.text) r.text = r.meta.text
+
+        delete r.meta
+      }
+
+      if (r.children && r.children.length) {
+        r.children = _recursiveDel(r.children, r.path, r)
+      }
+
+      return r
+    })
+
+    return rs
+  }
+
+  function _expending(rs, arr) {
+    rs.map(r => {
+      if (!r.children) {
+        arr.push(Object.assign({}, r))
+      } else {
+        _expending(r.children, arr)
+      }
+    })
+
+    return arr.sort((n1, n2) => {
+      if (n1.sort <= n2.sort) { return 1 } else {
+        return -1
+      }
+    })
   }
 }
 
-function pushNav(navs,route,rootpath) {
-  if(!navs)navs = []
-  const meta = route.meta || {}
-  const path = rootpath || route.path || route.alias || '/'
-  let nav = {
-    path,
-    name: route.name || route.path,
-    text: meta.text || route.name || route.path,
-    i18n: meta.i18n || route.name || route.path,
-    icon: meta.icon || '',
-    img: meta.img || ''
-  }
 
-  navs.push(nav)
-}
 
 export default {
-  convertRoute2Nav
+
 }

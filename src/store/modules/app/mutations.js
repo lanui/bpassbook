@@ -9,5 +9,8 @@ export default {
   },
   [types.UPDATE_MINI](state,mini){
     state.mini = Boolean(mini)
+  },
+  [types.UPDATE_CURNAVS](state, curnavs) {
+    state.curnavs = curnavs || ['home']
   }
 }

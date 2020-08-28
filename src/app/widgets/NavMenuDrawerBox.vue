@@ -8,7 +8,7 @@
           <v-icon>{{item.icon}}</v-icon>
         </v-list-item-action>
         <v-list-item-content>
-          <v-list-item-title>{{item.text}}</v-list-item-title>
+          <v-list-item-title>{{ $t(`nav.${item.i18n}`) }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -21,6 +21,7 @@ import { mapState } from 'vuex';
 import NavTitleBar from '@app/widgets/AppNavTitle.vue';
 
 import {navs} from '@/commrouter/navs'
+// import {appnavs} from '@app/router/routes'
 
 export default {
   name: 'NavMenuDrawerBox',
@@ -31,12 +32,14 @@ export default {
   data() {
     return {
       drawer: null,
-      navs:navs.filter(nav => nav.roles.includes('app'))
+      navs: appnavs,
+      // navs:navs.filter(nav => nav.roles.includes('app'))
     };
   },
   methods: {
-    navClick(nav) {
-      this.$router.push({path:nav.path})
+    async navClick(nav) {
+      await this.$store.dispatch('app/setCurrentNav',nav.breadcrumbs)
+      await this.$router.push({path:nav.path})
     },
   },
 };

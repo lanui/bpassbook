@@ -13,9 +13,20 @@ export const commroutes = [
         name: "passbook.index",
         component: AppIndex,
         meta:{
+          sort: 0,
           icon: 'mdi-shield-key-outline',
-          i18n:''
-        }
+          i18n:'passbook.index',
+          text:'密码本'
+        },
+        // children:[
+        //   {
+        //     path:"sdsf",
+        //     name:"sdf",
+        //     meta:{
+        //       icon: "oodosd"
+        //     }
+        //   }
+        // ]
       },
       {
         path: "wallet",
@@ -23,10 +34,17 @@ export const commroutes = [
         name: "wallet.index",
         component: WalletIndex,
         meta:{
+          sort: 1,
           icon: 'mdi-wallet-giftcard',
-          i18n: ''
+          i18n: 'wallet.index',
+          text: '钱包'
         }
       }
-    ]
+    ],
+    meta:{
+      i18n:'home',
+      text:'首页',
+      icon:''
+    }
   },
 ]

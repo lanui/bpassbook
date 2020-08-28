@@ -1,3 +1,4 @@
+export const APP_ROLE = 'app'
 export const navs = [
   {
     path: "/wallet",
@@ -40,6 +41,8 @@ export const navs = [
     ]
   }
 ]
+
+export const appnavs = navs.filter(nav => nav.roles && nav.roles.includes(APP_ROLE))
 
 export const popupnavs = [
   ...navs,

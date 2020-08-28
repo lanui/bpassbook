@@ -4,9 +4,7 @@
     app>
     <!-- <v-app-bar-nav-icon @click.stop="toggleLeftDrawer"></v-app-bar-nav-icon>
     <logo class="mx-3"></logo> -->
-    <v-toolbar-title class="mr-12 align-center">
-      <span class="title">BPassword</span>
-    </v-toolbar-title>
+    <nav-breadcrumbs />
     <v-spacer></v-spacer>
   </v-app-bar>
 </template>
@@ -14,10 +12,13 @@
 <script>
 import { mapState } from 'vuex';
 import Logo from '@/widgets/ExtLogo.vue';
+import NavBreadcrumbs from '@/widgets/NavBreadcrumbs.vue'
+
 export default {
   name: 'AppTopBar',
   components: {
     Logo,
+    NavBreadcrumbs,
   },
   computed: {
     ...mapState('app',[
