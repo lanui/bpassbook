@@ -4,7 +4,12 @@
     app>
     <!-- <v-app-bar-nav-icon @click.stop="toggleLeftDrawer"></v-app-bar-nav-icon>
     <logo class="mx-3"></logo> -->
-    <nav-breadcrumbs />
+    <v-btn icon tile class="mx-0" @click.stop="gotoHome">
+      <v-icon>
+        mdi-shield-home
+      </v-icon>
+    </v-btn>
+    <nav-breadcrumbs class="pl-1"/>
     <v-spacer></v-spacer>
   </v-app-bar>
 </template>
@@ -30,6 +35,10 @@ export default {
   },
   methods: {
     toggleLeftDrawer() {},
+    async gotoHome(){
+      await this.$store.dispatch('app/setCurrentNav',[{path:'/index',i18n:'home'}])
+      this.$router.push({path:'/index'})
+    }
   },
 };
 </script>

@@ -2,7 +2,7 @@
   <v-container>
     <v-row class="fill-height text-center">
       <v-col>
-        Home
+        Options
       </v-col>
     </v-row>
   </v-container>
@@ -10,7 +10,7 @@
 
 <script>
 export default {
-  name:"AppHomeIndex",
+  name:"OptionsIndex",
   data() {
     return {
 

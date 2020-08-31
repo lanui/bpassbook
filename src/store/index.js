@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 import * as getters from './getters';
 import mutations from './mutations';
 import * as actions from './actions';
+import { DEFAULT_LOCALE} from '../corejs/settings'
 
 // modules
 import p3 from './modules/p3'
@@ -17,6 +18,7 @@ export default new Vuex.Store({
     app,
   },
   state: {
+    locale: DEFAULT_LOCALE,
     dense:true,
     lockTime: 15*60,//s
     foo: 'bar',
@@ -33,7 +35,13 @@ export default new Vuex.Store({
       }
     ]
   },
-  getters,
+  getters: {
+    locale: state => state.locale,
+    dense: state => state.dense,
+    chainId: state => state.chainId,
+    wallet: state => state.wallet,
+    ...getters
+  },
   mutations,
   actions,
 });

@@ -5,6 +5,9 @@ const menus = {
   },
   wallet: {
     index:"钱包"
+  },
+  options: {
+    index: "设置"
   }
 }
 

@@ -21,7 +21,7 @@ export const routes2navs = (routes) => {
       r.breadcrumbs = breadcrumbs
 
       if (r.meta) {
-        if (r.meta.sort) r.sort = r.meta.sort
+        if (r.meta.sort !== undefined) r.sort = r.meta.sort
         if (r.meta.icon) r.icon = r.meta.icon
         if (r.meta.i18n) {
           r.i18n = r.meta.i18n
@@ -51,9 +51,9 @@ export const routes2navs = (routes) => {
       }
     })
 
-    return arr.sort((n1, n2) => {
-      if (n1.sort <= n2.sort) { return 1 } else {
-        return -1
+    return arr.filter(n => n.name !== 'home.index' ).sort((n1, n2) => {
+      if (n1.sort < n2.sort) { return -1 } else {
+        return 1
       }
     })
   }

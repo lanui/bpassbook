@@ -2,7 +2,7 @@
   <v-container>
     <v-row class="fill-height text-center">
       <v-col>
-        Home
+        Passbook
       </v-col>
     </v-row>
   </v-container>
@@ -10,14 +10,8 @@
 
 <script>
 export default {
-  name:"AppHomeIndex",
-  data() {
-    return {
-
-    }
-  },
-}
+  name: 'PassbookIndex',
+};
 </script>
 <style>
-
 </style>

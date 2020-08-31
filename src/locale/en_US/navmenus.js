@@ -5,6 +5,9 @@ const menus = {
   },
   wallet: {
     index: "Wallet"
+  },
+  options: {
+    index: "Settings"
   }
 }
 

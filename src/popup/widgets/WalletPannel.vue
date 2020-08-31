@@ -24,8 +24,13 @@
       </v-col>
     </v-row>
     <div class="float-right mb-2 mr-2">
-      <v-btn icon ripple color="white">
-        <v-icon>mdi-qrcode-scan</v-icon>
+      <!-- <v-btn icon ripple color="white">
+        <v-icon>mdi-qrcode-edit</v-icon>
+      </v-btn> -->
+      <v-btn icon ripple
+        @click.stop="openExtURL"
+        color="white">
+        <v-icon>mdi-shield-home-outline</v-icon>
       </v-btn>
     </div>
   </div>
