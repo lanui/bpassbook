@@ -8,6 +8,10 @@ const menus = {
   },
   options: {
     index: "Settings"
+  },
+  login: {
+    locking: "Locking",
+    unlock: "Unlock"
   }
 }
 

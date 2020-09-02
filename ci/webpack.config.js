@@ -123,10 +123,12 @@ const config = {
     new webpack.DefinePlugin({
       global: 'window',
     }),
+    webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
+
     new CopyPlugin({
       patterns: [
         { from: R(src, 'icons'), to: R(dist, 'icons'), globOptions: { ignore: ['**/icon.xcf'] } },

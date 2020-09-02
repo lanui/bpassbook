@@ -11,7 +11,9 @@ const app = {
     dense:true,
     clipped:false,
     mini:false,
-    curnavs:[{i18n:'home',path:'/'}]
+    curnavs:[{i18n:'home',path:'/'}],
+    mnemonics:'',
+    createpwd:'',
   }
 }
 export default app

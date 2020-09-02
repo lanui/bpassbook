@@ -1,5 +1,5 @@
 <template>
-  <v-avatar tile size="32px">
+  <v-avatar tile :size="size">
     <img :src="extIcon" alt="BPassword">
   </v-avatar>
 </template>
@@ -14,6 +14,13 @@ export default {
       extIcon: ExtLogo
     }
   },
+  props:{
+    size:{
+      default:32,
+      type:[String,Number],
+      required:false
+    }
+  }
 
 };
 </script>

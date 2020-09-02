@@ -8,7 +8,8 @@ const p3 = {
   getters,
   mutations,
   state:{
-    activities:[]
+    activities:[],
+    locked:true,
   }
 }
 

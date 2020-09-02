@@ -9,7 +9,7 @@ export const routes2navs = (routes) => {
   return _expending(_routes,[])
 
   function _recursiveDel(rs, rootpath, parent) {
-    rs = rs.map(r => {
+    rs = rs.filter(r => !r.navhide).map(r => {
       r = Object.assign({}, r)
       let fullpath = rootpath ? (rootpath === '/' ? `${rootpath}${r.path}` : `${rootpath}/${r.path}`) : r.path
       r.path = fullpath

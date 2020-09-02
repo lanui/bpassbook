@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app :dense="dense" clipped-right light>
-    <top-icon />
+    <menu-logo />
 
     <v-container :dense="dense"
       align="center" class="networks-wrapper" >
@@ -20,7 +20,8 @@
       </v-select>
     </v-container>
     <v-spacer></v-spacer>
-    <v-btn icon :dense="dense" @click="togglerDrawer">
+    <v-btn v-if="rightMenus"
+      icon :dense="dense" @click="togglerDrawer">
       <v-icon size="20px" color="light-blue accent-4">
         mdi-dots-vertical
       </v-icon>
@@ -29,13 +30,16 @@
 </template>
 
 <script>
-import TopIcon from '@/widgets/ExtLogo.vue'
 import { mapState } from 'vuex'
+
+import TopIcon from '@/widgets/ExtLogo.vue'
+import MenuLogo from '@/widgets/MenuLogo.vue'
 
 export default {
   name: 'PopupTopBar',
   components: {
-    TopIcon
+    TopIcon,
+    MenuLogo,
   },
   computed: {
     ...mapState([
@@ -79,7 +83,13 @@ export default {
       this.$store.dispatch('changeRightDrawer',!rdrawer)
     }
   },
-
+  props:{
+    rightMenus:{
+      default:true,
+      type:Boolean,
+      required:false
+    }
+  }
 };
 </script>
 <style>

@@ -12,9 +12,11 @@
         </div>
       </v-col>
       <v-col class="px-0 py-2">
-        <v-btn @click.stop="openExtURL"
+        <v-btn @click.stop="openLock"
           icon color="grey lighten-5" outlined rounded ripple x-large>
-          <v-icon dark>mdi-ethereum</v-icon>
+          <v-icon>
+            {{locked ? lockIcon : ethIcon }}
+          </v-icon>
         </v-btn>
       </v-col>
       <v-col class="px-0 py-1">
@@ -30,7 +32,9 @@
       <v-btn icon ripple
         @click.stop="openExtURL"
         color="white">
-        <v-icon>mdi-shield-home-outline</v-icon>
+        <v-icon>
+          mdi-shield-key-outline
+        </v-icon>
       </v-btn>
     </div>
   </div>
@@ -38,18 +42,25 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+
+import {ETH_MDI,LOCKED_MDI} from '@/ui/constants/icon-cnsts'
+
 export default {
   name: 'WGWalletPannel',
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
     ...mapGetters(['shortAddress', 'networkColor']),
+    ...mapGetters('p3',['locked']),
     ethBalance: (state) => {
       const bal = '71.2567';
       return parseFloat(bal || '0').toFixed(4);
     },
   },
   data() {
-    return {};
+    return {
+      ethIcon:ETH_MDI,
+      lockIcon:LOCKED_MDI,
+    };
   },
   methods: {
     openExtURL(){
@@ -61,6 +72,13 @@ export default {
       chrome.tabs.create({active:true,url:url},function(tab) {
         console.log(tab)
       })
+    },
+    openLock(){
+      const locked = this.$store.getters['p3/locked']
+      console.log(">>>>",locked)
+      if(locked){
+        this.$store.dispatch('p3/unlockedAccount')
+      }
     }
   },
 };

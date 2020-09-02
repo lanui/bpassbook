@@ -8,6 +8,10 @@ const menus = {
   },
   options: {
     index: "设置"
+  },
+  login:{
+    locking:"锁定",
+    unlock:"解锁"
   }
 }
 
