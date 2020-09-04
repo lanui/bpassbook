@@ -59,7 +59,7 @@ export default {
       err:'',
       rules:{
         password: [
-          passwordRules.min,passwordRules.max
+          ...passwordRules
         ]
       }
     }

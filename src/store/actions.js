@@ -16,3 +16,7 @@ export const toggleRightDrawer = ({commit,state}) => {
 export const changeRightDrawer = ({commit},flag) =>{
   commit(types.UPDATE_RDRAWER, flag)
 }
+
+export const unlockWallet = ({commit},password) =>{
+  commit(types.UPDATE_UNLOCKED,Boolean(password))
+}

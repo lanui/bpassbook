@@ -13,6 +13,8 @@ import router from './router';
 import i18n from '@/locale'
 
 global.browser = require('webextension-polyfill');
+import LocalStore from '../lib/storage/local-store'
+global.$localStore = new LocalStore()
 
 Vue.prototype.$browser = global.browser
 

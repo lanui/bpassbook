@@ -5,6 +5,7 @@ import NullLayout from '@/widgets/NullLayout'
 import CreateLayout from '@app/views/Accounts/CreateLayout.vue'
 import CreateAccIndex from '@app/views/Accounts/CreateIndex.vue'
 import Welcome from '@app/views/Welcome.vue'
+import AppSignIn from '@app/views/AppSignin.vue'
 import AppPrivacyPolicy from '@app/views/Accounts/PrivacyPolicy.vue'
 
 const appRoutes = [
@@ -23,6 +24,22 @@ const appRoutes = [
       {
         path:'privacy',
         component: AppPrivacyPolicy,
+        meta: {
+        }
+      }
+    ],
+    meta: {
+    }
+  },
+  {
+    path: "/login",
+    component: NullLayout,
+    navhide: true,
+    children:[
+      {
+        path: 'index',
+        alias:'/login',
+        component: AppSignIn,
         meta: {
         }
       }

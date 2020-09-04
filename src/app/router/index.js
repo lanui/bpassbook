@@ -17,11 +17,27 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to,from,next) => {
-  // if (to.breadcrumbs) {
-  //   await store.dispatch('app/setCurrentNav', to.breadcrumbs)
-  // }
+  if(to.matched.some(rec => rec.meta.auth)){
+    const eipid = store.getters['bipinit']
+    const unlocked = store.getters['unlocked']
+    console.log(">>>>>", eipid, unlocked)
+    if (!eipid) {
+      next({
+        path: '/init/welcome',
+        query: { redirect: to.fullPath }
+      })
+    } else if (!unlocked){
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }else {
+      next()
+    }
+  }else {
+    next()
+  }
 
-  next()
 })
 
 global.appnavs = appnavs

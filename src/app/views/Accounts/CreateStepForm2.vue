@@ -1,53 +1,53 @@
 <template>
   <v-card class="mx-auto px-2"
-    min-width="600"
-    max-width="650"
-    min-height="400"
     outlined>
     <v-card-title>
-      Confirm Mnemonic Words
+      Generator Mnemonic Seeds
     </v-card-title>
-
-    <v-card-text>
-      <v-card class="my-2" min-height="80">
-        <v-card-text>
-          <v-chip close
-            text-color="white"
-            color="teal darken-1"
-            v-for="(text,i) in mnemonics"
-            @click:close="removeMnemonics(text)"
-            class="ma-2" :key="'sel_'+i">
-            {{ text }}
-          </v-chip>
-        </v-card-text>
-      </v-card>
-      <v-divider></v-divider>
-      <v-card class="my-2">
-        <v-card-title>
-          Select mnemonic in order
-        </v-card-title>
-        <v-card-text>
-          <v-chip dense
-            v-for="(text,i) in demos"
-            @click="addMnemonics(text)"
-            class="ma-2" color="grey" :key="i">
-            {{ text }}
-          </v-chip>
-        </v-card-text>
-      </v-card>
-    </v-card-text>
-
-    <v-card-actions>
+    <v-form ref="EIP39" class="mx-2">
+      <v-row class="d-flex" >
+        <v-col class="flex-grow-1 flex-shrink-0">
+          <v-textarea
+            dense
+            outlined
+            clearable
+            disabled
+            placeholder="Click Generate Button get mnemonics"
+            name="Seeds"
+            rows="4"
+            color="indigo"
+            v-model="mnemonics"
+            :value="mnemonics"
+            label="Mnemonics"
+            type="text"
+            >
+          </v-textarea>
+        </v-col>
+        <v-col class="flex-grow-0 flex-shrink-1 align-self-end pb-8">
+          <v-btn @click.stop="clipboradSeeds"
+            icon :disabled="!Boolean(mnemonics)">
+            <v-icon>
+              mdi-clipboard-text-multiple-outline
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
+    <v-card-actions class="">
       <v-row justify="center">
-        <v-col  class="text-center ">
-          <v-btn @click="previous(1)"
+        <v-col class="text-center ">
+          <v-btn @click="stepTo(1)"
             outlined  color="indigo" class="mx-4 ma-6">
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
             Previous
           </v-btn>
-          <v-btn @click="next(3)"
+          <v-btn @click="generateSeeds"
+            outlined  color="indigo" class="mx-4 ma-6">
+            Generate
+          </v-btn>
+          <v-btn @click="stepTo(3)"
             outlined  color="indigo" class="mx-4 ma-6">
             Next
             <v-icon right>
@@ -57,50 +57,59 @@
         </v-col>
       </v-row>
     </v-card-actions>
+    <v-snackbar :timeout="4000"
+      v-model="showNotifier"
+      centered
+      :elevation="1">
+
+      {{ notifyMessage }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          icon
+          v-bind="attrs"
+          @click="showNotifier = false"
+        >
+          <v-icon>
+            mdi-close
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-card>
 </template>
 
 <script>
-const seeds = [
-  'okex','live','love','bmw','lanbery'
-]
 export default {
-  name: 'CreateStepForm1',
+  name: 'CreateStepFormTwo',
   data() {
     return {
       pwdHide:true,
-      comments:'',
-      eip39:{
-        seeds:"",
-        password:"",
-        confirmPassword:""
-      },
-      demos:seeds.sort(),
-      mnemonics: []
+      mnemonics:'',
+      showNotifier:false,
+      notifyMessage:'Mnemonic words Copied.'
     }
   },
   methods: {
-    previous(id) {
-      this.$emit('stepClick',id)
+    generateSeeds() {
+      this.$emit('generateSeeds',this)
     },
-    next(id) {
-      this.$emit('stepClick',id)
+    stepTo(n){
+      this.$emit('stepClick',n)
     },
-    addMnemonics(text) {
-      const index = this.demos.findIndex(v => v === text)
-      if(index >=0) {
-        this.demos.splice(index,1)
-        this.mnemonics.push(text)
-      }
-    },
-    removeMnemonics(text) {
-      const idx = this.mnemonics.findIndex(v => v===text)
-      if( idx >=0 ) {
-        this.mnemonics.splice(idx,1)
-        this.demos.push(text)
-        this.demos.sort()
+    clipboradSeeds() {
+      console.log(">>>>>>>>>>>>>>>>")
+      if(this.mnemonics){
+        this.showNotifier = true
+        // setTimeout(() => {
+        //   this.showNotifier = false
+        // }, 10000);
       }
     }
+  },
+  mounted() {
+    this.$emit('initMnemonic',this)
   },
 };
 </script>

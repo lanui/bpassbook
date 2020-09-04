@@ -1,50 +1,25 @@
 <template>
   <v-card class="mx-auto px-2"
-    min-width="600"
-    min-height="400"
     outlined>
-    <v-card-title>
-      Generator Wallet
+    <v-card-title class="flex-column">
+      <div class="text-h1">
+        {{congemoji}}
+      </div>
+      <p class="text-h2">
+         Congratulations
+      </p>
+
     </v-card-title>
-    <v-form ref="EIP39" class="mx-2">
-      <v-textarea dense
-          outlined clearable
-          name="Seeds"
-        :value="eip39.seeds" label="Wallet Seed" type="text">
-      </v-textarea>
-      <v-text-field dense
-          outlined clearable
-          counter
-          label="Password"
-          prepend-inner-icon="mdi-key-outline"
-          :append-icon="pwdHide ? 'mdi-eye-off' : 'mdi-eye'"
-          :type="pwdHide ? 'password' : 'text'"
-          @click:append="pwdHide = !pwdHide"
-          :value="eip39.password"
-          name="Password">
-      </v-text-field>
-      <v-text-field dense
-          outlined clearable
-          counter
-          label="Confirm"
-          prepend-inner-icon="mdi-key-change"
-          :append-icon="pwdHide ? 'mdi-eye-off' : 'mdi-eye'"
-          :type="pwdHide ? 'password' : 'text'"
-          @click:append="pwdHide = !pwdHide"
-          :value="eip39.confirmPassword"
-          name="confirmPassword">
-      </v-text-field>
-    </v-form>
+    <v-card-text>
+
+    </v-card-text>
     <v-card-actions>
       <v-row justify="center">
         <v-col  class="text-center ">
-          <v-btn  outlined  color="indigo" class="mx-4 ma-6">
-            Generate
-          </v-btn>
           <v-btn outlined  color="indigo" class="mx-4 ma-6">
-            Next
-            <v-icon right>
-              mdi-chevron-double-right
+            Completed
+            <v-icon left>
+             mdi-check-all
             </v-icon>
           </v-btn>
         </v-col>
@@ -59,6 +34,7 @@ export default {
   data() {
     return {
       pwdHide:true,
+      congemoji:'🎉',
       eip39:{
         seeds:"",
         password:"",

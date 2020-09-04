@@ -123,7 +123,7 @@ const config = {
     new webpack.DefinePlugin({
       global: 'window',
     }),
-    webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/),
+    new webpack.IgnorePlugin(/^\.\/wordlists\/(?!english)/, /bip39\/src$/),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
       filename: '[name].css',

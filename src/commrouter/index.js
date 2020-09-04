@@ -15,6 +15,7 @@ export const commroutes = [
         name: "home.index",
         component: AppIndex,
         meta: {
+          auth:true,
           sort: 1,
           icon: 'mdi-shield-key-outline',
           i18n: 'home',
@@ -33,6 +34,7 @@ export const commroutes = [
         name: "passbook.index",
         component: PassbookIndex,
         meta:{
+          auth: true,
           sort: 1,
           icon: 'mdi-shield-key-outline',
           i18n:'passbook.index',
@@ -45,6 +47,7 @@ export const commroutes = [
         name: "wallet.index",
         component: WalletIndex,
         meta:{
+          auth: true,
           sort: 2,
           icon: 'mdi-wallet-giftcard',
           i18n: 'wallet.index',
@@ -57,6 +60,7 @@ export const commroutes = [
         name: "options.index",
         component: OptionsIndex,
         meta: {
+          auth: true,
           sort: 3,
           icon: 'mdi-cog-outline',
           i18n: 'options.index',
@@ -65,6 +69,7 @@ export const commroutes = [
       }
     ],
     meta:{
+      auth: true,
       i18n:'home',
       text:'首页',
       icon:''
