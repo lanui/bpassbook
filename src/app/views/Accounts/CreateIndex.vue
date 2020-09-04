@@ -12,6 +12,7 @@
                   class="px-0" :key="idx">
                   <v-btn icon
                     x-large
+                    :disabled=" step.id === 4 && (creator.precheck() || !completed)"
                     @click="stepHandler(step.id)" >
                     <v-icon
                       :color="stepid === step.id ? 'indigo ':''"
@@ -27,18 +28,23 @@
                 @stepClick="stepHandler"
                 @setPassword="setPassword"
                 @getPwd="getPwd"
+                :saved="completed"
                 v-if="stepid === 1"/>
               <step-form-two
                 @stepClick="stepHandler"
                 @generateSeeds="generateSeeds"
                 @initMnemonic="initMnemonic"
+                :saved="completed"
                 v-if="stepid === 2"/>
               <step-form-three
                 @stepClick="stepHandler"
                 @initSeeds="initSeeds"
+                :saved="completed"
+                @saveWallet="saveWallet"
                 v-if="stepid === 3"/>
               <step-form-four
                 @stepClick="stepHandler"
+                :address="firstAddress"
                 v-if="stepid === 4"/>
             </v-col>
             <v-col cols="4" class="flex-grow-0 flex-shrink-1">
@@ -59,12 +65,14 @@
 
 <script>
 
+
 import StepFormOne from './CreateStepForm1'
 import StepFormTwo from './CreateStepForm2'
 import StepFormThree from './CreateStepForm3'
 import StepFormFour from './CreateStepForm4'
 
 import { creator } from '@/corejs/accounts/creator.js'
+global.creator = creator
 
 export default {
   name: 'AppCreateAccIndex',
@@ -111,6 +119,7 @@ export default {
       ],
       pwdHide:true,
       creator,
+      firstAddress:'',
       completed:false
     }
   },
@@ -147,7 +156,15 @@ export default {
       if($this !== undefined) {
         $this.originSeeds = creator.getSeeds()
         $this.seedStr = creator.getMnemonic()
+        $this.pwd = creator.getPassword()
       }
+    },
+    saveWallet(){
+      this.completed = true
+      creator.createWallet()
+      this.firstAddress = creator.getAddress()
+      console.log("this.firstAddress>>",this.firstAddress)
+      this.stepHandler(4)
     }
 
   },

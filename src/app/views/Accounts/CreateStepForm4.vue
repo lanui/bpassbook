@@ -8,7 +8,9 @@
       <p class="text-h2">
          Congratulations
       </p>
-
+      <p class="text-h5">
+        Address: {{address}}
+      </p>
     </v-card-title>
     <v-card-text>
 
@@ -35,13 +37,15 @@ export default {
     return {
       pwdHide:true,
       congemoji:'🎉',
-      eip39:{
-        seeds:"",
-        password:"",
-        confirmPassword:""
-      }
     }
   },
+  props:{
+    address:{
+      default:'',
+      type:String,
+      required:false
+    }
+  }
 };
 </script>
 <style>

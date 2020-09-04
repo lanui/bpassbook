@@ -44,6 +44,7 @@
             Previous
           </v-btn>
           <v-btn @click="generateSeeds"
+            :disabled="saved"
             outlined  color="indigo" class="mx-4 ma-6">
             Generate
           </v-btn>
@@ -110,6 +111,12 @@ export default {
   },
   mounted() {
     this.$emit('initMnemonic',this)
+  },
+  props:{
+    saved:{
+      type:Boolean,
+      required:true
+    }
   },
 };
 </script>

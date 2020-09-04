@@ -16,6 +16,9 @@ global.browser = require('webextension-polyfill');
 import LocalStore from '../lib/storage/local-store'
 global.$localStore = new LocalStore()
 
+import * as ethUtils from 'ethereumjs-util'
+global.ethUtils = ethUtils
+
 Vue.prototype.$browser = global.browser
 
 global.bpvue = new Vue({

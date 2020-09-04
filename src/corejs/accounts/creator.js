@@ -1,11 +1,14 @@
 import Wallet from 'ethereumjs-wallet'
 import hdkey from 'ethereumjs-wallet/hdkey'
+import { toChecksumAddress } from 'ethereumjs-util'
 
 import { HD_PATHS } from '../settings'
 
 // const hdkey = require('ethereumjs-wallet/hdkey')
 
 const bip39 = require('bip39')
+
+
 
 export const getMnemonic = bip39.generateMnemonic
 
@@ -43,6 +46,10 @@ class WalletCreator {
     return (this.mnemonics || '').trim().toLowerCase().match(/\w+/gu)
   }
 
+  precheck() {
+    return this.password === undefined || !this.mnemonics || !bip39.validateMnemonic(this.mnemonics)
+  }
+
   createWallet() {
     if (this.password === undefined) {
       throw new Error('Set password first.')
@@ -52,7 +59,7 @@ class WalletCreator {
       throw new Error(`mnemonics args illegal.`)
     }
 
-    const hdwallet = hdkey.fromMasterSeed(bip39.mnemonicToSeedSync(mnemonics))
+    const hdwallet = hdkey.fromMasterSeed(bip39.mnemonicToSeedSync(this.mnemonics))
 
     const wallet = hdwallet.derivePath(HD_PATHS.ledger).getWallet()
 
@@ -62,6 +69,15 @@ class WalletCreator {
 
   getWallet() {
     return this.wallet
+  }
+
+  getAddress(){
+    if(!this.wallet) return ''
+    if(!this.firstAddress){
+      const hexAddress = '0x'+ this.wallet.getAddress().toString('hex')
+      this.firstAddress = toChecksumAddress(hexAddress)
+    }
+    return this.firstAddress
   }
 
   getV3() {

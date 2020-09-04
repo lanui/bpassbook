@@ -20,7 +20,7 @@
           :value="password"
           name="Password"
           :rules="rules.password"
-          :disabled="loading"
+          :disabled="loading || saved"
         ></v-text-field>
         <v-text-field
           dense
@@ -34,7 +34,7 @@
           @click:append="pwdHide = !pwdHide"
           v-model="confirmPassword"
           :value="confirmPassword"
-          :disabled="loading"
+          :disabled="loading || saved"
           :rules="rules.password"
           :error="Boolean(error)"
           :error-messages="error"
@@ -103,6 +103,12 @@ export default {
   },
   mounted() {
     const pwd = this.$emit('getPwd',this)
+  },
+  props:{
+    saved:{
+      type:Boolean,
+      required:true
+    }
   },
   watch: {
     password:function(val,old) {

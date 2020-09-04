@@ -31,6 +31,14 @@
             {{ text }}
           </v-chip>
         </v-card-text>
+        <div class="my-2 ml-4">
+          <v-checkbox
+              v-model="skipValid"
+              :label="'Skip verification'"
+            >
+          </v-checkbox>
+        </div>
+
       </v-card>
     </v-card-text>
 
@@ -45,6 +53,7 @@
             Previous
           </v-btn>
           <v-btn @click="next(4)"
+            :disabled="canStore"
             outlined  color="indigo" class="mx-4 ma-6">
             Next
             <v-icon right>
@@ -58,15 +67,20 @@
 </template>
 
 <script>
-const seeds = [
-  'okex','live','love','bmw','lanbery'
-]
+
 export default {
   name: 'CreateStepFormThree',
   computed: {
     sortableSeeds(){
       const dseeds = this.originSeeds || []
       return dseeds.sort()
+    },
+    canStore() {
+      if(!this.skipValid){
+        return !this.pwd || !this.seedStr || this.mnemonics.join(' ') !== this.seedStr
+      }else {
+        return !this.pwd || !this.seedStr
+      }
     }
   },
   data() {
@@ -74,8 +88,10 @@ export default {
       pwdHide:true,
       comments:'',
       seedStr:'',
+      pwd:'',
       mnemonics: [],
-      originSeeds:[]
+      originSeeds:[],
+      skipValid:false
     }
   },
   methods: {
@@ -83,7 +99,11 @@ export default {
       this.$emit('stepClick',id)
     },
     next(id) {
-      this.$emit('stepClick',id)
+      if(!this.saved){
+        this.$emit('saveWallet')
+      }else {
+        this.$emit('stepClick',id)
+      }
     },
     addMnemonics(text) {
       const index = this.originSeeds.findIndex(v => v === text)
