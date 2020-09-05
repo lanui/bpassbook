@@ -18,7 +18,8 @@
     <v-card-actions>
       <v-row justify="center">
         <v-col  class="text-center ">
-          <v-btn outlined  color="indigo" class="mx-4 ma-6">
+          <v-btn @click="goHome"
+            outlined  color="indigo" class="mx-4 ma-6">
             Completed
             <v-icon left>
              mdi-check-all
@@ -45,7 +46,12 @@ export default {
       type:String,
       required:false
     }
-  }
+  },
+  methods: {
+    goHome(){
+      this.$router.push({path:'/index'})
+    }
+  },
 };
 </script>
 <style>

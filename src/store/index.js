@@ -9,6 +9,7 @@ import { DEFAULT_LOCALE } from '../corejs/settings'
 // modules
 import p3 from './modules/p3'
 import app from './modules/app'
+import settings from './modules/settings'
 
 Vue.use(Vuex);
 
@@ -16,9 +17,12 @@ export default new Vuex.Store({
   modules: {
     p3,
     app,
+    settings,
   },
   state: {
     locale: DEFAULT_LOCALE,
+    key:null,  //pwd key
+    v3:null,//v3 encrypt data
     bipinit: null,
     unlocked: false,
     dense: true,
@@ -44,6 +48,7 @@ export default new Vuex.Store({
     wallet: state => state.wallet,
     bipinit: state => state.bipinit,
     unlocked: state => state.unlocked,
+    v3:state => state.v3,
     ...getters
   },
   mutations,

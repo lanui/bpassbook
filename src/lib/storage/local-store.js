@@ -73,6 +73,20 @@ export default class ExtensionStore {
       })
     })
   }
+
+  _clear() {
+    const local = extension.storage.local
+    return new Promise((resolve, reject) => {
+      local.clear( () => {
+        const err = checkForError()
+        if (err) {
+          reject(err)
+        } else {
+          resolve(true)
+        }
+      })
+    })
+  }
 }
 
 function isEmpty(obj) {

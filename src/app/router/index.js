@@ -18,10 +18,10 @@ const router = new VueRouter({
 
 router.beforeEach(async (to,from,next) => {
   if(to.matched.some(rec => rec.meta.auth)){
-    const eipid = store.getters['bipinit']
+    const v3 = store.getters['v3']
     const unlocked = store.getters['unlocked']
-    console.log(">>>>>", eipid, unlocked)
-    if (!eipid) {
+    console.log(">>>>>", v3, unlocked)
+    if (!v3) {
       next({
         path: '/init/welcome',
         query: { redirect: to.fullPath }

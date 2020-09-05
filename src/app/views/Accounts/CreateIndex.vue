@@ -74,6 +74,9 @@ import StepFormFour from './CreateStepForm4'
 import { creator } from '@/corejs/accounts/creator.js'
 global.creator = creator
 
+
+
+
 export default {
   name: 'AppCreateAccIndex',
   components:{
@@ -159,11 +162,12 @@ export default {
         $this.pwd = creator.getPassword()
       }
     },
-    saveWallet(){
+    async saveWallet(){
       this.completed = true
       creator.createWallet()
       this.firstAddress = creator.getAddress()
-      console.log("this.firstAddress>>",this.firstAddress)
+      console.log("this.firstAddress>>",this.firstAddress,creator.getV3())
+      await this.$store.dispatch('createAndSaveAccount',creator)
       this.stepHandler(4)
     }
 

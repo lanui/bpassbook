@@ -27,6 +27,7 @@
     "@mdi/font": "^5.5.55",
     "axios": "^0.19.0",
     "bip39": "^3.0.2",
+    "browser-passworder": "^2.0.3",
     "browserify-unibabel": "^3.0.0",
     "end-of-stream": "^1.4.4",
     "eth-keyring-controller": "^6.1.0",

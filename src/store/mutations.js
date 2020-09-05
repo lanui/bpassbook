@@ -17,6 +17,12 @@ export default {
   },
   [types.UPDATE_UNLOCKED](state,unlocked =false) {
     state.unlocked = Boolean(unlocked)
+  },
+  [types.UPDATE_KEY](state,key = null) {
+    state.key = key
+  },
+  [types.SET_V3](state,v3 = null) {
+    state.v3 = v3
   }
 
 };

@@ -81,6 +81,14 @@ class WalletCreator {
   }
 
   getV3() {
+    if (!this.wallet && !this.password) {
+      throw new Error('no wallet or password.')
+    } else {
+      return this.wallet.toV3(this.password)
+    }
+  }
+
+  getV3Json() {
     if (this.wallet && this.password) {
       return this.wallet.toV3String(this.password)
     } else {
