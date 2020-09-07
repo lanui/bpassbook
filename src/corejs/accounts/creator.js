@@ -50,21 +50,24 @@ class WalletCreator {
     return this.password === undefined || !this.mnemonics || !bip39.validateMnemonic(this.mnemonics)
   }
 
-  createWallet() {
-    if (this.password === undefined) {
+  async createWallet() {
+    const self = this
+    if (self.password === undefined) {
       throw new Error('Set password first.')
     }
 
-    if (!this.mnemonics || !bip39.validateMnemonic(this.mnemonics)) {
+    if (!self.mnemonics || !bip39.validateMnemonic(self.mnemonics)) {
       throw new Error(`mnemonics args illegal.`)
     }
 
-    const hdwallet = hdkey.fromMasterSeed(bip39.mnemonicToSeedSync(this.mnemonics))
+    const hdwallet = await hdkey.fromMasterSeed(await bip39.mnemonicToSeed(self.mnemonics))
 
-    const wallet = hdwallet.derivePath(HD_PATHS.ledger).getWallet()
+    const wallet = await hdwallet.derivePath(HD_PATHS.ledger).getWallet()
 
-    this.wallet = wallet
+    self.wallet = wallet
+
     return wallet
+
   }
 
   getWallet() {

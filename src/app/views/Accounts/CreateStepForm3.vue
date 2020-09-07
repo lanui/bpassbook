@@ -52,10 +52,16 @@
             </v-icon>
             Previous
           </v-btn>
+
           <v-btn @click="next(4)"
             :disabled="canStore"
             outlined  color="indigo" class="mx-4 ma-6">
-            Next
+            <v-progress-circular v-if="loading"
+              indeterminate :size="22"
+              :width="2"
+              color="primary"
+            ></v-progress-circular>
+            <span class="ml-1">Next</span>
             <v-icon right>
               mdi-chevron-double-right
             </v-icon>
@@ -91,7 +97,8 @@ export default {
       pwd:'',
       mnemonics: [],
       originSeeds:[],
-      skipValid:false
+      skipValid:false,
+      loading:false
     }
   },
   methods: {
@@ -99,7 +106,9 @@ export default {
       this.$emit('stepClick',id)
     },
     next(id) {
+      // this.loading = 'warning'
       if(!this.saved){
+        this.loading = 'warning'
         this.$emit('saveWallet')
       }else {
         this.$emit('stepClick',id)
@@ -127,6 +136,13 @@ export default {
   mounted() {
     this.$emit('initSeeds',this)
   },
+  props:{
+    // creating:{
+    //   default:false,
+    //   type:Boolean,
+    //   required:false
+    // }
+  }
 };
 </script>
 <style>

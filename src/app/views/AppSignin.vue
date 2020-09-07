@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import Logo from '@/widgets/ExtLogo.vue';
 
 import { passwordRules } from '@/ui/constants/valid-rules';
@@ -50,6 +51,11 @@ export default {
   name: 'AppSignIn',
   components: {
     Logo,
+  },
+  computed: {
+    ...mapState([
+      'unlocked'
+    ])
   },
   data() {
     return {
@@ -66,14 +72,29 @@ export default {
     async login() {
       if(this.$refs.signInForm.validate()){
         const pwd = this.password
-        await this.$store.dispatch('unlockWallet',pwd)
-        const next = {
-          path: this.$route.query && this.$route.query.redirect ? this.$route.query.redirect : '/'
+        const $vue = this
+
+        try{
+          const env3 = await this.$store.getters['env3']
+          $conn.clientPort.sendUnlockedReq(pwd,env3)
+
+        }catch(err){
+          this.err = err.message
         }
-        this.$router.push(next)
       }
     },
+    goHome(){
+      this.$router.push({path:"/index"})
+    }
   },
+  watch:{
+    unlocked:function(val,old) {
+      console.log("watch:",val,old)
+      if(val){
+        this.goHome()
+      }
+    }
+  }
 };
 </script>
 <style>

@@ -45,7 +45,8 @@
               <step-form-four
                 @stepClick="stepHandler"
                 :address="firstAddress"
-                v-if="stepid === 4"/>
+                :creating="creating"
+                 v-if="stepid === 4"/>
             </v-col>
             <v-col cols="4" class="flex-grow-0 flex-shrink-1">
               <p class="text-h5">
@@ -123,7 +124,8 @@ export default {
       pwdHide:true,
       creator,
       firstAddress:'',
-      completed:false
+      completed:false,
+      creating:false
     }
   },
   methods: {
@@ -163,12 +165,18 @@ export default {
       }
     },
     async saveWallet(){
-      this.completed = true
-      creator.createWallet()
-      this.firstAddress = creator.getAddress()
-      console.log("this.firstAddress>>",this.firstAddress,creator.getV3())
-      await this.$store.dispatch('createAndSaveAccount',creator)
-      this.stepHandler(4)
+
+      this.creating = 'warning'
+      const that = this
+      creator.createWallet().then( async function(wallet){
+        that.completed = true
+        that.firstAddress = creator.getAddress()
+        console.log("this.firstAddress>>",that.firstAddress,creator.getV3())
+        await that.$store.dispatch('createAndSaveAccount',creator)
+        that.stepHandler(4)
+      }).catch(err=>{
+        console.log('create>>>',err)
+      })
     }
 
   },

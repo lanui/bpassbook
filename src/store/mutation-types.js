@@ -4,6 +4,9 @@ export const UPDATE_RDRAWER = 'UPDATE_RDRAWER'
 export const SET_BIPINIT = "SET_BIPINIT"
 export const CLEAN_BIPINIT = "CLEAN_BIPINIT"
 export const UPDATE_UNLOCKED = "UPDATE_UNLOCKED"
+export const UPDATE_SELECTADDRESS = "UPDATE_SELECTADDRESS"
+
 
 export const UPDATE_KEY = "UPDATE_KEY"
 export const SET_V3 = "SET_V3"
+export const SET_ENV3 = "SET_ENV3"

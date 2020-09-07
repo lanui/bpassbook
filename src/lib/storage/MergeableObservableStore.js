@@ -28,3 +28,5 @@ class MergeableObservableStore extends ObservableStore {
     return flatState
   }
 }
+
+export default MergeableObservableStore

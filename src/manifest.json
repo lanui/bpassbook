@@ -20,6 +20,13 @@
     "page": "options/options.html",
     "chrome_style": true
   },
+  "externally_connectable":{
+    "ids":["*"],
+    "matches":[
+      "*://extensions/*"
+    ],
+    "accepts_tls_channel_id": false
+  },
   "permissions": [
     "tabs",
     "management",

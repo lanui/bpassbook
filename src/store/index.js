@@ -23,6 +23,7 @@ export default new Vuex.Store({
     locale: DEFAULT_LOCALE,
     key:null,  //pwd key
     v3:null,//v3 encrypt data
+    env3:null,
     bipinit: null,
     unlocked: false,
     dense: true,
@@ -30,7 +31,7 @@ export default new Vuex.Store({
     foo: 'bar',
     rdrawer: false,
     chainId: 3,
-    wallet: '0xc0E6a6F90D4Cd02F13447565171Fea4bf91D73A8',
+    wallet: '',
     nickname: "lanberyEth",
     networks: [
       {
@@ -49,6 +50,7 @@ export default new Vuex.Store({
     bipinit: state => state.bipinit,
     unlocked: state => state.unlocked,
     v3:state => state.v3,
+    env3:state => state.env3,
     ...getters
   },
   mutations,

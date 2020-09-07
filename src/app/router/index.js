@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 import routes, { appnavs } from './routes'
 import store from '@/store'
+import LocalStore from '@/lib/storage/local-store'
+
 
 Vue.use(VueRouter)
 
@@ -17,11 +20,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async (to,from,next) => {
+  let bipinit = store.getters['bipinit']
+  if(!bipinit){
+    bipinit = await hasWallet()
+  }
   if(to.matched.some(rec => rec.meta.auth)){
-    const v3 = store.getters['v3']
+
     const unlocked = store.getters['unlocked']
-    console.log(">>>>>", v3, unlocked)
-    if (!v3) {
+    console.log(">>>>>", bipinit, unlocked)
+    if (!Boolean(bipinit)) {
       next({
         path: '/init/welcome',
         query: { redirect: to.fullPath }
@@ -41,5 +48,18 @@ router.beforeEach(async (to,from,next) => {
 })
 
 global.appnavs = appnavs
+
+async function hasWallet() {
+  const local = new LocalStore()
+  const d = await local.get()
+  console.log("router>>>>>",d)
+  if(d &&d.data&& d.data.env3){
+    await store.dispatch('loadBipinit',true)
+    return true;
+  }else {
+    await store.dispatch('loadBipinit', false)
+    return false;
+  }
+}
 
 export default router
