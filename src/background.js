@@ -20,6 +20,7 @@ import {
   APITYPE_PWD_INCORRECT,
   APITYPE_LOGIN_PASS,
   APITYPE_REDIRECT_APP,
+  APITYPE_LOGOUT,
 } from './corejs/enums'
 import pump from 'pump'
 
@@ -126,10 +127,10 @@ async function setupController(initState) {
         openTabsIDs[tabId] = true
         console.log(">>>>>", processName, data, remotePort)
       }
-      const isUnlocked = Boolean(ctx.appStateController.isUnlocked)
-      console.log("lodls>>>>", controller.appStateController.isUnlocked)
+      const isUnlocked = Boolean(controller.appStateController.isUnlocked)
       const sendData = Object.assign({}, data, { isUnlocked})
-      remotePort.postMessage({ apiType: 'initState',data: sendData })
+      console.log("send data connect>>", getSendData())
+      remotePort.postMessage({ apiType: 'initState', data: getSendData() })
     } else {
       console.log("external process", processName)
     }
@@ -150,9 +151,13 @@ async function setupController(initState) {
                 const newState = getSendData()
                 remotePort.postMessage({ apiType: APITYPE_INIT_STATE, data: newState,redirect:'/index'})
               }else{
-                remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT })
+                remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT ,error:{message:'password incorrect.'}})
               }
             }
+            break;
+          case APITYPE_LOGOUT:
+            await controller.appStateController.locked()
+            remotePort.postMessage({ apiType: 'initState', data: getSendData() })
             break;
 
           default:
@@ -160,13 +165,22 @@ async function setupController(initState) {
         }
       }
     })
+
+
+    function getSendData() {
+      const storeState = controller.store.getState()
+      const sendData = controller.appStateController.getAppState()
+      const extendObj = {
+        isUnlocked: Boolean(controller.appStateController.isUnlocked),
+        selectAddress: controller.appStateController.selectAddress,
+        ...controller.appStateController.store.getState(),
+      }
+      return Object.assign({}, storeState, sendData, extendObj)
+    }
+
   }
 
-  function getSendData() {
-    const storeState = controller.store.getState()
-    const sendData = controller.appStateController.getAppState()
-    return Object.assign({}, storeState, sendData)
-  }
+
 
 }
 

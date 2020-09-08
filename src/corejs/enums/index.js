@@ -9,3 +9,7 @@ export const APITYPE_PWD_INCORRECT = "pwdIncorrect"
 export const APITYPE_LOGIN_PASS = "loginPass"
 
 export const APITYPE_REDIRECT_APP = "redirectApp"
+
+export const APITYPE_LOGOUT = "logout"
+
+

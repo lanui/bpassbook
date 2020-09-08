@@ -9,6 +9,7 @@ import {
   APITYPE_UPDATE_UNLOCKED,
   APITYPE_PWD_INCORRECT,
   APITYPE_REDIRECT_APP,
+  APITYPE_LOGOUT,
 } from '@/corejs/enums'
 
 class ClientConnectionPort extends EventEmitter {
@@ -28,13 +29,17 @@ class ClientConnectionPort extends EventEmitter {
 
         switch (apiType) {
           case APITYPE_INIT_STATE :
-            console.log(">data>>>",message.data,store)
-            store.dispatch('updateFromBackground', message.data)
+            updateVuex(message.data)
             break;
           case APITYPE_PWD_INCORRECT:
-
+            //message : apiType, error.message error.code
+            console.log('error',message.error.message)
+            store.dispatch('setLoginError', message.error.message)
             break;
           case APITYPE_UPDATE_UNLOCKED:
+
+            break;
+          case APITYPE_LOGOUT:
 
             break;
           default:
@@ -42,13 +47,16 @@ class ClientConnectionPort extends EventEmitter {
         }
       }
 
-    })
 
+      function updateVuex(payload) {
+        store.dispatch('updateFromBackground', payload)
+      }
+    })
 
   }
 
-  updateInitStore(){
-
+  getRemotePort(){
+    return this.remotePort
   }
 
   sendUnlockedReq(password,env3){

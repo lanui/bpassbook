@@ -28,10 +28,14 @@ export default new Vuex.Store({
     unlocked: false,
     dense: true,
     lockTime: 15 * 60,//s
-    foo: 'bar',
+    loginError: '',
+    loginLoading:false,
     rdrawer: false,
     chainId: 3,
     wallet: '',
+    privateKey:null,
+    publicKey:null,
+    selectAddress:'',
     nickname: "lanberyEth",
     networks: [
       {
@@ -51,6 +55,9 @@ export default new Vuex.Store({
     unlocked: state => state.unlocked,
     v3:state => state.v3,
     env3:state => state.env3,
+    loginError: state => state.loginError||'',
+    loginLoading:state => state.loginLoading ||false,
+    selectAddress: state => state.selectAddress,
     ...getters
   },
   mutations,

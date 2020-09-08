@@ -14,6 +14,7 @@
       <v-col cols="10">
         <v-form ref="signInForm">
           <v-text-field
+            :loading="loginLoading"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
@@ -42,6 +43,7 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 
 import LogoBig from '@/widgets/ExtLogo';
 import {passwordRules} from '@/ui/constants/valid-rules'
@@ -50,6 +52,13 @@ export default {
   name: 'PopupSignIn',
   components: {
     LogoBig
+  },
+  computed: {
+    ...mapState([
+      'unlocked',
+      'loginLoading',
+      'loginError'
+    ])
   },
   data() {
     return {
@@ -67,19 +76,40 @@ export default {
   methods: {
     async unlockAccount() {
       const pwd = this.password
-      if(pwd === '') {
+      const env3 = await this.$store.getters['env3']
+      if(pwd === '' || !env3) {
         //this.pwdHint = 'Incorrect password.'
         this.err = 'Incorrect password.'
       }else {
-        await this.$store.dispatch('p3/unlockedAccount',{})
-        await this.$router.push({path:'/index'})
+        await this.$store.dispatch('setLoginLoading',true)
+         $conn.clientPort.sendUnlockedReq(pwd,env3)
       }
+    },
+    gotoIndex(){
+      this.$router.push({path:'/index'})
+    }
+  },
+  mounted() {
+    const unlocked = this.$store.getters['unlocked']
+    if(unlocked){
+      this.gotoIndex()
     }
   },
   watch: {
     password:(val,old) => {
-      this.err = ''
-    }
+      if(val===''){
+        this.$store.dispatch('setLoginError','')
+      }
+      if(val!==old){
+        this.$store.dispatch('setLoginError','')
+      }
+    },
+    unlocked:function(val,old) {
+      console.log("watch:",val,old)
+      if(val){
+        this.gotoIndex()
+      }
+    },
   },
 };
 </script>

@@ -18,15 +18,15 @@
       <v-list-item dense @click="toggleLocked">
         <v-list-item-icon>
           <v-icon>
-            {{ locked ? lockedIcon : unlockedIcon }}
+            {{ unlocked ?  unlockedIcon :lockedIcon }}
           </v-icon>
         </v-list-item-icon>
         <v-list-item-title>
-          {{ locked ? $t('nav.login.unlock') : $t('nav.login.locking') }}
+          {{ unlocked ?  $t('nav.login.locking') : $t('nav.login.unlock') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider></v-divider>
-      <v-list-item dense>
+      <!-- <v-list-item dense>
         <v-list-item-icon>
           <v-icon>mdi-account-multiple-plus-outline</v-icon>
         </v-list-item-icon>
@@ -41,7 +41,7 @@
         <v-list-item-title>
           导入账号
         </v-list-item-title>
-      </v-list-item>
+      </v-list-item> -->
     </v-list>
   </v-menu>
 </template>
@@ -55,6 +55,7 @@ import {LOCKED_MDI,UNLOCKED_MDI} from '@/ui/constants/icon-cnsts'
 export default {
   name: 'MenuLogo',
   computed: {
+    ...mapGetters(['unlocked']),
     ...mapGetters('p3',['locked']),
   },
   data() {
@@ -66,19 +67,16 @@ export default {
   },
   methods: {
     async toggleLocked(){
-      const _locked = this.locked
+      const _locked = this.unlocked
       if(_locked){
-        await this.unlockedHandler()
-      }else {
         await this.lockedHandler()
+      }else {
+        //await this.lockedHandler()
       }
     },
     async lockedHandler() {
-
-      this.$store.dispatch('p3/lockedAccount')
-    },
-    async unlockedHandler() {
-      this.$store.dispatch('p3/unlockedAccount')
+      await this.$store.dispatch('unlockWallet',false)
+      $conn.clientRedirect(this.$router,{path:'/signin'})
     }
   },
 };

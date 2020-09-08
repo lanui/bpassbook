@@ -30,6 +30,21 @@ export default {
   },
   [types.SET_ENV3](state,env3) {
     state.env3 = env3||null
+  },
+  [types.SET_LOGINLOADING](state,loading) {
+    state.loginLoading = Boolean(loading)
+  },
+  [types.SET_LOGINERROR](state,error) {
+    state.loginError = error||''
+  },
+  [types.UPDATE_SELECT_ADDR](state,address) {
+    state.selectAddress = address||''
+  },
+  [types.SET_WALLET_OPEN](state,{privateKey =null,publicKey=null,selectAddress='',chainId=3}) {
+    state.privateKey = privateKey
+    state.publicKey = publicKey
+    state.selectAddress = selectAddress
+    state.chainId = chainId
   }
 
 };

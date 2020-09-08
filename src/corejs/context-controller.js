@@ -5,8 +5,9 @@ import KeyringController from 'eth-keyring-controller'
 
 import {version} from '../manifest.json'
 
-import MergeableObservableStore from '@/lib/storage/MergeableObservableStore'
+import MergeableObservableStore from '@/lib/storage/mergeable-observable-store'
 import AppStateController from './app-state'
+import NetworkController from './networks/network-controller'
 
 const FIRST_TIME_INFO = 'firstTimeInfo'
 
@@ -18,10 +19,12 @@ class ContextController extends EventEmitter {
     this.sendUpdate = debounce(this.privateSendUpdate.bind(this),200)
 
     const initState = opts.initState || {}
-    console.log(">>>", initState)
+    console.log("F>>>>", initState)
     this.recordFirstTimeInfo(initState)
 
     this.store = new MergeableObservableStore(initState)
+
+    this.networkController = new NetworkController(initState.NetworkController)
 
     this.appStateController = new AppStateController({
       initState: initState.AppStateController
@@ -32,11 +35,15 @@ class ContextController extends EventEmitter {
       encryptor: opts.encryptor || undefined
     })
 
+
     this.keyringController.memStore.subscribe((s) => this._onKeyringControllerUpdate(s))
 
 
+    // Update
     this.store.updateStructure({
       AppStateController: this.appStateController.store,
+      KeyringController:this.keyringController.store,
+      NetworkController:this.networkController.store
     })
 
     this.memStore = new MergeableObservableStore(null,{
@@ -78,6 +85,8 @@ class ContextController extends EventEmitter {
       return
     }
   }
+
+
 
 }
 

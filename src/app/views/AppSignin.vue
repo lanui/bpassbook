@@ -10,6 +10,7 @@
         <h1 style="font-size:2.75rem;font-weight:400;">Welcome to BPassword</h1>
         <v-form ref="signInForm">
           <v-text-field
+            :loading="loginLoading"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
@@ -18,7 +19,7 @@
             counter
             :hint="pwdHint"
             @click:append="pwdShow = !pwdShow"
-            :error-messages="err"
+            :error-messages="loginError"
             :placeholder="$t('l.passwordPlaceHolder')"
             v-model="password">
           </v-text-field>
@@ -54,7 +55,9 @@ export default {
   },
   computed: {
     ...mapState([
-      'unlocked'
+      'unlocked',
+      'loginLoading',
+      'loginError'
     ])
   },
   data() {
@@ -76,6 +79,7 @@ export default {
 
         try{
           const env3 = await this.$store.getters['env3']
+          await this.$store.dispatch('setLoginLoading',true)
           $conn.clientPort.sendUnlockedReq(pwd,env3)
 
         }catch(err){
@@ -87,11 +91,25 @@ export default {
       this.$router.push({path:"/index"})
     }
   },
+  mounted() {
+    const unlocked = this.$store.getters['unlocked']
+    if(unlocked){
+      this.goHome()
+    }
+  },
   watch:{
     unlocked:function(val,old) {
       console.log("watch:",val,old)
       if(val){
         this.goHome()
+      }
+    },
+    password:function(val,old){
+      if(val===''){
+        this.$store.dispatch('setLoginError','')
+      }
+      if(val!==old){
+        this.$store.dispatch('setLoginError','')
       }
     }
   }

@@ -15,7 +15,7 @@
         <v-btn @click.stop="openLock"
           icon color="grey lighten-5" outlined rounded ripple x-large>
           <v-icon>
-            {{locked ? lockIcon : ethIcon }}
+            {{ ethIcon }}
           </v-icon>
         </v-btn>
       </v-col>
@@ -49,7 +49,7 @@ export default {
   name: 'WGWalletPannel',
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
-    ...mapGetters(['shortAddress', 'networkColor']),
+    ...mapGetters(['shortAddress', 'networkColor','unlocked']),
     ...mapGetters('p3',['locked']),
     ethBalance: (state) => {
       const bal = '71.2567';
@@ -71,14 +71,11 @@ export default {
 
       chrome.tabs.create({active:true,url:url},function(tab) {
         console.log(tab)
+        //todo notify backend
       })
     },
     openLock(){
-      const locked = this.$store.getters['p3/locked']
-      console.log(">>>>",locked)
-      if(locked){
-        this.$store.dispatch('p3/unlockedAccount')
-      }
+
     }
   },
 };

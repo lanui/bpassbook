@@ -45,7 +45,8 @@ export default {
     ...mapState([
       'rdrawer',
       'dense',
-      'networks'
+      'networks',
+      'chainId'
     ]),
 
     networkColor(){
@@ -56,7 +57,7 @@ export default {
   },
   data() {
     return {
-      chainId: 3,
+
       // networks: [
       //   {
       //     text: 'Ropsten',value:3,color:'rgba(233, 21, 80, 0.7)'

@@ -18,8 +18,8 @@ const router = new VueRouter({
 
 router.beforeEach((to,from,next) => {
   if( to.matched.some( rec => rec.meta.auth)) {
-    const locked = store.state.p3.locked
-    if (locked){
+    const unlocked = store.state.unlocked
+    if (!unlocked){
       next({
         path:'/signin',
         query:{redirect: to.fullPath}

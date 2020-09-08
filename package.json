@@ -37,6 +37,7 @@
     "ethereumjs-util": "^7.0.4",
     "extension-port-stream": "^1.0.0",
     "extensionizer": "^1.0.1",
+    "idb": "^5.0.4",
     "lodash": "^4.17.20",
     "loglevel": "^1.7.0",
     "obs-store": "^4.0.3",
@@ -50,6 +51,7 @@
     "vue-router": "^3.4.3",
     "vuetify": "^2.3.9",
     "vuex": "^3.5.1",
+    "web3": "^1.2.11",
     "webextension-polyfill": "^0.6.0"
   },
   "devDependencies": {

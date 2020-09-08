@@ -7,9 +7,14 @@ import { version } from '@/manifest.json'
 
 const passworder = require('browser-passworder')
 
-export const setFoo = ({ commit }, payload) => {
-  commit(types.UPDATE_FOO, payload);
+export const setLoginError = ({ commit }, errMsg) => {
+  commit(types.SET_LOGINERROR, errMsg);
+  commit(types.SET_LOGINLOADING,false)
 };
+
+export const setLoginLoading = ({commit},loading) =>{
+  commit(types.SET_LOGINLOADING,Boolean(loading))
+}
 
 export const setChainId = ({ commit }, chainId) => {
   commit(types.UPDATE_CHAINID, chainId)
@@ -67,23 +72,26 @@ export const createAndSaveAccount = async ({commit},creator) => {
   }
 }
 
+/**
+ * set vuex state from backend message
+ * @param {*} param0
+ * @param {*} payload
+ */
 export const updateFromBackground = async ({commit},payload)=> {
   console.log("action>>", payload)
 
+  commit(types.SET_BIPINIT, true)
+  if (payload.AppStateController){
+    const { chainId, privateKey, publicKey, selectAddress } = payload.AppStateController
+    commit(types.SET_WALLET_OPEN, { chainId, privateKey, publicKey, selectAddress})
+  }
 
-  if(payload.env3) {
-    const { v3, isUnlocked, selectAddress } = payload
-    console.log("---------------->",isUnlocked)
+  if (payload.isUnlocked) {
     commit(types.SET_BIPINIT,true)
     commit(types.SET_ENV3, payload.env3)
-    commit(types.UPDATE_UNLOCKED, isUnlocked)
-    commit(types.UPDATE_SELECTADDRESS, selectAddress)
-
+    commit(types.UPDATE_UNLOCKED, payload.isUnlocked)
   }
 }
 
-export const updateUnlockBackground = async ({commit},payload) =>{
-  console.log("data actions>>>",payload)
-  commit(types.UPDATE_SELECTADDRESS, payload.selectAddress)
-  commit(types.UPDATE_UNLOCKED, payload.isUnlocked)
-}
+
+
