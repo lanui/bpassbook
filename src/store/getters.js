@@ -26,3 +26,6 @@ export const networkColor = state => {
   }
 }
 
+export const currentNickname = (state) => {
+  return state.nickname ||''
+}

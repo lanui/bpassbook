@@ -1,8 +1,10 @@
 export const LOAD_ACTIVITY = 'LOAD_ACTIVITY'
 export const UPDATE_LOCKED = "UPDATE_LOCKED"
+export const UPDATE_DRAWER = "UPDATE_DRAWER"
 
 
 export default {
   LOAD_ACTIVITY,
   UPDATE_LOCKED,
+  UPDATE_DRAWER,
 }

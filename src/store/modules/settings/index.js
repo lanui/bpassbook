@@ -1,13 +1,18 @@
-import { APP_DEFAULT_SETTINGS } from '@/corejs/settings'
+import * as getters from './getters'
+import actions from './actions'
+import mutations from './mutations'
 
 const settings = {
   namespaced: true,
-  state:{
-    ...APP_DEFAULT_SETTINGS
-  },
+  actions,
   getters:{
-
-  }
+    autoLockedMins: state => state.autoLockedMins,
+    ...getters,
+  },
+  mutations,
+  state: {
+    autoLockedMins: 5,
+  },
 }
 
 export default settings

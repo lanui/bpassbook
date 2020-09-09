@@ -2,13 +2,16 @@
   <div class="v-application--wrap">
     <top-bar />
     <main-container />
-    <v-navigation-drawer @click="drawerClick"
+    <v-navigation-drawer
       ref="rightDrawer"
-      absolute :value="rdrawer" :right="true" style="height:550px;top:50px;">
+      :value="rightDrawer"
+      @input="setDrawerValue($event)"
+      @transitionend="drawerTransitionChanged"
+      absolute  :right="true" style="height:550px;top:50px;">
       <v-list :dense="dense" class="py-0" >
         <v-list-item
           v-for="(nav,idx) in navMenus"
-          @click="navMenuClick(nav)"
+          @click.stop="navMenuClick(nav)"
           :key="idx">
           <v-list-item-avatar>
             <v-icon>{{nav.icon}}</v-icon>
@@ -23,7 +26,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState ,mapGetters} from 'vuex'
 
 import TopBar from '@popup/widgets/TopBar.vue';
 import MainContainer from '@popup/views/MainContainer.vue';
@@ -38,20 +41,36 @@ export default {
     DrawerWalletPannel,
   },
   computed: {
+    ...mapGetters('p3',['drawer']),
+    rightDrawer:{
+      get(){
+        return this.$store.state.p3.drawer
+      },
+      set(v){
+        this.$store.state.p3.drawer = v
+      }
+    },
     ...mapState(['rdrawer','dense'])
   },
   data() {
     return {
-      drawer: true,
       navMenus: navs.filter(nav => nav.roles.includes('p3'))
     };
   },
   methods: {
     navMenuClick(nav) {
       console.log(nav)
+      this.$router.push({path:nav.path})
+      this.rightDrawer = false
     },
     drawerClick(){
       console.log('<<<<>>>>')
+    },
+    setDrawerValue($event){
+      console.log("Drawer>>>>>",$event)
+    },
+    drawerTransitionChanged(val){
+      console.log("TransitionChanged>>>>>",val)
     }
   },
 };

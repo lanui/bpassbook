@@ -21,16 +21,18 @@
     </v-container>
     <v-spacer></v-spacer>
     <v-btn v-if="rightMenus"
-      icon :dense="dense" @click="togglerDrawer">
-      <v-icon size="20px" color="light-blue accent-4">
+      tile :dense="dense" @click="togglerDrawer"
+      class="ma-0" small>
+      <v-icon color="light-blue accent-4">
         mdi-dots-vertical
       </v-icon>
+      More
     </v-btn>
   </v-app-bar>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState,mapGetters } from 'vuex'
 
 import TopIcon from '@/widgets/ExtLogo.vue'
 import MenuLogo from '@/widgets/MenuLogo.vue'
@@ -42,6 +44,7 @@ export default {
     MenuLogo,
   },
   computed: {
+    ...mapGetters('p3',['drawer']),
     ...mapState([
       'rdrawer',
       'dense',
@@ -58,14 +61,6 @@ export default {
   data() {
     return {
 
-      // networks: [
-      //   {
-      //     text: 'Ropsten',value:3,color:'rgba(233, 21, 80, 0.7)'
-      //   },
-      //   {
-      //     text:"Mainnet",value:1,color:'rgba(3, 135, 137, 0.7)'
-      //   }
-      // ]
     }
   },
   methods: {
@@ -74,14 +69,15 @@ export default {
       //alert(id)
 
       this.$store.dispatch('setChainId',id)
+      this.$store.dispatch('p3/toggleRightDrawer',false)
     },
     togglerDrawer(){
-      const rdrawer = this.rdrawer
+      const rdrawer = this.$store.getters['p3/drawer']
       const drawerEl = this.$parent.$refs['rightDrawer']
 
       const flag = rdrawer && drawerEl.$el.classList.contains('v-navigation-drawer--close') ? true : !rdrawer
       console.log('>>>>',rdrawer,flag)
-      this.$store.dispatch('changeRightDrawer',!rdrawer)
+      this.$store.dispatch('p3/toggleRightDrawer',!rdrawer)
     }
   },
   props:{

@@ -11,7 +11,7 @@ export const navs = [
     ]
   },
   {
-    path: "/",
+    path: "/passbook",
     name: "passbook",
     i18n: "passbook.index",
     text: "密码本",
@@ -31,7 +31,27 @@ export const navs = [
     ]
   },
   {
-    path: "/settings",
+    path: "/importor",
+    name: "importor",
+    i18n: "importor.index",
+    text: "导入账户",
+    icon: 'mdi-content-duplicate',
+    roles: [
+      'p3'
+    ]
+  },
+  {
+    path: "/exportor",
+    name: "exportor",
+    i18n: "exportor.index",
+    text: "导出账户",
+    icon: 'mdi-export',
+    roles: [
+      'p3'
+    ]
+  },
+  {
+    path: "/options",
     name: "settings",
     i18n: "passbook.index",
     text: "设置",

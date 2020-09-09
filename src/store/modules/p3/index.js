@@ -3,13 +3,18 @@ import getters from './getters'
 import mutations from './mutations'
 
 const p3 = {
-  namespaced:true,
+  namespaced: true,
   actions,
-  getters,
+  getters: {
+    locked: state => state.locked,
+    drawer: state => state.drawer,
+    ...getters
+  },
   mutations,
-  state:{
-    activities:[],
-    locked:true,
+  state: {
+    activities: [],
+    locked: true,
+    drawer: false,
   }
 }
 

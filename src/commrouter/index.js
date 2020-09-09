@@ -55,7 +55,7 @@ export const commroutes = [
         }
       },
       {
-        path: "index",
+        path: "options",
         alias: "/options/index",
         name: "options.index",
         component: OptionsIndex,
