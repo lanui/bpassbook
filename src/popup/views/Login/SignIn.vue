@@ -77,12 +77,13 @@ export default {
     async unlockAccount() {
       const pwd = this.password
       const env3 = await this.$store.getters['env3']
+
       if(pwd === '' || !env3) {
         //this.pwdHint = 'Incorrect password.'
         this.err = 'Incorrect password.'
       }else {
         await this.$store.dispatch('setLoginLoading',true)
-         $conn.clientPort.sendUnlockedReq(pwd,env3)
+        $conn.clientPort.sendUnlockedReq(pwd,env3)
       }
     },
     gotoIndex(){
@@ -96,7 +97,7 @@ export default {
     }
   },
   watch: {
-    password:(val,old) => {
+    password:function(val,old){
       if(val===''){
         this.$store.dispatch('setLoginError','')
       }

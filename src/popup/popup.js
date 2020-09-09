@@ -13,8 +13,8 @@ import ConnectionManager from '@/corejs/connections'
 
 global.browser = require('webextension-polyfill');
 
-const $conn = new ConnectionManager({portName:'popup'})
-global.$conn = $conn
+const connection = new ConnectionManager({ portName: 'popup' })
+global.$conn = connection
 
 Vue.prototype.$browser = global.browser;
 

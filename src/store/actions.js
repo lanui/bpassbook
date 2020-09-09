@@ -81,6 +81,7 @@ export const updateFromBackground = async ({commit},payload)=> {
   console.log("action>>", payload)
 
   commit(types.SET_BIPINIT, true)
+  commit(types.SET_ENV3, payload.env3 ||null)
   if (payload.AppStateController){
     const { chainId, privateKey, publicKey, selectAddress } = payload.AppStateController
     commit(types.SET_WALLET_OPEN, { chainId, privateKey, publicKey, selectAddress})
@@ -88,7 +89,6 @@ export const updateFromBackground = async ({commit},payload)=> {
 
   if (payload.isUnlocked) {
     commit(types.SET_BIPINIT,true)
-    commit(types.SET_ENV3, payload.env3)
     commit(types.UPDATE_UNLOCKED, payload.isUnlocked)
   }
 }
