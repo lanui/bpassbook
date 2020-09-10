@@ -30,3 +30,30 @@ export const INFURA_PROVIDER_TYPES = [
   MAINNET,
   // GOERLI,
 ]
+
+export const INFURA_PROVIDER_SUPPORTS = [
+  MAINNET_NETWORK_ID,
+  ROPSTEN_NETWORK_ID
+]
+
+/**
+ *
+ * @param {*} chainId
+ */
+export const networkSupport = (chainId) => {
+  return INFURA_PROVIDER_SUPPORTS.find(id => id === chainId) ? true : false
+}
+
+export const getNetwork = (chainId) => {
+  switch (chainId) {
+    case MAINNET_NETWORK_ID:
+      return MAINNET_DISPLAY_NAME;
+    case ROPSTEN_NETWORK_ID:
+      return ROPSTEN_DISPLAY_NAME;
+
+    default:
+      return ROPSTEN_DISPLAY_NAME;
+  }
+}
+
+export const DEFAULT_CHAINID = ROPSTEN_NETWORK_ID

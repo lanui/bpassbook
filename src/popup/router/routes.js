@@ -1,4 +1,4 @@
-
+import Welcome from '@/popup/views/Login/Welcome'
 import MainLayout from '@/popup/layouts/MainLayout'
 import SingleLayout from '@/popup/layouts/SingleLayout'
 import PopupIndex from '@popup/views/Index';
@@ -8,6 +8,7 @@ import OptionsIndex from '@popup/views/Options/Index'
 import ImportWallet from '@popup/views/Login/ImportWallet'
 import ExportWallet from '@/popup/views/Wallet/ExportWallet'
 
+
 export default [
   {
     path: '/',
@@ -16,7 +17,7 @@ export default [
       {
         path: 'index',
         alias: '/',
-        component: PopupIndex,
+        component: ExportWallet,
         meta: {
           auth: true
         }
@@ -90,6 +91,11 @@ export default [
         alias: '/signin',
         component: SignInIndex
       },
+      {
+        path: 'welcome',
+        alias: '/welcome',
+        component: Welcome
+      }
     ]
   },
 ];

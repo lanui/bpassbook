@@ -15,9 +15,8 @@ export default {
   [types.CLEAN_BIPINIT](state) {
     state.bipinit = null
   },
-  [types.UPDATE_UNLOCKED](state,unlocked =false) {
-    console.log(">>>>>", unlocked)
-    state.unlocked = Boolean(unlocked)
+  [types.UPDATE_ISUNLOCKED](state,isUnlocked =false) {
+    state.isUnlocked = Boolean(isUnlocked)
   },
   [types.UPDATE_KEY](state,key = null) {
     state.key = key
@@ -25,7 +24,7 @@ export default {
   [types.SET_V3](state,v3 = null) {
     state.v3 = v3
   },
-  [types.UPDATE_SELECTADDRESS](state,address){
+  [types.UPDATE_WALLET](state,address){
     state.wallet = address || ''
   },
   [types.SET_ENV3](state,env3) {
@@ -37,13 +36,13 @@ export default {
   [types.SET_LOGINERROR](state,error) {
     state.loginError = error||''
   },
-  [types.UPDATE_SELECT_ADDR](state,address) {
+  [types.UPDATE_SELECTEDADDRESS](state,address) {
     state.selectAddress = address||''
   },
-  [types.SET_WALLET_OPEN](state,{privateKey =null,publicKey=null,selectAddress='',chainId=3}) {
+  [types.SET_WALLET_OPEN](state, { privateKey = null, publicKey = null, selectedAddress='',chainId=3}) {
     state.privateKey = privateKey
     state.publicKey = publicKey
-    state.selectAddress = selectAddress
+    state.selectedAddress = selectedAddress
     state.chainId = chainId
   }
 

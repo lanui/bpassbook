@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'unlocked',
+      'isUnlocked',
       'loginLoading',
       'loginError'
     ])
@@ -92,13 +92,13 @@ export default {
     }
   },
   mounted() {
-    const unlocked = this.$store.getters['unlocked']
-    if(unlocked){
+    const isUnlocked = this.$store.getters['isUnlocked']
+    if(isUnlocked){
       this.goHome()
     }
   },
   watch:{
-    unlocked:function(val,old) {
+    isUnlocked:function(val,old) {
       console.log("watch:",val,old)
       if(val){
         this.goHome()

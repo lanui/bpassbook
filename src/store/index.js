@@ -7,6 +7,7 @@ import * as actions from './actions';
 import { DEFAULT_LOCALE } from '../corejs/settings'
 
 // modules
+import acc from './modules/acc'
 import p3 from './modules/p3'
 import app from './modules/app'
 import settings from './modules/settings'
@@ -15,6 +16,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
+    acc,
     p3,
     app,
     settings,
@@ -25,7 +27,7 @@ export default new Vuex.Store({
     v3:null,//v3 encrypt data
     env3:null,
     bipinit: null,
-    unlocked: false,
+    isUnlocked: false,
     dense: true,
     lockTime: 15 * 60,//s
     loginError: '',
@@ -35,7 +37,7 @@ export default new Vuex.Store({
     wallet: '',
     privateKey:null,
     publicKey:null,
-    selectAddress:'',
+    selectedAddress:'',
     nickname: "lanberyEth",
     networks: [
       {
@@ -52,12 +54,12 @@ export default new Vuex.Store({
     chainId: state => state.chainId,
     wallet: state => state.wallet,
     bipinit: state => state.bipinit,
-    unlocked: state => state.unlocked,
+    isUnlocked: state => state.isUnlocked,
     v3:state => state.v3,
     env3:state => state.env3,
     loginError: state => state.loginError||'',
     loginLoading:state => state.loginLoading ||false,
-    selectAddress: state => state.selectAddress,
+    selectedAddress: state => state.selectedAddress,
     ...getters
   },
   mutations,

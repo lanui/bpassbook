@@ -49,8 +49,7 @@ export default {
   name: 'WGWalletPannel',
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
-    ...mapGetters(['shortAddress', 'networkColor','unlocked']),
-    ...mapGetters('p3',['locked']),
+    ...mapGetters(['shortAddress', 'networkColor']),
     ethBalance: (state) => {
       const bal = '71.2567';
       return parseFloat(bal || '0').toFixed(4);
@@ -77,6 +76,10 @@ export default {
     openLock(){
 
     }
+  },
+  async mounted() {
+    this.$store.dispatch('acc/loadBalances')
+    console.log(await this.$store.state.selectedAddress)
   },
 };
 </script>

@@ -43,6 +43,7 @@
     "obs-store": "^4.0.3",
     "promise-to-callback": "^1.0.0",
     "pump": "^3.0.0",
+    "qrcode": "^1.4.4",
     "readable-stream": "2.3.3",
     "store": "^2.0.12",
     "vue": "^2.6.12",

@@ -14,7 +14,7 @@
       <v-col cols="10">
         <v-form ref="signInForm">
           <v-text-field
-            :loading="loginLoading"
+            :loading="loading"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
@@ -33,8 +33,13 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-btn
-          @click="unlockAccount"
+          @click="login"
           block larage color="light-blue darken-1" dark>
+          <v-progress-circular v-if="loading"
+            indeterminate :size="22"
+            :width="2"
+            color="white"
+          ></v-progress-circular>
           {{$t('nav.login.unlock')}}
         </v-btn>
       </v-col>
@@ -55,7 +60,7 @@ export default {
   },
   computed: {
     ...mapState([
-      'unlocked',
+      'isUnlocked',
       'loginLoading',
       'loginError'
     ])
@@ -66,6 +71,7 @@ export default {
       pwdShow:false,
       pwdHint:'',
       err:'',
+      loading:false,
       rules:{
         password: [
           ...passwordRules
@@ -74,16 +80,20 @@ export default {
     }
   },
   methods: {
-    async unlockAccount() {
-      const pwd = this.password
-      const env3 = await this.$store.getters['env3']
+    async login() {
+      if(this.$refs.signInForm.validate()){
+        const pwd = this.password
+        const env3 = await this.$store.getters['env3']
 
-      if(pwd === '' || !env3) {
-        //this.pwdHint = 'Incorrect password.'
-        this.err = 'Incorrect password.'
-      }else {
-        await this.$store.dispatch('setLoginLoading',true)
-        $conn.clientPort.sendUnlockedReq(pwd,env3)
+        try{
+          this.loading = true
+          await this.$store.dispatch('setLoginLoading',true)
+          $conn.clientPort.sendUnlockedReq(pwd,env3)
+          this.loading = false
+        }catch(err){
+          this.loading = false
+          this.err = err.message
+        }
       }
     },
     gotoIndex(){
@@ -91,13 +101,15 @@ export default {
     }
   },
   mounted() {
-    const unlocked = this.$store.getters['unlocked']
-    if(unlocked){
+    this.loading = false
+    const isUnlocked = this.$store.getters['isUnlocked']
+    if(isUnlocked){
       this.gotoIndex()
     }
   },
   watch: {
     password:function(val,old){
+      this.loading = false
       if(val===''){
         this.$store.dispatch('setLoginError','')
       }
@@ -105,7 +117,7 @@ export default {
         this.$store.dispatch('setLoginError','')
       }
     },
-    unlocked:function(val,old) {
+    isUnlocked:function(val,old) {
       console.log("watch:",val,old)
       if(val){
         this.gotoIndex()

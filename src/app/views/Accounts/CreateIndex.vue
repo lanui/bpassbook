@@ -4,7 +4,8 @@
       <v-card class="d-flex justify-center" :elevation="0">
         <v-container class="align-stretch">
           <v-row justify="space-between">
-            <v-col cols="1" class="text-center flex-grow-0 flex-shrink-1">
+            <v-col v-if="false"
+              cols="1" class="text-center flex-grow-0 flex-shrink-1">
               <v-row justify="center"
                 class="flex-column ma-0 fill-height">
                 <v-col v-for="(step,idx) in stepnavs"
@@ -45,7 +46,6 @@
               <step-form-four
                 @stepClick="stepHandler"
                 :address="firstAddress"
-                :creating="creating"
                  v-if="stepid === 4"/>
             </v-col>
             <v-col cols="4" class="flex-grow-0 flex-shrink-1">
@@ -74,8 +74,6 @@ import StepFormFour from './CreateStepForm4'
 
 import { creator } from '@/corejs/accounts/creator.js'
 global.creator = creator
-
-
 
 
 export default {
@@ -125,7 +123,6 @@ export default {
       creator,
       firstAddress:'',
       completed:false,
-      creating:false
     }
   },
   methods: {
@@ -136,7 +133,6 @@ export default {
     },
     setPassword(password) {
       creator.setPassword(password)
-      console.log(">>>>>>",creator.getPassword())
     },
     getPwd($this){
       const pwd = creator.getPassword()
@@ -166,24 +162,27 @@ export default {
     },
     async saveWallet(){
 
-      this.creating = 'warning'
       const that = this
+
       creator.createWallet().then( async function(wallet){
-        that.completed = true
         that.firstAddress = creator.getAddress()
         console.log("this.firstAddress>>",that.firstAddress,creator.getV3())
         await that.$store.dispatch('createAndSaveAccount',creator)
+        that.completed = true
         that.stepHandler(4)
       }).catch(err=>{
         console.log('create>>>',err)
       })
-    }
+    },
+
 
   },
   mounted() {
     this.stepHandler(1)
   },
 };
+
+
 </script>
 <style>
 </style>

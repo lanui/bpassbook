@@ -33,13 +33,13 @@ Vue.prototype.$local = new LocalStore()
 const connection = new ConnectionManager({ portName: 'app' })
 import dbMgr from '@/plugins/indexdb'
 import Web3Client from '@/corejs/web3'
-global.web3Client = new Web3Client()
+global.web3Cli = new Web3Client()
 
 global.$conn = connection
 global.dbMgr = dbMgr
 
 
-global.bpvue = new Vue({
+global.app = new Vue({
   el:"#app",
   i18n,
   store,

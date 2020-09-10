@@ -30,21 +30,21 @@ export default class AppStateController extends EventEmitter {
 
   async unlock(password, env3) {
     try {
-      console.log("123>>>>", password, env3)
+      console.log("Unlocked By password>>>>", password, env3)
       const text = JSON.stringify(env3)
       const v3 = await passworder.decrypt(password, text)
 
       const wallet = await fromV3(v3, password)
       if(wallet){
         this.wallet = wallet
-        const selectAddress =  wallet.getChecksumAddressString();
+        const selectedAddress =  wallet.getChecksumAddressString();
         const privateKey =  wallet.getPrivateKeyString()
         const publicKey =  wallet.getPublicKeyString()
 
-        this.store.updateState({ selectAddress, privateKey, publicKey})
+        this.store.updateState({ selectedAddress, privateKey, publicKey})
       }
 
-      // console.log(">>>>>>", v3)
+      console.log("wallet unlocked success>>>", v3)
       this.isUnlocked = true
       this.v3 = v3
       return v3

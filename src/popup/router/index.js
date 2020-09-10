@@ -3,6 +3,8 @@ import VueRouter from 'vue-router';
 import routes from './routes';
 import store from '@/store'
 
+import { hasEnv3, getData } from '@/lib/storage'
+
 Vue.use(VueRouter);
 
 const VueRouterPush = VueRouter.prototype.push
@@ -16,13 +18,22 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach((to,from,next) => {
+router.beforeEach(async (to,from,next) => {
+  const ret = await getData()
+  const { env3 } = ret.data
+  const isUnlocked = store.state.isUnlocked
+  console.log("has env3>>>", ret, isUnlocked)
   if( to.matched.some( rec => rec.meta.auth)) {
-    const unlocked = store.state.unlocked
-    if (!unlocked){
+
+    if (!env3){
       next({
-        path:'/signin',
-        query:{redirect: to.fullPath}
+        path: '/welcome',
+        query: { redirect: to.fullPath }
+      })
+    } else if (!isUnlocked){
+      next({
+        path: '/signin',
+        query: { redirect: to.fullPath }
       })
     }else {
       next()

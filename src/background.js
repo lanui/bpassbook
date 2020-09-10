@@ -54,7 +54,7 @@ initialize().catch(log.error)
 
 async function initialize() {
   const initState = await loadStateFromPersistence()
-  console.log(">initState>>>", initState)
+  console.log("Back initState>>>", initState)
   setupController(initState ||{ })
 }
 
@@ -111,11 +111,9 @@ async function setupController(initState) {
 
     if (isInternalProcess) {
       const portStream = new PortStream(remotePort)
-
-      console.log("internal process", processName)
       const data = controller.store.getState()
+      console.log("Back Local Data >>>>>", processName, data)
 
-      console.log("send data>>>>>", data, sendData)
       if(processName === ENVIRONMENT_TYPE_POPUP) {
         popupIsOpen = true
         endOfStream(portStream,()=>{
@@ -125,12 +123,11 @@ async function setupController(initState) {
       } else if (processName === ENVIRONMENT_TYPE_APP) {
         const tabId = remotePort.sender.tab.id
         openTabsIDs[tabId] = true
-        console.log(">>>>>", processName, data, remotePort)
       }
       const isUnlocked = Boolean(controller.appStateController.isUnlocked)
-      const sendData = Object.assign({}, data, { isUnlocked})
-      console.log("send data connect>>", getSendData())
-      remotePort.postMessage({ apiType: 'initState', data: getSendData() })
+      const sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked)})
+      console.log("send data connect>>", sendData)
+      remotePort.postMessage({ apiType: 'initState', data: sendData })
     } else {
       console.log("external process", processName)
     }
@@ -143,9 +140,11 @@ async function setupController(initState) {
           case APITYPE_UPDATE_UNLOCKED:
             const curstate = controller.store.getState()
             console.log("APITYPE_UPDATE_UNLOCKED", msg.data, curstate)
-            if (msg.data && msg.data.password && curstate.env3) {
+            if (msg.data && msg.data.password && msg.data.env3) {
               log.warn('send local...', msg.data.password, curstate.env3)
-              const v3 = await controller.appStateController.unlock(msg.data.password, curstate.env3)
+              const env3 = msg.data.env3
+              controller.store.updateState({ env3 })
+              const v3 = await controller.appStateController.unlock(msg.data.password, msg.data.env3)
 
               if(v3){
                 const newState = getSendData()
@@ -195,7 +194,6 @@ function recviceMessageHandler(data){
  */
 async function loadStateFromPersistence(){
   versionedData = (await $local.get()) || {meta:{version:1}}
-  console.log("versionedData local>>>",versionedData)
   return versionedData.data
 }
 

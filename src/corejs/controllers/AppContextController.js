@@ -12,11 +12,6 @@ class AppContextController extends EventEmitter {
     this.opts = opts
   }
 
-  async loadStore(){
-
-  }
-
-
 
   async persistData(state) {
     if (!state) {

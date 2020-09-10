@@ -61,8 +61,9 @@ class ClientConnectionPort extends EventEmitter {
 
   sendUnlockedReq(password,env3){
     const remotePort = this.remotePort
+    console.log("clientPort>>",this)
     remotePort.postMessage({ apiType: APITYPE_UPDATE_UNLOCKED,data:{password,env3}})
-    console.log("env3>>>", remotePort,env3,password)
+    console.log("Cli Send unlock env3>>>", remotePort,env3,password)
   }
 
 }

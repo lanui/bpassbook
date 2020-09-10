@@ -19,7 +19,8 @@ class ContextController extends EventEmitter {
     this.sendUpdate = debounce(this.privateSendUpdate.bind(this),200)
 
     const initState = opts.initState || {}
-    console.log("F>>>>", initState)
+    console.log(" Back init state>>>>", initState)
+
     this.recordFirstTimeInfo(initState)
 
     this.store = new MergeableObservableStore(initState)

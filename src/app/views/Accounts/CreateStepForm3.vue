@@ -46,6 +46,7 @@
       <v-row justify="center">
         <v-col  class="text-center ">
           <v-btn @click="previous(2)"
+            :disabled="loading"
             outlined  color="indigo" class="mx-4 ma-6">
             <v-icon left>
               mdi-chevron-double-left
@@ -105,14 +106,9 @@ export default {
     previous(id) {
       this.$emit('stepClick',id)
     },
-    next(id) {
-      // this.loading = 'warning'
-      if(!this.saved){
-        this.loading = 'warning'
-        this.$emit('saveWallet')
-      }else {
-        this.$emit('stepClick',id)
-      }
+    async next(id) {
+      this.loading = true
+      await this.$emit('saveWallet')
     },
     addMnemonics(text) {
       const index = this.originSeeds.findIndex(v => v === text)
@@ -135,13 +131,13 @@ export default {
   },
   mounted() {
     this.$emit('initSeeds',this)
+    this.loading = false
   },
   props:{
-    // creating:{
-    //   default:false,
-    //   type:Boolean,
-    //   required:false
-    // }
+    creating: {
+      default:false,
+      type:Boolean
+    }
   }
 };
 </script>

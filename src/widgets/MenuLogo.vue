@@ -18,11 +18,11 @@
       <v-list-item dense @click="toggleLocked">
         <v-list-item-icon>
           <v-icon>
-            {{ unlocked ?  unlockedIcon :lockedIcon }}
+            {{ isUnlocked ?  unlockedIcon :lockedIcon }}
           </v-icon>
         </v-list-item-icon>
         <v-list-item-title>
-          {{ unlocked ?  $t('nav.login.locking') : $t('nav.login.unlock') }}
+          {{ isUnlocked ?  $t('nav.login.locking') : $t('nav.login.unlock') }}
         </v-list-item-title>
       </v-list-item>
       <v-divider></v-divider>
@@ -55,7 +55,7 @@ import {LOCKED_MDI,UNLOCKED_MDI} from '@/ui/constants/icon-cnsts'
 export default {
   name: 'MenuLogo',
   computed: {
-    ...mapGetters(['unlocked']),
+    ...mapGetters(['isUnlocked']),
     ...mapGetters('p3',['locked']),
   },
   data() {
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     async toggleLocked(){
-      const _locked = this.unlocked
+      const _locked = this.isUnlocked
       if(_locked){
         await this.lockedHandler()
       }else {

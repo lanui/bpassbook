@@ -3,7 +3,7 @@ import { APITYPE_LOGOUT} from '@/corejs/enums'
 
 class ConnectionManager {
   constructor(opts){
-    const {portName,store} = opts
+    const {portName} = opts
     this.clientPort = new ClientConnectionPort({
       portName: portName ||'app'
     })

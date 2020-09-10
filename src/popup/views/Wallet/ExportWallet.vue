@@ -2,18 +2,17 @@
   <v-container class="fill-height">
     <v-row justify="center">
       <v-col cols="10" class="text-center">
-        <div class="text-h4">
+        <div class="text-h5">
           导出钱包
         </div>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row justify="center" v-if="!unlocked">
       <v-col cols="10">
-        <v-form ref="exportForm">
+        <v-form ref="exportForm" >
           <v-text-field
-            dense
-            outlined
-            clearable
+            :loading="loading"
+            dense outlined clearable
             counter
             label="Password"
             prepend-inner-icon="mdi-key"
@@ -33,37 +32,46 @@
       <v-col cols="10">
         <v-btn
           block larage
+          @click="unlockedHandle"
           color="light-blue darken-1" dark>
-          Export
+         <v-progress-circular v-if="loading"
+            indeterminate :size="22"
+            :width="2"
+            color="white"
+          ></v-progress-circular>
+          Unlocked
         </v-btn>
       </v-col>
     </v-row>
     <v-row justify="center" >
-      <v-col cols="10">
+      <v-col cols="10" v-if="unlocked">
         <v-img :src="qrcode" width="120" class="mx-auto"></v-img>
       </v-col>
     </v-row>
-    <v-row justify="center" class="fill-height">
+    <v-row justify="center" v-if="unlocked">
       <v-col cols="10">
-        <v-card outlined class="px-1">
-          <div class="body-1">
-            Hexp alste new former like love assets
-            hello mins taiwan china usa
-          </div>
-          <v-card-actions>
-            <v-btn tile text x-small class="my-1 float-right">
-              <v-icon left>mdi-clipboard-text-multiple</v-icon>
-              Copy
-            </v-btn>
-          </v-card-actions>
-        </v-card>
+        <v-textarea
+          dense outlined readonly
+          rows="5"
+          :value="v3json"
+          label="Keystore"
+          class="body-2">
+        </v-textarea>
+        <v-btn tile text x-small
+          @click="copyJson"
+          class="my-1 float-right">
+          <v-icon left>mdi-clipboard-text-multiple</v-icon>
+          Copyed
+        </v-btn>
       </v-col>
     </v-row>
+    <v-row class="fill-height"></v-row>
     <goback-btn />
   </v-container>
 </template>
 
 <script>
+import QRCode from 'qrcode'
 
 import {passwordRules} from '@/ui/constants/valid-rules'
 import DemoQrCode from '@/assets/icons/demo-qrcode.png';
@@ -76,19 +84,64 @@ export default {
   },
   data() {
     return {
-      qrcode:DemoQrCode,
-      mnemonics:"",
+      qrcode:'',
+      privKey:"",
       hideMnemonic:true,
       v3json:"",
       pwdHide:true,
       password:"",
       error:"",
+      unlocked:false,
       loading:false,
       rules:{
         password: [
           ...passwordRules
         ]
       }
+    }
+  },
+  methods: {
+    unlockedHandle(){
+      if(this.$refs.exportForm.validate()){
+        const pwd = this.password
+        this.loading = true
+        this.$store.dispatch('decryptFromEnv3',pwd).then(ret => {
+          this.v3json = ret.json
+          this.unlocked = true
+          this.loading = false
+          return ret.json
+        }).then(jsonText=>{
+          console.log(jsonText)
+          QRCode.toDataURL(jsonText)
+          .then(url => {
+            console.log(url)
+            this.qrcode = url
+          })
+          .catch(err => {
+            console.error(err)
+          })
+        }).catch(err=>{
+          this.loading = false
+          this.error = err.message
+        })
+      }
+    },
+    copyJson(){
+
+    },
+    resetstate(){
+      this.loading = false
+      this.unlocked = false
+      this.password = ''
+      this.v3json = ''
+    }
+  },
+  mounted() {
+    this.resetstate()
+  },
+  watch: {
+    password:function(val,old) {
+      this.error = ''
     }
   },
 };

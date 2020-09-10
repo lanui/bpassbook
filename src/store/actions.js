@@ -30,7 +30,7 @@ export const changeRightDrawer = ({commit},flag) =>{
 }
 
 export const unlockWallet = ({commit},password) =>{
-  commit(types.UPDATE_UNLOCKED,Boolean(password))
+  commit(types.UPDATE_ISUNLOCKED,Boolean(password))
 }
 
 export const loadLocalVault = async ({commit,state},password) =>{
@@ -51,12 +51,17 @@ export const loadBipinit = async ({commit},payload) =>{
   commit(types.SET_BIPINIT, payload)
 }
 
+/**
+ *
+ * @param {*} param0
+ * @param {*} creator
+ */
 export const createAndSaveAccount = async ({commit},creator) => {
   try{
     const local = new LocalStore()
     const v3 = creator.getV3()
     if(v3){
-
+      const password = creator.password
       const env3s = await passworder.encrypt(creator.password,v3)
       if (!env3s) throw new Error('encrypt v3 fail')
       let localStore = (await local.get()) || { 'firstTimeInfo': { version,date:Date.now()}}
@@ -64,12 +69,22 @@ export const createAndSaveAccount = async ({commit},creator) => {
       localStore = Object.assign({}, localStore,{data:{env3}})
 
       await local.set(localStore)
+      commit(types.SET_ENV3,env3)
       commit(types.SET_V3, v3)
-      commit(types.UPDATE_UNLOCKED,true)
+      commit(types.UPDATE_ISUNLOCKED,true)
+
+      sendUnlockBackEnd(password,env3)
     }
   }catch(err) {
     throw err
   }
+
+}
+
+function sendUnlockBackEnd(password, env3) {
+  const clientPort = global.$conn.clientPort
+  clientPort.sendUnlockedReq.bind(clientPort)
+  clientPort.sendUnlockedReq(password, env3)
 }
 
 /**
@@ -80,18 +95,38 @@ export const createAndSaveAccount = async ({commit},creator) => {
 export const updateFromBackground = async ({commit},payload)=> {
   console.log("action>>", payload)
 
+  // if (web3Cli && payload.AppStateController && payload.AppStateController.chainId){
+  //   web3Cli.chainStore.putState(payload.AppStateController.chainId)
+  // }
+
   commit(types.SET_BIPINIT, true)
   commit(types.SET_ENV3, payload.env3 ||null)
   if (payload.AppStateController){
-    const { chainId, privateKey, publicKey, selectAddress } = payload.AppStateController
-    commit(types.SET_WALLET_OPEN, { chainId, privateKey, publicKey, selectAddress})
+    const { chainId, privateKey, publicKey, selectedAddress } = payload.AppStateController
+    commit(types.SET_WALLET_OPEN, { chainId, privateKey, publicKey, selectedAddress})
   }
 
   if (payload.isUnlocked) {
     commit(types.SET_BIPINIT,true)
-    commit(types.UPDATE_UNLOCKED, payload.isUnlocked)
+    commit(types.UPDATE_ISUNLOCKED, payload.isUnlocked)
   }
 }
 
+export const decryptFromEnv3 = async ({ state }, password) => {
+  const {env3} = state
+  console.log("decryptFromEnv3", env3,password)
+  if(!env3)throw new Error('no found env3')
+  try{
+    const evn3Json = JSON.stringify(env3)
 
+    const v3 = await passworder.decrypt(password, evn3Json)
+    return {
+      json: JSON.stringify(v3),
+      privateKey:''
+    }
+
+  }catch(err){
+    throw err
+  }
+}
 
