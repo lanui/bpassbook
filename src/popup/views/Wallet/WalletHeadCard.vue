@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import QRCode from 'qrcode'
 import { mapGetters, mapState } from 'vuex';
 
 import { compressAddress } from '@/utils';
@@ -35,24 +36,37 @@ import DemoQrCode from '@/assets/icons/demo-qrcode.png';
 export default {
   name: 'WalletHeadCard',
   computed: {
-    ...mapGetters(['currentNickname']),
+    ...mapGetters(['currentNickname','selectedAddress']),
     shortAddress() {
-      const address = this.$store.selectAddress;
-      return address ? this.compressAddress(address) : '0xA8...e4B8';
+      const address = this.$store.state.selectedAddress;
+      return address ? this.compressAddress(address) : '';
     },
   },
   data() {
     return {
-      qrcode: DemoQrCode,
+      qrcode: '',
     };
   },
   methods: {
     compressAddress: compressAddress,
     copyWalletAddress(){
 
+    },
+    getQrcodeUrl(){
+      const text = this.selectedAddress
+      QRCode.toDataURL(text)
+      .then(url => {
+        console.log(url)
+        this.qrcode = url
+      })
+      .catch(err => {
+        console.error(err)
+      })
     }
   },
-  mounted() {},
+  mounted() {
+    this.getQrcodeUrl()
+  },
 };
 </script>
 <style>

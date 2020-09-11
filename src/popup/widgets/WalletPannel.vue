@@ -12,20 +12,21 @@
         </div>
       </v-col>
       <v-col class="px-0 py-2">
-        <v-btn @click.stop="openLock"
+        <v-btn @click.stop="toggleToken"
           icon color="grey lighten-5" outlined rounded ripple x-large>
           <v-icon>
-            {{ ethIcon }}
+            {{ defToken ? 'mdi-diamond-stone' : 'mdi-ethereum' }}
           </v-icon>
         </v-btn>
       </v-col>
       <v-col class="px-0 py-1">
         <div class="balance">
-          <h2 >{{ethBalance}}</h2>
+          <h2 >{{defToken ? btsBalText : ethBalText}}</h2>
         </div>
       </v-col>
     </v-row>
-    <div class="float-right mb-2 mr-2">
+    <div v-if="true"
+      class="float-right mb-2 mr-2">
       <!-- <v-btn icon ripple color="white">
         <v-icon>mdi-qrcode-edit</v-icon>
       </v-btn> -->
@@ -50,20 +51,18 @@ export default {
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
     ...mapGetters(['shortAddress', 'networkColor']),
-    ethBalance: (state) => {
-      const bal = '71.2567';
-      return parseFloat(bal || '0').toFixed(4);
-    },
+    ...mapGetters('acc', ['ethBalText','btsBalText']),
   },
   data() {
     return {
+      defToken:true,
       ethIcon:ETH_MDI,
       lockIcon:LOCKED_MDI,
     };
   },
   methods: {
     openExtURL(){
-      const subpath = 'app/app.html'
+      const subpath = 'popup/popup.html'
       const url = this.$browser.extension.getURL(subpath)
       console.log(subpath)
       console.log(this.$browser.tabs)
@@ -73,8 +72,8 @@ export default {
         //todo notify backend
       })
     },
-    openLock(){
-
+    toggleToken(){
+      this.defToken = !this.defToken
     }
   },
   async mounted() {

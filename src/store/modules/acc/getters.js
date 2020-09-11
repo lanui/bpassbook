@@ -1,8 +1,9 @@
-// export const shortAddress = state => {
-//   const address = state.selectedAddress
-//   if(address && address.length > 12) {
-//     return address.substr(0,6) +'...'+address.substr(address.length-6)
-//   }else {
-//     return address || ''
-//   }
-// }
+export const ethBalText = state => {
+  const bal = state.ethBalance
+  return bal ? parseFloat(bal.toString()).toFixed(4) : '0'
+}
+
+export const btsBalText = state => {
+  const bal = state.btsBalance
+  return bal ? parseFloat(bal.toString()).toFixed(4) : '0'
+}

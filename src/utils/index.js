@@ -5,7 +5,7 @@ export const compressAddress = (address) => {
   if(!address || address.length <12) return address
 
   const len = address.length
-  const ret = address.substr(0, 6) + '...' + address.substr(len - 6)
+  const ret = address.substr(0, 6) + '...' + address.substr(len - 4)
 
   return ret
 }

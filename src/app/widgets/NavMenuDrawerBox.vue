@@ -18,10 +18,10 @@
 <script>
 import { mapState } from 'vuex';
 
-import NavTitleBar from '@app/widgets/AppNavTitle.vue';
 
 import {navs} from '@/commrouter/navs'
-// import {appnavs} from '@app/router/routes'
+
+import NavTitleBar from '@app/widgets/AppNavTitle.vue';
 
 export default {
   name: 'NavMenuDrawerBox',
@@ -41,6 +41,9 @@ export default {
       await this.$store.dispatch('app/setCurrentNav',nav.breadcrumbs)
       await this.$router.push({path:nav.path})
     },
+    async lockedHandle(){
+
+    }
   },
 };
 </script>

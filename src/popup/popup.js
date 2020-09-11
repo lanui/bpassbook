@@ -10,7 +10,11 @@ import store from '../store';
 import router from './router';
 import i18n from '@/locale'
 import ConnectionManager from '@/corejs/connections'
+
 import Web3Client from '@/corejs/web3'
+import idbMgr from '@/corejs/indexdb'
+global.$idb = idbMgr
+
 
 import {utils} from 'web3'
 global.Web3Util = utils
@@ -26,6 +30,7 @@ const connection = new ConnectionManager({ portName: 'popup' ,web3Cli})
 global.$conn = connection
 
 Vue.prototype.$browser = global.browser;
+import '../assets/css/core.css'
 
 /* eslint-disable no-new */
 global.p3 = new Vue({

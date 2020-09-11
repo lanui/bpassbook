@@ -18,6 +18,17 @@
           </v-list-item-avatar>
           <v-list-item-content>{{ nav.text }}</v-list-item-content>
         </v-list-item>
+        <v-divider></v-divider>
+        <v-list-item @click="lockedHandle">
+          <v-list-item-avatar>
+            <v-icon>
+              {{ isUnlocked ?  unlockedIcon :lockedIcon }}
+            </v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            {{ isUnlocked ?  $t('nav.login.locking') : $t('nav.login.unlock') }}
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
 
       <drawer-wallet-pannel />
@@ -27,6 +38,8 @@
 
 <script>
 import { mapState ,mapGetters} from 'vuex'
+
+import {LOCKED_MDI,UNLOCKED_MDI} from '@/ui/constants/icon-cnsts'
 
 import TopBar from '@popup/widgets/TopBar.vue';
 import MainContainer from '@popup/views/MainContainer.vue';
@@ -41,6 +54,7 @@ export default {
     DrawerWalletPannel,
   },
   computed: {
+    ...mapGetters(['isUnlocked']),
     ...mapGetters('p3',['drawer']),
     rightDrawer:{
       get(){
@@ -54,6 +68,8 @@ export default {
   },
   data() {
     return {
+      lockedIcon:LOCKED_MDI,
+      unlockedIcon:UNLOCKED_MDI,
       navMenus: navs.filter(nav => nav.roles.includes('p3'))
     };
   },
@@ -71,6 +87,10 @@ export default {
     },
     drawerTransitionChanged(val){
       console.log("TransitionChanged>>>>>",val)
+    },
+    async lockedHandle(){
+      await this.$store.dispatch('unlockWallet',false)
+      $conn.clientRedirect(this.$router,{path:'/signin'})
     }
   },
 };

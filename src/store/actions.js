@@ -1,3 +1,4 @@
+import {fromV3} from 'ethereumjs-wallet'
 
 import * as types from './mutation-types';
 
@@ -120,9 +121,14 @@ export const decryptFromEnv3 = async ({ state }, password) => {
     const evn3Json = JSON.stringify(env3)
 
     const v3 = await passworder.decrypt(password, evn3Json)
+
+    const wallet = await fromV3(v3,password)
+    const priKey = wallet.getPrivateKeyString()
+    // const pubKey = wallet.getPublicKeyString()
+
     return {
       json: JSON.stringify(v3),
-      privateKey:''
+      privateKey: priKey
     }
 
   }catch(err){

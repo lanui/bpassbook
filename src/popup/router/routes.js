@@ -7,6 +7,7 @@ import WalletIndex from '@popup/views/Wallet/Index'
 import OptionsIndex from '@popup/views/Options/Index'
 import ImportWallet from '@popup/views/Login/ImportWallet'
 import ExportWallet from '@/popup/views/Wallet/ExportWallet'
+import AddPassBookItem from '@popup/views/PassBook/AddPassItem'
 
 
 export default [
@@ -17,7 +18,7 @@ export default [
       {
         path: 'index',
         alias: '/',
-        component: ExportWallet,
+        component: AddPassBookItem,
         meta: {
           auth: true
         }
@@ -60,11 +61,19 @@ export default [
           auth: true
         }
       },
+      {
+        path: 'add',
+        component: AddPassBookItem,
+        meta: {
+          auth: true
+        }
+      }
     ],
     meta:{
       auth:true
     }
   },
+
   {
     path:"/wallet",
     component: MainLayout,

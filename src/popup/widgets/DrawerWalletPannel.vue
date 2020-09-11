@@ -23,11 +23,17 @@
 </template>
 
 <script>
+
 import ExtLogo from '@/icons/icon_128.png'
+
 export default {
   name: 'DrawerWalletPannel',
+  computed: {
+
+  },
   data() {
     return {
+
       logo:ExtLogo
     }
   },

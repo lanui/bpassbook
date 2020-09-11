@@ -2,7 +2,7 @@ import {openDB} from 'idb'
 
 const DEFAULT_DB_SCHEMA = "bpassbook"
 
-import { DB_SCHEMAS, ACCOUNT_SCHEMA } from './enums'
+import { DB_SCHEMAS, ACCOUNT_SCHEMA, BOOK_SCHEMA} from './enums'
 
 class IDB {
   constructor(opts={}){
@@ -43,7 +43,19 @@ class IDB {
     return (await this.db).put(ACCOUNT_SCHEMA, val, key)
   }
 
+  async getPassbook(key) {
+    _validKey(key)
+    return (await this.db).get(BOOK_SCHEMA, key)
+  }
+  async setPassbook(pb) {
+    const { key, tips } = pb
+    _validKey(key || tips)
+    key = tips
+    return (await this.db).put(BOOK_SCHEMA, val, key)
+  }
 }
+
+
 
 function _validKey(key){
   if (typeof key === 'undefined') {
@@ -61,8 +73,5 @@ function _valid(tbName, key) {
 }
 
 const IDB_MGR = new IDB()
-
-
-
 
 export default IDB_MGR

@@ -14,7 +14,7 @@
         <img :src="logo" alt="BPassbook">
       </v-avatar>
     </template>
-    <v-list dense dark >
+    <v-list dense dark v-if="false">
       <v-list-item dense @click="toggleLocked">
         <v-list-item-icon>
           <v-icon>

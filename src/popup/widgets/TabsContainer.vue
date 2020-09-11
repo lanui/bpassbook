@@ -19,10 +19,30 @@
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="activeTab">
+      <!-- <v-tab-item value="passbook" key="1">
+        <password-list />
+      </v-tab-item>
+      <v-tab-item value="activity" key="2">
+        <activity-list />
+      </v-tab-item> -->
       <v-tab-item v-for="(t,idx) in tabs"
         :key="idx">
         <password-list v-if="t.name == 'passbook'" />
+
         <activity-list v-if="t.name == 'activity'" />
+        <v-btn
+          @click.stop="addItemHandle"
+          v-if="t.name == 'passbook'"
+          color="pink"
+          dark
+          x-small
+          absolute
+          top
+          center
+          fab
+          style="bottom:-10px;">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </v-tab-item>
     </v-tabs-items>
   </v-container>
@@ -49,6 +69,11 @@ export default {
         { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
       ],
     };
+  },
+  methods: {
+    addItemHandle(){
+      this.$router.push({path:'/passbook/add'})
+    }
   },
 };
 </script>

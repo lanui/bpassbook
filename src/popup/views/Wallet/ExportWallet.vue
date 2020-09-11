@@ -45,7 +45,7 @@
     </v-row>
     <v-row justify="center" >
       <v-col cols="10" v-if="unlocked">
-        <v-img :src="qrcode" width="120" class="mx-auto"></v-img>
+        <v-img :src="qrcode" width="150" class="mx-auto"></v-img>
       </v-col>
     </v-row>
     <v-row justify="center" v-if="unlocked">

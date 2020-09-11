@@ -1,6 +1,16 @@
 export const APP_ROLE = 'app'
 export const navs = [
   {
+    path: "/passbook",
+    name: "passbook",
+    i18n: "passbook.index",
+    text: "密码本",
+    icon: 'mdi-wallet-giftcard',
+    roles: [
+      'app', 'p3'
+    ]
+  },
+  {
     path: "/wallet",
     name: "",
     i18n: "wallet.index",
@@ -8,26 +18,6 @@ export const navs = [
     icon: 'mdi-shield-key-outline',
     roles: [
       'app', 'p3'
-    ]
-  },
-  {
-    path: "/passbook",
-    name: "passbook",
-    i18n: "passbook.index",
-    text: "密码本",
-    icon:'mdi-wallet-giftcard',
-    roles: [
-      'app', 'p3'
-    ]
-  },
-  {
-    path: "/wallet/buybts",
-    name: "wallet.buybts",
-    i18n: "wallet.buybts",
-    text: "购买钻石",
-    icon: 'mdi-diamond-stone',
-    roles: [
-      'p3'
     ]
   },
   {

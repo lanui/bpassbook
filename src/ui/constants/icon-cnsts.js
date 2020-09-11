@@ -9,3 +9,5 @@ export const LOCKED_LINK_MDI = "mdi-shield-lock-outline"
 export const SHOW_PWD_MDI = "mdi-eye-outline"
 export const HIDDEN_PWD_MDI = "mdi-eye-off-outline"
 export const ETH_MDI = "mdi-ethereum"
+
+export const ARROW_LEFT_MDI = "mdi-chevron-left"

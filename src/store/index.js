@@ -11,6 +11,7 @@ import acc from './modules/acc'
 import p3 from './modules/p3'
 import app from './modules/app'
 import settings from './modules/settings'
+import passbook from './modules/passbook'
 
 Vue.use(Vuex);
 
@@ -20,6 +21,7 @@ export default new Vuex.Store({
     p3,
     app,
     settings,
+    passbook,
   },
   state: {
     locale: DEFAULT_LOCALE,

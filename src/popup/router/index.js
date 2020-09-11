@@ -22,7 +22,7 @@ router.beforeEach(async (to,from,next) => {
   const ret = await getData()
   const { env3 } = ret.data
   const isUnlocked = store.state.isUnlocked
-  console.log("has env3>>>", ret, isUnlocked)
+  // console.log("has env3>>>", ret, isUnlocked)
   if( to.matched.some( rec => rec.meta.auth)) {
 
     if (!env3){
