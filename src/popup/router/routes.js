@@ -1,14 +1,13 @@
-import Welcome from '@/popup/views/Login/Welcome'
-import MainLayout from '@/popup/layouts/MainLayout'
-import SingleLayout from '@/popup/layouts/SingleLayout'
+import Welcome from '@/popup/views/Login/Welcome';
+import MainLayout from '@/popup/layouts/MainLayout';
+import SingleLayout from '@/popup/layouts/SingleLayout';
 import PopupIndex from '@popup/views/Index';
-import SignInIndex from '@popup/views/Login/SignIn'
-import WalletIndex from '@popup/views/Wallet/Index'
-import OptionsIndex from '@popup/views/Options/Index'
-import ImportWallet from '@popup/views/Login/ImportWallet'
-import ExportWallet from '@/popup/views/Wallet/ExportWallet'
-import AddPassBookItem from '@popup/views/PassBook/AddPassItem'
-
+import SignInIndex from '@popup/views/Login/SignIn';
+import WalletIndex from '@popup/views/Wallet/Index';
+import OptionsIndex from '@popup/views/Options/Index';
+import ImportWallet from '@popup/views/Login/ImportWallet';
+import ExportWallet from '@/popup/views/Wallet/ExportWallet';
+import AddPassBookItem from '@popup/views/PassBook/AddPassItem';
 
 export default [
   {
@@ -18,93 +17,93 @@ export default [
       {
         path: 'index',
         alias: '/',
-        component: AddPassBookItem,
+        component: PopupIndex,
         meta: {
-          auth: true
-        }
+          auth: true,
+        },
       },
       {
         path: 'options',
         alias: '/',
         component: OptionsIndex,
         meta: {
-          auth: true
-        }
+          auth: true,
+        },
       },
       {
         path: 'exportor',
         alias: '/exportor',
         component: ExportWallet,
         meta: {
-          auth: true
-        }
+          auth: true,
+        },
       },
       {
         path: 'importor',
         alias: '/importor',
-        component: ImportWallet
-      }
+        component: ImportWallet,
+      },
     ],
     meta: {
-      auth: true
-    }
+      auth: true,
+    },
   },
   {
     path: '/passbook',
     component: MainLayout,
     children: [
       {
-        path:'index',
-        alias:'/passbook',
-        component:PopupIndex,
+        path: 'index',
+        alias: '/passbook',
+        component: PopupIndex,
         meta: {
-          auth: true
-        }
+          auth: true,
+        },
       },
       {
         path: 'add',
         component: AddPassBookItem,
         meta: {
-          auth: true
-        }
-      }
+          auth: true,
+        },
+      },
     ],
-    meta:{
-      auth:true
-    }
+    meta: {
+      auth: true,
+    },
   },
 
   {
-    path:"/wallet",
+    path: '/wallet',
     component: MainLayout,
-    children:[
+    children: [
       {
-        path:"index",
+        path: 'index',
         component: WalletIndex,
-        alias:"/wallet",
+        alias: '/wallet',
         meta: {
-          auth: true
-        }
-      }
+          auth: true,
+        },
+      },
     ],
     meta: {
-      auth: true
-    }
+      auth: true,
+    },
   },
   {
-    path: "/",
+    path: '/',
     component: SingleLayout,
     children: [
       {
         path: 'signin',
         alias: '/signin',
-        component: SignInIndex
+        component: SignInIndex,
       },
       {
         path: 'welcome',
         alias: '/welcome',
-        component: Welcome
-      }
-    ]
+        component: Welcome,
+      },
+    ],
   },
 ];

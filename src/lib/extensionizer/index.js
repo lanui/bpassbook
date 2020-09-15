@@ -1,5 +1,3 @@
-import { Extension } from './extinst'
+import { Extension } from './extinst';
 
-
-
-export default new Extension()
+export default new Extension();

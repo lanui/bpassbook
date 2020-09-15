@@ -1,10 +1,6 @@
 <template>
   <v-container class="px-0 py-0">
-    <v-tabs v-model="activeTab"
-      dense
-      centered
-      icons-and-text
-      ripple fixed-tabs>
+    <v-tabs v-model="activeTab" dense centered icons-and-text ripple fixed-tabs>
       <v-tab class="primary--text">
         PassBook
         <v-icon>
@@ -25,14 +21,13 @@
       <v-tab-item value="activity" key="2">
         <activity-list />
       </v-tab-item> -->
-      <v-tab-item v-for="(t,idx) in tabs"
-        :key="idx">
+      <v-tab-item v-for="(t, idx) in tabs" :key="idx">
         <password-list v-if="t.name == 'passbook'" />
 
         <activity-list v-if="t.name == 'activity'" />
         <v-btn
           @click.stop="addItemHandle"
-          v-if="t.name == 'passbook'"
+          v-if="t.name == 'passbook' && !drawer"
           color="pink"
           dark
           x-small
@@ -40,7 +35,8 @@
           top
           center
           fab
-          style="bottom:-10px;">
+          style="bottom: -10px;"
+        >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </v-tab-item>
@@ -49,18 +45,22 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from 'vuex';
 //mdi-form-textbox-lock
 //mdi-bank-transfer
 
-import PasswordList from '@/popup/views/Home/PasswordList.vue'
-import ActivityList from '@/popup/views/Home/ActivityList.vue'
+import PasswordList from '@/popup/views/Home/PasswordList.vue';
+import ActivityList from '@/popup/views/Home/ActivityList.vue';
 export default {
   name: 'TabsContainer',
   components: {
     PasswordList,
     ActivityList,
   },
-  computed: {},
+  computed: {
+    ...mapGetters('p3', ['drawer']),
+    // ...mapState(['p3',['drawer']])
+  },
   data() {
     return {
       activeTab: null,
@@ -71,11 +71,10 @@ export default {
     };
   },
   methods: {
-    addItemHandle(){
-      this.$router.push({path:'/passbook/add'})
-    }
+    addItemHandle() {
+      this.$router.push({ path: '/passbook/add' });
+    },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

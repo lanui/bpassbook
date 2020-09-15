@@ -1,5 +1,5 @@
 {
-  "name": "bpassword-ext",
+  "name": "BPassword",
   "description": "BPassword extension for chrome",
   "version": "0.1.0",
   "manifest_version": 2,
@@ -8,29 +8,31 @@
     "128": "icons/icon_128.png"
   },
   "browser_action": {
-    "default_title": "bpassword-ext",
+    "default_title": "BPassword",
     "default_popup": "popup/popup.html"
   },
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "scripts": ["background.js"]
   },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*"],
+      "exclude_matches": ["*://extensions/*"],
+      "css": ["share/css/injet.css"],
+      "js": ["bpjet/contentscript.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": ["bpjet/bpjet.js", "bpjet/injet.css", "icons/*", "share/*"],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true
   },
-  "externally_connectable":{
-    "ids":["*"],
-    "matches":[
-      "*://extensions/*"
-    ],
+  "externally_connectable": {
+    "ids": ["*"],
+    "matches": ["*://extensions/*"],
     "accepts_tls_channel_id": false
   },
-  "permissions": [
-    "tabs",
-    "management",
-    "storage",
-    "unlimitedStorage"
-  ]
+  "permissions": ["tabs", "activeTab", "management", "storage", "unlimitedStorage", "http://*/*", "https://*/*"]
 }

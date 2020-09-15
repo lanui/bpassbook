@@ -1,28 +1,22 @@
 <template>
-  <v-card class="mx-auto px-2"
-    outlined>
+  <v-card class="mx-auto px-2" outlined>
     <v-card-title class="flex-column">
       <div class="text-h1">
-        {{congemoji}}
+        {{ congemoji }}
       </div>
       <p class="text-h2">
-         Congratulations
+        Congratulations
       </p>
-      <p class="text-h5">
-        Address: {{address}}
-      </p>
+      <p class="text-h5">Address: {{ address }}</p>
     </v-card-title>
-    <v-card-text>
-
-    </v-card-text>
+    <v-card-text> </v-card-text>
     <v-card-actions>
       <v-row justify="center">
-        <v-col  class="text-center ">
-          <v-btn @click="goHome"
-            outlined  color="indigo" class="mx-4 ma-6">
+        <v-col class="text-center">
+          <v-btn @click="goHome" outlined color="indigo" class="mx-4 ma-6">
             Completed
             <v-icon left>
-             mdi-check-all
+              mdi-check-all
             </v-icon>
           </v-btn>
         </v-col>
@@ -36,24 +30,23 @@ export default {
   name: 'CreateStepForm1',
   data() {
     return {
-      pwdHide:true,
-      congemoji:'🎉',
-    }
+      pwdHide: true,
+      congemoji: '🎉',
+    };
   },
-  props:{
-    address:{
-      default:'',
-      type:String,
-      required:false
-    }
+  props: {
+    address: {
+      default: '',
+      type: String,
+      required: false,
+    },
   },
   methods: {
-    goHome(){
-
-      this.$router.push({path:'/index'})
-    }
+    goHome() {
+      window.close();
+      // this.$router.push({path:'/index'})
+    },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

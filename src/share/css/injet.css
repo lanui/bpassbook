@@ -1,0 +1,13 @@
+#bp-icon-button {
+  width: 16px !important;
+  height: 16px !important;
+  background: transparent !important;
+}
+
+body {
+  font-size: 30px !important;
+}
+
+label {
+  border: 1px solid olive !important;
+}
