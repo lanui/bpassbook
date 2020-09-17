@@ -1,13 +1,6 @@
-#bp-icon-button {
-  width: 16px !important;
-  height: 16px !important;
-  background: transparent !important;
-}
-
-body {
-  font-size: 30px !important;
-}
-
-label {
-  border: 1px solid olive !important;
+bp-extension-button,
+bp-extension-menu {
+  all: initial !important;
+  position: fixed !important;
+  z-index: 2247483646 !important;
 }

@@ -19,9 +19,14 @@ if (shouldInjectController()) {
 
 async function startup() {
   //console.log(ext)
-  setupStream();
+  //setupStream();
   //make sure resolve inject js
+
   await domIsReady();
+}
+
+function setupMessage() {
+  //window.ad
 }
 
 async function setupStream() {

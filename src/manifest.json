@@ -14,17 +14,41 @@
   "background": {
     "scripts": ["background.js"]
   },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      }
+    },
+    "lock": {
+      "description": "Lock the extension",
+      "name": "lock",
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      }
+    }
+  },
   "content_scripts": [
     {
-      "matches": ["http://*/*"],
+      "matches": ["http://*/*", "https://*/*"],
       "exclude_matches": ["*://extensions/*"],
       "css": ["share/css/injet.css"],
-      "js": ["bpjet/contentscript.js"],
+      "js": ["bpjet/contentscript.js", "bpjet/bpjet.js"],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
-  "web_accessible_resources": ["bpjet/bpjet.js", "bpjet/injet.css", "icons/*", "share/*"],
+  "web_accessible_resources": [
+    "bpjet/bpjet.js",
+    "bpjet/injet.css",
+    "icons/*",
+    "share/*",
+    "inputor/inputor.css",
+    "inputor/inputor.html",
+    "inputor/inputor.js"
+  ],
   "options_ui": {
     "page": "options/options.html",
     "chrome_style": true
@@ -34,5 +58,5 @@
     "matches": ["*://extensions/*"],
     "accepts_tls_channel_id": false
   },
-  "permissions": ["tabs", "activeTab", "management", "storage", "unlimitedStorage", "http://*/*", "https://*/*"]
+  "permissions": ["<all_urls>", "tabs", "activeTab", "management", "storage", "unlimitedStorage", "nativeMessaging"]
 }

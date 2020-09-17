@@ -54,6 +54,10 @@ async function initialize() {
   const initState = await loadStateFromPersistence();
   console.log('Back initState>>>', initState);
   setupController(initState || {});
+
+  window.addEventListener('message', function (event) {
+    console.log('Back>>>>>', event);
+  });
 }
 
 async function setupController(initState) {
