@@ -1,6 +1,15 @@
 bp-extension-button,
-bp-extension-menu {
+bp-selector-options {
   all: initial !important;
   position: fixed !important;
-  z-index: 2247483646 !important;
+  z-index: 2747483646 !important;
+}
+
+img.bp-img--wrapper,
+img.bp-img--wrapper:hover {
+  cursor: pointer !important;
+}
+
+img.bp-img--pointer:hover {
+  cursor: pointer !important;
 }

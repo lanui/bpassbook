@@ -73,12 +73,19 @@ function originBindEvent(store) {
   const opts = store.getState();
   const { $target, id } = opts;
   $($target).on('focusin', function (e) {
+    e.stopPropagation();
     console.log('Create Icons >>>>', this.getClientRects(), opts);
     createBPIcon(this);
   });
-  $($target).on('focusout', function (e) {
-    console.log('remove Icons >>>>');
-    removeIcon(id);
+  $($target).on('click', function (e) {
+    e.stopPropagation();
+  });
+  // $($target).on('focusout', function (e) {
+  //   console.log('remove Icons >>>>');
+  //   //removeIcon(id);
+  // });
+  $(window.document).on('click', function () {
+    removeIcon();
   });
 }
 

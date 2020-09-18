@@ -7,6 +7,8 @@ import ext from '../lib/extensionizer';
 
 import { name } from '../../package.json';
 
+import { CONN_CONTENTS_NAME, CONN_BPJET_NAME } from './contents';
+
 const injetContent = 'const BPassword="v1.1;"';
 
 const extName = name || 'BPassword';
@@ -23,6 +25,7 @@ async function startup() {
   //make sure resolve inject js
 
   await domIsReady();
+  setupStream();
 }
 
 function setupMessage() {
@@ -32,12 +35,20 @@ function setupMessage() {
 async function setupStream() {
   //创建
   const pageStream = new PostMessageDuplexStream({
-    name: 'contentscript',
-    target: 'injet',
+    name: CONN_CONTENTS_NAME,
+    target: CONN_BPJET_NAME,
   });
 
+  const extid = ext.runtime.id;
+  console.log('>>>>>>>>', ext);
+  pageStream._write('shift from contentscript.........' + extid);
+  setTimeout(function () {
+    console.log('Sending message…');
+    window.postMessage({ type: 'FROM_PAGE', text: 'Hello BPaaword from the webpage!' }, '*');
+  }, 6000);
+
   //与background 交互长连接
-  const extensionPort = ext.runtime.connect({ name: 'contentscript' });
+  const extensionPort = ext.runtime.connect({ name: CONN_CONTENTS_NAME });
   console.log('>>extensionPort>>', extensionPort);
   const extensionStream = new PortStream(extensionPort);
 

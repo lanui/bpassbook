@@ -14,6 +14,7 @@ import createStreamSink from '@/lib/storage/createStreamSink';
 import {
   ENVIRONMENT_TYPE_POPUP,
   ENVIRONMENT_TYPE_APP,
+  ENVIRONMENT_TYPE_BPEXT,
   ENVIRONMENT_TYPE_BACKGROUND,
   APITYPE_INIT_STATE,
   APITYPE_UPDATE_UNLOCKED,
@@ -22,6 +23,9 @@ import {
   APITYPE_REDIRECT_APP,
   APITYPE_LOGOUT,
 } from './corejs/enums';
+
+import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
+
 import pump from 'pump';
 
 global.browser = require('webextension-polyfill');
@@ -46,6 +50,7 @@ const extensionInternalProcessHash = {
   [ENVIRONMENT_TYPE_POPUP]: true,
   [ENVIRONMENT_TYPE_APP]: true,
   [ENVIRONMENT_TYPE_BACKGROUND]: true,
+  [ENVIRONMENT_TYPE_BPEXT]: true,
 };
 
 initialize().catch(log.error);
@@ -116,7 +121,8 @@ async function setupController(initState) {
     if (isInternalProcess) {
       const portStream = new PortStream(remotePort);
       const data = controller.store.getState();
-      console.log('Back Local Data >>>>>', processName, data);
+      console.log('New Connection listened at Background >>>>>', processName, data);
+      console.log('New Connection listened at Background from sender>>>>>', remotePort.sender);
 
       if (processName === ENVIRONMENT_TYPE_POPUP) {
         popupIsOpen = true;
@@ -129,7 +135,10 @@ async function setupController(initState) {
         openTabsIDs[tabId] = true;
       }
       const isUnlocked = Boolean(controller.appStateController.isUnlocked);
-      const sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked) });
+      let sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked) });
+      if (isUnlocked) {
+        sendData = Object.assign(sendData, { BookController: { items: MOCK_PBOOK_ITEMS } });
+      }
       console.log('send data connect>>', sendData);
       remotePort.postMessage({ apiType: 'initState', data: sendData });
     } else {

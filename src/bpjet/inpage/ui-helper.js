@@ -12,6 +12,7 @@ const ICON_SIZES = {
   small: 16,
 };
 
+export const ICON_CLASS_NAME = 'bp-img--wrapper';
 const ICON_WRAP_TAG = 'bp-extension-button';
 const OPTIONS_WRAP_TAG = 'bp-selector-options';
 const BP_IFRAME_MENU_ID = '__bp_iframe_menu';
@@ -36,26 +37,13 @@ export const getIconSize = (height) => {
   return ICON_SIZES.small;
 };
 
-export function removeIcon(id) {
-  // const t = $(`#${id}`)
-  // if (t[0]) t.remove()
-  if (document.querySelector(`${ICON_WRAP_TAG}`)) {
-    document.querySelector(`${ICON_WRAP_TAG}`).remove();
-  }
-
-  if (document.querySelector(`#${BP_IFRAME_MENU_ID}`)) {
-    document.querySelector(`#${BP_IFRAME_MENU_ID}`).remove();
-  }
-}
-
 export function createBPIcon(el) {
   if (!el) return;
-
+  //console.log("Top>>>>>")
   const { document } = window;
   removeIcon();
 
-  const wrapper = document.createElement(ICON_WRAP_TAG);
-  const optionsWrap = document.createElement(OPTIONS_WRAP_TAG);
+  const wrapper = window.document.createElement(ICON_WRAP_TAG);
 
   const position = getElPosition(el);
   const fLeft = calcIconFloatLeft(position);
@@ -69,14 +57,16 @@ export function createBPIcon(el) {
   img.setAttribute('width', iconSize);
   img.setAttribute('height', iconSize);
   img.src = iconSrcBase64;
+  img.className = ICON_CLASS_NAME;
   img.style.cssText =
     `position:fixed;float:initial;left:${fLeft}px;top:${fTop}px;` +
     `margin: ${ICON_WRAPPER_MARGIN.x}px ${ICON_WRAPPER_MARGIN.y}px;z-index:${Z_INDEX}`;
 
   wrapper.appendChild(img);
 
-  $(wrapper).appendTo($('body'));
-  $(optionsWrap).appendTo($('body'));
+  //$(wrapper).appendTo($('body'));
+  window.document.body.appendChild(wrapper);
+
   createIFrame(position);
 }
 
@@ -85,18 +75,38 @@ export function createBPIcon(el) {
  * @param {*} position
  */
 export function createIFrame(position) {
-  const iframe = document.createElement('iframe');
+  const extIframe = window.document.querySelectorAll(OPTIONS_WRAP_TAG);
+  if (extIframe && extIframe.length) {
+    window.document.querySelector(OPTIONS_WRAP_TAG).remove();
+  }
+  const optionsWrap = document.createElement(OPTIONS_WRAP_TAG);
+
+  const iframe = window.document.createElement('iframe');
   iframe.setAttribute('id', BP_IFRAME_MENU_ID);
   iframe.setAttribute('src', Ext_GID);
   const fTop = calcBoxFloatTop(position);
   const fLeft = calcBoxFloatLeft(position);
   iframe.style.cssText =
     `position:fixed;float:initial;left:${fLeft}px;top:${fTop}px;` +
-    `width:260px;height:90px;` +
+    `width:260px;min-height:90px;` +
     'box-shadow:none;' +
     'background: white;border-radius: 6px;border: solid 1px rgba(0,0,0,.01);' +
     `z-index:${Z_INDEX}`;
-  $(iframe).appendTo($('body'));
+  $(iframe).appendTo($(optionsWrap));
+
+  window.document.body.appendChild(optionsWrap);
+}
+
+export function removeIcon(id) {
+  // const t = $(`#${id}`)
+  // if (t[0]) t.remove()
+  if (document.querySelector(`${ICON_WRAP_TAG}`)) {
+    document.querySelector(`${ICON_WRAP_TAG}`).remove();
+  }
+
+  if (document.querySelector(OPTIONS_WRAP_TAG)) {
+    document.querySelector(OPTIONS_WRAP_TAG).remove();
+  }
 }
 
 export function calcBoxFloatLeft(position) {
