@@ -1,9 +1,12 @@
+import PostMessageDuplexStream from 'post-message-stream';
+
 import extension from '@/lib/extensionizer';
 import { ENVIRONMENT_TYPE_BPEXT } from '@/corejs/enums';
 
 import InputorController from './context-controller';
 
-import { APITYPE_INIT_STATE } from '@/corejs/enums';
+import { APITYPE_INIT_STATE, APITYPE_SELECTED_PBITEM } from '@/corejs/enums';
+import { CONN_BPJET_NAME, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
 
 import store from '../store';
 
@@ -16,6 +19,16 @@ function initConnection() {
   console.log('extensionPort', extensionPort);
 
   extensionPort.onMessage.addListener(handleExtensionMessage);
+
+  return extensionPort;
+}
+
+export function sendMessage(port, data) {
+  const message = {
+    apiType: APITYPE_SELECTED_PBITEM,
+    data,
+  };
+  port.postMessage(message);
 }
 
 async function handleExtensionMessage(req, sender, sendResp) {

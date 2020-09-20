@@ -1,41 +1,46 @@
-// import './injet.css'
-
 import ResizeObserver from 'resize-observer-polyfill';
 import { debounce } from 'lodash';
 
-// import ext from '@/lib/extensionizer';
 import PostMessageDuplexStream from 'post-message-stream';
 
 import { getElPosition } from './inpage/ui-helper';
-import { NameController } from './inpage/name-controller';
+import { FieldsController } from './inpage/fields-controller';
 
-import { CONN_CONTENTS_NAME, CONN_BPJET_NAME } from './contents';
+import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
+import { INPUTOR_PAGER } from './contents';
 
 const $ = require('jquery');
+global.$ = $;
+
+const LOG_PREFFIX = 'BP-injet';
 
 injetStartup();
 
 const bpassbookStream = new PostMessageDuplexStream({
-  name: CONN_CONTENTS_NAME,
-  target: CONN_BPJET_NAME,
+  name: CONN_BPJET_NAME,
+  target: CONN_CONTENTS_NAME,
 });
 
-bpassbookStream.on('data', (data) => {
-  console.log('BPjet Recv post-message-stream >>>', data);
-});
+let ctx = null;
 
 function injetStartup() {
-  window.addEventListener('message', handleMessage);
   window.addEventListener('DOMContentLoaded', domLoadedHandle);
 }
 
 function domLoadedHandle(event) {
-  const nameCtx = new NameController();
-  global.nameCtx = nameCtx;
-  let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 100));
+  window.addEventListener('message', handleMessage);
 
-  if (nameCtx.enabled) {
-    DomSizeObs.observe(document.body);
+  const initState = {
+    extid: chrome.runtime.id,
+    inputorURL: chrome.runtime.getURL(INPUTOR_PAGER),
+  };
+
+  const controller = new FieldsController({ initState, bpassbookStream });
+
+  let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 100));
+  if (controller.hasLoginForm) {
+    DomSizeObs.observe(window.document.body);
+    window.addEventListener('message', handleMessage);
   } else {
     console.log('Webpage No login field....');
   }
@@ -43,20 +48,39 @@ function domLoadedHandle(event) {
   function handleWindowResize(entries, observer) {
     const { document } = window;
 
-    const nameState = nameCtx.getState();
-    console.log('Store get>>>', nameState, nameCtx.getOrigin());
+    const state = controller.getState();
+    console.log('Store get>>>', state, controller.currentTarget);
+    if (controller.currentTarget) {
+      const position = getElPosition(controller.currentTarget);
+      console.log('namePosition>>>', position);
+      controller.updatePosition(position);
+    }
+  }
 
-    const namePosition = getElPosition(nameCtx.getOrigin());
-    console.log('namePosition>>>', namePosition);
-    nameCtx.updatePosition(namePosition);
+  bpassbookStream.on('data', function (message) {
+    console.log(`${LOG_PREFFIX} >>bpassbookStream on data>`, message, window.self === window.top, controller);
+
+    if (controller.hasLoginForm && message.item) {
+      console.log(`${LOG_PREFFIX} >>bpassbookStream on ctx>`, message.item, controller);
+      controller.fillInputField(message.item);
+    }
+  });
+
+  function handleMessage(event) {
+    const { origin, source, type, data } = event;
+    console.log(`${LOG_PREFFIX} =>>>handleMessage>>>`, event);
+    console.log(
+      `${LOG_PREFFIX} =>>>handleMessage> Recvi>>`,
+      origin,
+      'source>>',
+      source,
+      'type>>',
+      type,
+      'data>>>',
+      data
+    );
+    console.log(`${LOG_PREFFIX} ===>> data`, data);
   }
 }
 
-/**
- *
- */
-function handleMessage(event) {
-  const { origin, source, type, data } = event;
-  console.log('bpjet RECV>>>>>>>>>>>>>>>', event);
-  console.log('Recvi>>>>>>>>>', origin, 'source>>', source, 'type>>', type, 'data>>>', data);
-}
+function fillField(item, controller) {}

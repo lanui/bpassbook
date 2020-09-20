@@ -7,7 +7,8 @@ import i18n from '@/locale';
 import store from './store';
 
 //
-import './controller';
+import remotePort from './controller';
+global.$remotePort = remotePort;
 
 global.$inputor = new Vue({
   el: '#RootInputor',

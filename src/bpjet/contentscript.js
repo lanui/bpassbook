@@ -7,8 +7,10 @@ import ext from '../lib/extensionizer';
 
 import { name } from '../../package.json';
 
-import { CONN_CONTENTS_NAME, CONN_BPJET_NAME } from './contents';
+import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
+import { APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/corejs/enums';
 
+const LOG_PREFFIX = 'BP-contentScript';
 const injetContent = 'const BPassword="v1.1;"';
 
 const extName = name || 'BPassword';
@@ -23,9 +25,10 @@ async function startup() {
   //console.log(ext)
   //setupStream();
   //make sure resolve inject js
+  // console.log("cs chrome>>>", chrome)
+  setupStream();
 
   await domIsReady();
-  setupStream();
 }
 
 function setupMessage() {
@@ -40,29 +43,50 @@ async function setupStream() {
   });
 
   const extid = ext.runtime.id;
-  console.log('>>>>>>>>', ext);
-  pageStream._write('shift from contentscript.........' + extid);
-  setTimeout(function () {
-    console.log('Sending message…');
-    window.postMessage({ type: 'FROM_PAGE', text: 'Hello BPaaword from the webpage!' }, '*');
-  }, 6000);
+  console.log(`${LOG_PREFFIX} >setupStream>>`, ext);
+  pageStream._write('shift from contentscript.........' + extid, ENCODING_UTF8, function (e) {
+    console.log('send callback', e, this);
+  });
 
-  //与background 交互长连接
-  const extensionPort = ext.runtime.connect({ name: CONN_CONTENTS_NAME });
-  console.log('>>extensionPort>>', extensionPort);
-  const extensionStream = new PortStream(extensionPort);
+  // {active:true,currentWindow:true}
+
+  // setTimeout(function () {
+  //   console.log('Sending message…');
+  //   window.postMessage({ type: 'FROM_PAGE', text: 'Hello BPaaword from the webpage!' }, '*');
+  // }, 6000);
 
   //connect channel muxers
   //创建并连接通道复用器，以便可以分别处理channels
   const pageMux = new ObjectMultiplex();
   pageMux.setMaxListeners(25);
 
-  const extensionMux = new ObjectMultiplex();
-  extensionMux.setMaxListeners(25);
-
   //
   pump(pageMux, pageStream, pageMux, (err) => logStreamDisconnectWarning(`${extName} Injet Multiplex`, err));
 
+  //与background 交互长连接
+  const extensionPort = ext.runtime.connect({ name: CONN_CONTENTS_NAME });
+
+  extensionPort.onMessage.addListener(function (message, sender) {
+    const { apiType, data } = message;
+    switch (apiType) {
+      case APITYPE_CONTENTSCRIPTS_TRANSFER:
+        console.log(`${LOG_PREFFIX} extensionPort.onMessage.addListener switch>>>`, apiType, data);
+        console.log(`${LOG_PREFFIX} >>`, window);
+        pageStream._write(data, ENCODING_UTF8, (resp) => {
+          console.log('extensionPort.onMessage.addListener success');
+        });
+        break;
+
+      default:
+        break;
+    }
+    //APITYPE_CONTENTSCRIPTS_TRANSFER
+  });
+
+  const extensionStream = new PortStream(extensionPort);
+  console.log('>>extensionPort>>', extensionPort, extensionStream);
+  const extensionMux = new ObjectMultiplex();
+  extensionMux.setMaxListeners(25);
   pump(extensionMux, extensionStream, extensionMux, (err) =>
     logStreamDisconnectWarning(`${extName} Background Multiplex`, err)
   );

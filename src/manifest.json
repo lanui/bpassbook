@@ -37,7 +37,7 @@
       "css": ["share/css/injet.css"],
       "js": ["bpjet/contentscript.js", "bpjet/bpjet.js"],
       "run_at": "document_start",
-      "all_frames": true
+      "all_frames": false
     }
   ],
   "web_accessible_resources": [
@@ -58,5 +58,15 @@
     "matches": ["*://extensions/*"],
     "accepts_tls_channel_id": false
   },
-  "permissions": ["<all_urls>", "tabs", "activeTab", "management", "storage", "unlimitedStorage", "nativeMessaging"]
+  "permissions": [
+    "<all_urls>",
+    "background",
+    "tabs",
+    "activeTab",
+    "management",
+    "storage",
+    "unlimitedStorage",
+    "nativeMessaging"
+  ],
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
 }

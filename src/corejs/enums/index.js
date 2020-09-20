@@ -12,3 +12,6 @@ export const APITYPE_LOGIN_PASS = 'loginPass';
 export const APITYPE_REDIRECT_APP = 'redirectApp';
 
 export const APITYPE_LOGOUT = 'logout';
+
+export const APITYPE_SELECTED_PBITEM = 'selectPassBookItem';
+export const APITYPE_CONTENTSCRIPTS_TRANSFER = 'contentScriptTransfer';

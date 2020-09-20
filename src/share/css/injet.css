@@ -13,3 +13,7 @@ img.bp-img--wrapper:hover {
 img.bp-img--pointer:hover {
   cursor: pointer !important;
 }
+
+iframe#__bp_iframe_menu body {
+  background: transparent !important;
+}

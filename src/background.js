@@ -19,10 +19,13 @@ import {
   APITYPE_INIT_STATE,
   APITYPE_UPDATE_UNLOCKED,
   APITYPE_PWD_INCORRECT,
+  APITYPE_SELECTED_PBITEM,
+  APITYPE_CONTENTSCRIPTS_TRANSFER,
   APITYPE_LOGIN_PASS,
   APITYPE_REDIRECT_APP,
   APITYPE_LOGOUT,
 } from './corejs/enums';
+import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
 
 import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
 
@@ -41,6 +44,9 @@ let popupIsOpen = false;
 let versionedData;
 
 const openTabsIDs = {};
+const openTabsConnectPorts = {};
+
+const contentScriptsPorts = {};
 
 const clientOpenStatus = () => {
   return Boolean(popupIsOpen) || Boolean(Object.keys(openTabsIDs).length);
@@ -118,9 +124,9 @@ async function setupController(initState) {
 
     const isInternalProcess = extensionInternalProcessHash[processName];
 
+    const data = controller.store.getState();
     if (isInternalProcess) {
       const portStream = new PortStream(remotePort);
-      const data = controller.store.getState();
       console.log('New Connection listened at Background >>>>>', processName, data);
       console.log('New Connection listened at Background from sender>>>>>', remotePort.sender);
 
@@ -136,18 +142,39 @@ async function setupController(initState) {
       }
       const isUnlocked = Boolean(controller.appStateController.isUnlocked);
       let sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked) });
+      console.log('send data connect>>', sendData);
       if (isUnlocked) {
         sendData = Object.assign(sendData, { BookController: { items: MOCK_PBOOK_ITEMS } });
       }
-      console.log('send data connect>>', sendData);
       remotePort.postMessage({ apiType: 'initState', data: sendData });
     } else {
-      console.log('>>>', processName);
       if (remotePort.sender && remotePort.sender.tab && remotePort.sender.url) {
+        const tabId = remotePort.sender.tab.id;
+        const url = new URL(remotePort.sender.url);
+        const { origin } = url;
+        console.log('External webpage info>>>>', remotePort);
+        console.log('External webpage info>>>>', tabId, url, origin, processName);
+
+        if (tabId && processName === CONN_CONTENTS_NAME) {
+          contentScriptsPorts[tabId] = remotePort;
+          remotePort.onDisconnect.addListener(function (e) {
+            console.log('sc disconnect>>>', e);
+            contentScriptsPorts[tabId] = false;
+          });
+          const isUnlocked = Boolean(controller.appStateController.isUnlocked);
+          remotePort.postMessage({ apiType: 'initState', data: { isUnlocked } });
+        } else {
+        }
+
+        //remotePort.postMessage({ apiType: 'initState', data: sendData });
+        // remotePort.onMessage.addListener((msg)=>{
+        //   console.log("Tab msg:",msg)
+        // })
       }
     }
 
     remotePort.onMessage.addListener(async (msg) => {
+      console.log('Report>>>>>listener>>>', remotePort);
       if (msg && msg.apiType) {
         log.warn(`recive --type:${msg.apiType}`, msg.data);
         switch (msg.apiType) {
@@ -172,7 +199,16 @@ async function setupController(initState) {
             await controller.appStateController.locked();
             remotePort.postMessage({ apiType: 'initState', data: getSendData() });
             break;
-
+          case APITYPE_SELECTED_PBITEM:
+            const transData = msg.data;
+            const tabId = transData.tabId;
+            console.log('transData>>>>>>>>>>>', transData, tabId);
+            //remotePort.postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
+            if (contentScriptsPorts[tabId]) {
+              console.log('ContentScript>>>', contentScriptsPorts[tabId]);
+              contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
+            }
+            break;
           default:
             break;
         }
