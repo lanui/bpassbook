@@ -22,12 +22,7 @@ if (shouldInjectController()) {
 }
 
 async function startup() {
-  //console.log(ext)
-  //setupStream();
-  //make sure resolve inject js
-  // console.log("cs chrome>>>", chrome)
   setupStream();
-
   await domIsReady();
 }
 
@@ -42,18 +37,13 @@ async function setupStream() {
     target: CONN_BPJET_NAME,
   });
 
-  const extid = ext.runtime.id;
-  console.log(`${LOG_PREFFIX} >setupStream>>`, ext);
+  const extid = chrome.runtime.id;
+  // console.log(`${LOG_PREFFIX} >setupStream>>`, ext);
   pageStream._write('shift from contentscript.........' + extid, ENCODING_UTF8, function (e) {
-    console.log('send callback', e, this);
+    console.log(`${LOG_PREFFIX} >>send callback>>`, e, this);
   });
 
   // {active:true,currentWindow:true}
-
-  // setTimeout(function () {
-  //   console.log('Sending message…');
-  //   window.postMessage({ type: 'FROM_PAGE', text: 'Hello BPaaword from the webpage!' }, '*');
-  // }, 6000);
 
   //connect channel muxers
   //创建并连接通道复用器，以便可以分别处理channels
@@ -73,7 +63,7 @@ async function setupStream() {
         console.log(`${LOG_PREFFIX} extensionPort.onMessage.addListener switch>>>`, apiType, data);
         console.log(`${LOG_PREFFIX} >>`, window);
         pageStream._write(data, ENCODING_UTF8, (resp) => {
-          console.log('extensionPort.onMessage.addListener success');
+          console.log(`${LOG_PREFFIX}>>>>` + 'extensionPort.onMessage.addListener success');
         });
         break;
 
@@ -116,8 +106,6 @@ function injectCss() {
     style.type = 'text/css';
     style.href = url;
     container.insertBefore(style, container.children[0]);
-    //(document.head || document.documentElement).appendChild(style);
-    //container.removeChild(style)
   } catch (e) {
     console.error(`${extName} inject css error`, e);
   }
@@ -177,7 +165,7 @@ function domElementCheck() {
 }
 
 async function domIsReady() {
-  console.log('domIsReady>>>>>', document.readyState);
+  // console.log('domIsReady>>>>>', document.readyState);
   if (['interactive', 'complete'].includes(document.readyState)) {
     return true;
   }

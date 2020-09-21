@@ -1,7 +1,7 @@
 import PostMessageDuplexStream from 'post-message-stream';
 
 import extension from '@/lib/extensionizer';
-import { ENVIRONMENT_TYPE_BPEXT } from '@/corejs/enums';
+import { ENVIRONMENT_TYPE_BPEXT, CHANNEL_INPUTOR_CONTENTSCRIPT } from '@/corejs/enums';
 
 import InputorController from './context-controller';
 
@@ -16,6 +16,9 @@ function initConnection() {
   const ctx = new InputorController();
 
   const extensionPort = extension.runtime.connect({ name: ENVIRONMENT_TYPE_BPEXT });
+
+  const channelCSPort = extension.runtime.connect({ name: CHANNEL_INPUTOR_CONTENTSCRIPT });
+  global.channelCSPort = channelCSPort;
   console.log('extensionPort', extensionPort);
 
   extensionPort.onMessage.addListener(handleExtensionMessage);
@@ -31,6 +34,12 @@ export function sendMessage(port, data) {
   port.postMessage(message);
 }
 
+/**
+ *
+ * @param {*} req
+ * @param {*} sender
+ * @param {*} sendResp
+ */
 async function handleExtensionMessage(req, sender, sendResp) {
   console.log('req', req, sender, sendResp);
   const { apiType, data } = req;

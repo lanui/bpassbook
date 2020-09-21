@@ -8,6 +8,10 @@
     "128": "icons/icon_128.png"
   },
   "browser_action": {
+    "default_icon": {
+      "16": "icons/icon_18.png",
+      "48": "icons/icon_48.png"
+    },
     "default_title": "BPassword",
     "default_popup": "popup/popup.html"
   },
@@ -36,8 +40,8 @@
       "exclude_matches": ["*://extensions/*"],
       "css": ["share/css/injet.css"],
       "js": ["bpjet/contentscript.js", "bpjet/bpjet.js"],
-      "run_at": "document_start",
-      "all_frames": false
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ],
   "web_accessible_resources": [

@@ -48,16 +48,19 @@ import { mapGetters } from 'vuex';
 import icon from '@/icons/icon_128.png';
 import { postMsgToPage } from './helper';
 import { sendMessage } from './controller';
+
+const LOG_PREFFIX = 'BP-inputor-APP';
 export default {
   name: 'Inputor',
   computed: {
-    ...mapGetters(['isUnlocked', 'items']),
+    ...mapGetters(['items']), //'isUnlocked'
     hasItems() {
       return Boolean(this.items && this.items.length > 0);
     },
   },
   data() {
     return {
+      isUnlocked: true,
       icon: icon,
       tItems: [],
     };
@@ -85,7 +88,24 @@ export default {
       });
     },
     addItemHandle() {
-      console.log('add');
+      console.log(`${LOG_PREFFIX} >Document>>`, window.self);
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const tabId = tabs[0].id;
+        const tabUrl = tabs[0].url;
+        console.log(`${LOG_PREFFIX} >>> `, tabId, tabs[0]);
+
+        chrome.tabs.sendMessage(
+          tabId,
+          {
+            apiType: 'reqFieldData',
+            tabId,
+            tabUrl,
+          },
+          function (response) {
+            console.log(`${LOG_PREFFIX} >>response> `, response);
+          }
+        );
+      });
     },
   },
   beforeCreate() {

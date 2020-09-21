@@ -24,52 +24,37 @@ const initState = {
 };
 
 /**
- * initState:
- *  extid,inputorURL,isUnlocked(noused)
+ *
  */
 export class FieldsController extends EventEmitter {
   constructor(opts = {}) {
     super();
     const { initState } = opts;
+    const checkState = checkFormFields();
+    this.hasLoginForm = checkState.hasLoginForm;
+    const { targetUserName, targetPassword, currentTarget, position, usernameSelector, passwordSelector } = checkState;
 
-    this.store = new ObservableStore(initState);
-    this.hasLoginForm = false;
-  }
+    this.targetUserName = targetUserName;
+    this.targetPassword = targetPassword;
+    this.currentTarget = currentTarget;
+    this.usernameSelector = usernameSelector;
+    this.passwordSelector = passwordSelector;
 
-  checkedLoginForm(document) {
-    const loginFormData = checkFormFields();
-    if (loginFormData.hasLoginForm) {
-      const {
-        usernameSelector,
-        passwordSelector,
-        currentTarget,
-        hasLoginForm,
-        origin,
-        position,
-        targetPassword,
-        targetUserName,
-      } = loginFormData;
+    this.store = new ObservableStore(
+      Object.assign({}, { targetUserName, targetPassword, currentTarget, position }, { isUnlocked: false }, initState)
+    );
+    console.log('BPinjet>>>>', this.store.getState());
 
-      this.hasLoginForm = hasLoginForm;
-      this.origin = origin;
-      this.targetUserName = targetUserName;
-      this.targetPassword = targetPassword;
-      this.currentTarget = currentTarget;
+    //dom resize
+    handleStateChanged.bind(this);
 
-      this.store.updateState({ position, usernameSelector, passwordSelector });
+    //bind target event
+    this.store.subscribe(handleStateChanged);
 
-      console.log(`${LOG_PREFFIX}- loginCtx>>>`, loginFormData, document);
-      console.log(`${LOG_PREFFIX}- document>>>`, document);
+    this._initTargetBindEvents();
 
-      // Bind Target field event
-      this._initTargetBindEvents();
-
-      // subcribe store
-      //handleStateChanged.bind(this);
-      this.store.subscribe(handleStateChanged);
-      // create
-    } else {
-      // console.log(`${LOG_PREFFIX}- No login form>>>`, chrome)
+    if (this.hasLoginForm) {
+      this._listenMessage();
     }
   }
 
@@ -111,6 +96,7 @@ export class FieldsController extends EventEmitter {
   }
 
   _initTargetBindEvents() {
+    console.log('BPinjet>>>this bind>', this);
     const targetPassword = this.targetPassword;
     const targetUserName = this.targetUserName;
     const _ctx = this;
@@ -118,7 +104,7 @@ export class FieldsController extends EventEmitter {
     if (targetPassword) {
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
-        // console.log('BPinjet>>> focusin', e, e.target);
+        console.log('BPinjet>>> focusin', e, e.target);
         createBPIcon(this);
         _ctx.currentTarget = e.target;
         $(e.target).on('click', function (e) {
@@ -132,7 +118,7 @@ export class FieldsController extends EventEmitter {
       if (targetUserName) {
         $(targetUserName).on('focusin', function (e) {
           e.stopPropagation();
-          // console.log('BPinjet>>> focusin', e, e.target);
+          console.log('BPinjet>>> focusin', e, e.target);
           createBPIcon(this);
           _ctx.currentTarget = e.target;
           $(e.target).on('click', function (e) {
@@ -152,6 +138,7 @@ export class FieldsController extends EventEmitter {
       if (window.self !== window.top) {
         $(window.parent.document).on('click', function (e) {
           e.stopPropagation();
+          console.log('BPinjet>remove');
           removeIcon();
         });
       }
@@ -164,7 +151,6 @@ export class FieldsController extends EventEmitter {
  * @param {*} state
  */
 function handleStateChanged(state) {
-  console.log(`${LOG_PREFFIX}- state`, this, state);
   updateIconPosition(state.position);
   updateIFramePosition(state.position);
 }
@@ -172,26 +158,28 @@ function handleStateChanged(state) {
 const PASSWORD_SELECTOR = 'input[type="password"]';
 const USERNAME_SELECTOR = 'input[type="text"]';
 
-export function checkFormFields() {
+function checkFormFields() {
   let targetPassword = null,
     targetUserName = null,
-    origin = null,
+    iframe = null,
     hasLoginForm = false,
     currentTarget = null,
     position = null,
     usernameSelector = null,
     passwordSelector = null;
 
-  origin = window.location.origin;
   targetPassword = window.document.querySelector(PASSWORD_SELECTOR);
   targetUserName = window.document.querySelector(USERNAME_SELECTOR);
+
+  // if(window.self !== window.top){
+
+  // }
 
   if (targetPassword) {
     passwordSelector = buildPasswordSelector(targetPassword);
   }
 
   if (targetUserName) {
-    targetUserName.setAttribute('autocomplete', 'off');
     usernameSelector = buildUserNameSelector(targetUserName);
   }
 
@@ -199,7 +187,11 @@ export function checkFormFields() {
 
   if (hasLoginForm) {
     currentTarget = targetUserName || targetPassword;
-    position = getElPosition(currentTarget) || {};
+    position = getElPosition(currentTarget);
+  }
+  if (hasLoginForm) {
+    console.log(`${LOG_PREFFIX} >>> targetPassword`, passwordSelector, '<<>>', usernameSelector);
+    console.log(`${LOG_PREFFIX} >>> windw`, window.self, '<<>>');
   }
 
   return {
@@ -207,7 +199,6 @@ export function checkFormFields() {
     passwordSelector,
     currentTarget,
     hasLoginForm,
-    origin,
     position,
     targetPassword,
     targetUserName,

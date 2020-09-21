@@ -15,3 +15,6 @@ export const APITYPE_LOGOUT = 'logout';
 
 export const APITYPE_SELECTED_PBITEM = 'selectPassBookItem';
 export const APITYPE_CONTENTSCRIPTS_TRANSFER = 'contentScriptTransfer';
+
+export const CHANNEL_INPUTOR_CONTENTSCRIPT = 'channel-InputorContentScript';
+export const CHANNEL_CONTENTSCRIPT_INPUTOR = 'channel-ContentScriptInputor';

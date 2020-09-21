@@ -13,6 +13,10 @@ const ICON_SIZES = {
   small: 16,
 };
 
+const FRAME_BOX = {
+  width: 260,
+};
+
 export const ICON_CLASS_NAME = 'bp-img--wrapper';
 const ICON_WRAP_TAG = 'bp-extension-button';
 const OPTIONS_WRAP_TAG = 'bp-selector-options';
@@ -40,7 +44,7 @@ export const getIconSize = (height) => {
 
 export function createBPIcon(el) {
   if (!el) return;
-  console.log('BPInjetTop>>>>>', window);
+  // console.log('BPInjetTop>>>>>', window);
   const _win = window;
   const { document } = _win;
   removeIcon();
@@ -50,7 +54,7 @@ export function createBPIcon(el) {
   const position = getElPosition(el);
   const fLeft = calcIconFloatLeft(position);
   const fTop = calcIconFloatTop(position);
-  console.log('createBPIcon>>>', position);
+  // console.log('createBPIcon>>>', position);
 
   const { iconSize } = position;
   const id = ICON_WRAPPER_ID;
@@ -95,9 +99,9 @@ export function createIFrame(position) {
   const fLeft = calcBoxFloatLeft(position);
   iframe.style.cssText =
     `position:fixed;float:initial;left:${fLeft}px;top:${fTop}px;` +
-    `width:260px;` +
+    `width:${FRAME_BOX.width}px;` +
     'box-shadow:none;' +
-    'border-radius: 0px;border: solid 0px rgba(0,0,0,.01);' +
+    'border-radius: 0px;border: solid 0px rgba(0,0,0,0);' +
     `z-index:${Z_INDEX}`;
   $(iframe).appendTo($(optionsWrap));
 
@@ -118,8 +122,8 @@ export function removeIcon() {
 }
 
 export function calcBoxFloatLeft(position) {
-  const { offsetWidth, clientWidth, left, width, iconSize } = position;
-  return left;
+  const { offsetWidth, clientWidth, left, width } = position;
+  return left - (FRAME_BOX.width - (width || clientWidth || offsetWidth)) + 4;
 }
 
 export function calcBoxFloatTop(position) {
@@ -152,8 +156,9 @@ export function createSelectLockBox(opts, list, isUnlocked) {
  * @param {*} $target
  */
 export function getElPosition($target) {
-  if (!$target) return {};
+  if (!$target && $target.getClientRects()[0]) return false;
   const rects = $target.getClientRects();
+  console.log(`${LOG_PREFFIX}-rects>>>> `, $target, $target.getClientRects());
   const iconSize = getIconSize(rects[0].height || $target.offsetHeight);
 
   return {
