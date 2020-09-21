@@ -10,6 +10,8 @@ import { name } from '../../package.json';
 import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
 import { APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/corejs/enums';
 
+import { CHANNEL_INJET_CONTENTSCRIPT, CHANNEL_CONTENTSCRIPT_INJET } from '@/corejs/enums';
+
 const LOG_PREFFIX = 'BP-contentScript';
 const injetContent = 'const BPassword="v1.1;"';
 
@@ -34,7 +36,7 @@ async function setupStream() {
   //创建
   const pageStream = new PostMessageDuplexStream({
     name: CONN_CONTENTS_NAME,
-    target: CONN_BPJET_NAME,
+    target: CHANNEL_INJET_CONTENTSCRIPT,
   });
 
   const extid = chrome.runtime.id;

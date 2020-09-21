@@ -1,5 +1,5 @@
 export const DATA = 'data';
-export const ENVIRONMENT_TYPE_POPUP = 'popup';
+
 export const ENVIRONMENT_TYPE_APP = 'app';
 export const ENVIRONMENT_TYPE_BPEXT = 'bpext';
 export const ENVIRONMENT_TYPE_BACKGROUND = 'background';
@@ -18,3 +18,5 @@ export const APITYPE_CONTENTSCRIPTS_TRANSFER = 'contentScriptTransfer';
 
 export const CHANNEL_INPUTOR_CONTENTSCRIPT = 'channel-InputorContentScript';
 export const CHANNEL_CONTENTSCRIPT_INPUTOR = 'channel-ContentScriptInputor';
+export const CHANNEL_INJET_CONTENTSCRIPT = 'channel-InjetContentScript';
+export const CHANNEL_CONTENTSCRIPT_INJET = 'channel-ContentScriptInjet';

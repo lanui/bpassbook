@@ -15,6 +15,7 @@ const ICON_SIZES = {
 
 const FRAME_BOX = {
   width: 260,
+  minHeight: 180,
 };
 
 export const ICON_CLASS_NAME = 'bp-img--wrapper';
@@ -99,7 +100,7 @@ export function createIFrame(position) {
   const fLeft = calcBoxFloatLeft(position);
   iframe.style.cssText =
     `position:fixed;float:initial;left:${fLeft}px;top:${fTop}px;` +
-    `width:${FRAME_BOX.width}px;` +
+    `width:${FRAME_BOX.width}px;min-height:${FRAME_BOX.minHeight}px;` +
     'box-shadow:none;' +
     'border-radius: 0px;border: solid 0px rgba(0,0,0,0);' +
     `z-index:${Z_INDEX}`;

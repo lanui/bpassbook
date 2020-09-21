@@ -1,12 +1,12 @@
 import PostMessageDuplexStream from 'post-message-stream';
 
 import extension from '@/lib/extensionizer';
-import { ENVIRONMENT_TYPE_BPEXT, CHANNEL_INPUTOR_CONTENTSCRIPT } from '@/corejs/enums';
+import { CHANNEL_INPUTOR_CONTENTSCRIPT } from '@/corejs/enums';
 
 import InputorController from './context-controller';
 
 import { APITYPE_INIT_STATE, APITYPE_SELECTED_PBITEM } from '@/corejs/enums';
-import { CONN_BPJET_NAME, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
+import { BACKEND_CONN_CONTENTSCRIPT, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
 
 import store from '../store';
 
@@ -15,11 +15,7 @@ function initConnection() {
 
   const ctx = new InputorController();
 
-  const extensionPort = extension.runtime.connect({ name: ENVIRONMENT_TYPE_BPEXT });
-
-  const channelCSPort = extension.runtime.connect({ name: CHANNEL_INPUTOR_CONTENTSCRIPT });
-  global.channelCSPort = channelCSPort;
-  console.log('extensionPort', extensionPort);
+  const extensionPort = extension.runtime.connect({ name: BACKEND_CONN_CONTENTSCRIPT });
 
   extensionPort.onMessage.addListener(handleExtensionMessage);
 

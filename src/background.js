@@ -12,10 +12,6 @@ import ContextController from '@/corejs/context-controller';
 import createStreamSink from '@/lib/storage/createStreamSink';
 
 import {
-  ENVIRONMENT_TYPE_POPUP,
-  ENVIRONMENT_TYPE_APP,
-  ENVIRONMENT_TYPE_BPEXT,
-  ENVIRONMENT_TYPE_BACKGROUND,
   APITYPE_INIT_STATE,
   APITYPE_UPDATE_UNLOCKED,
   APITYPE_PWD_INCORRECT,
@@ -25,11 +21,22 @@ import {
   APITYPE_REDIRECT_APP,
   APITYPE_LOGOUT,
 } from './corejs/enums';
-import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
+
+import {
+  BACKEND_CONN_NAME,
+  BACKEND_CONN_POPUP,
+  BACKEND_CONN_FULLSCREEN,
+  BACKEND_CONN_CONTENTSCRIPT,
+  CLI_CONN_INPUTOR,
+  CLI_CONN_INJET,
+  CONN_CONTENTS_NAME,
+} from '@/lib/cnst/connection-cnst.js';
 
 import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
 
 import pump from 'pump';
+
+const LOG_PREFFIX = 'background';
 
 global.browser = require('webextension-polyfill');
 
@@ -53,22 +60,21 @@ const clientOpenStatus = () => {
 };
 
 const extensionInternalProcessHash = {
-  [ENVIRONMENT_TYPE_POPUP]: true,
-  [ENVIRONMENT_TYPE_APP]: true,
-  [ENVIRONMENT_TYPE_BACKGROUND]: true,
-  [ENVIRONMENT_TYPE_BPEXT]: true,
+  [BACKEND_CONN_POPUP]: true,
+  [BACKEND_CONN_FULLSCREEN]: true,
+  [CLI_CONN_INPUTOR]: true,
 };
 
 initialize().catch(log.error);
 
 async function initialize() {
   const initState = await loadStateFromPersistence();
-  console.log('Back initState>>>', initState);
+  console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);
   setupController(initState || {});
 
-  window.addEventListener('message', function (event) {
-    console.log('Back>>>>>', event);
-  });
+  // window.addEventListener('message', function (event) {
+  //   console.log(`${LOG_PREFFIX}-Back revc Window Message>>>`, event);
+  // });
 }
 
 async function setupController(initState) {
@@ -130,13 +136,13 @@ async function setupController(initState) {
       console.log('New Connection listened at Background >>>>>', processName, data);
       console.log('New Connection listened at Background from sender>>>>>', remotePort.sender);
 
-      if (processName === ENVIRONMENT_TYPE_POPUP) {
+      if (processName === BACKEND_CONN_POPUP) {
         popupIsOpen = true;
         endOfStream(portStream, () => {
           popupIsOpen = false;
           controller.isClientOpen = clientOpenStatus();
         });
-      } else if (processName === ENVIRONMENT_TYPE_APP) {
+      } else if (processName === BACKEND_CONN_FULLSCREEN) {
         const tabId = remotePort.sender.tab.id;
         openTabsIDs[tabId] = true;
       }
@@ -155,7 +161,7 @@ async function setupController(initState) {
         console.log('External webpage info>>>>', remotePort);
         console.log('External webpage info>>>>', tabId, url, origin, processName);
 
-        if (tabId && processName === CONN_CONTENTS_NAME) {
+        if (tabId && processName === BACKEND_CONN_CONTENTSCRIPT) {
           contentScriptsPorts[tabId] = remotePort;
           remotePort.onDisconnect.addListener(function (e) {
             console.log('sc disconnect>>>', e);
@@ -225,12 +231,6 @@ async function setupController(initState) {
       };
       return Object.assign({}, storeState, sendData, extendObj);
     }
-  }
-}
-
-function recviceMessageHandler(data) {
-  if (!data) {
-    log.log('>>>>>>>>');
   }
 }
 

@@ -7,6 +7,8 @@ import { getElPosition } from './inpage/ui-helper';
 import { FieldsController, checkFormFields } from './inpage/fields-controller';
 
 // import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
+import { CHANNEL_INJET_CONTENTSCRIPT, CHANNEL_CONTENTSCRIPT_INJET } from '@/corejs/enums';
+
 import { INPUTOR_PAGER } from './contents';
 
 const $ = require('jquery');
@@ -14,10 +16,10 @@ global.$ = $;
 
 const LOG_PREFFIX = 'BP-injet';
 
-// const bpassbookStream = new PostMessageDuplexStream({
-//   name: CONN_BPJET_NAME,
-//   target: CONN_CONTENTS_NAME,
-// });
+const bpassbookStream = new PostMessageDuplexStream({
+  name: CHANNEL_INJET_CONTENTSCRIPT,
+  target: CHANNEL_CONTENTSCRIPT_INJET,
+});
 injetStartup();
 
 let ctx = null;
