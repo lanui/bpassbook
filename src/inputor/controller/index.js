@@ -21,10 +21,9 @@ function initConnection() {
 
   extensionPort.onMessage.addListener(handleExtensionMessage);
 
-  return {
-    sendAddItemOnce(item, cb) {
-      console.log(`${LOG_PREFFIX}>sendAddItemOnce>>>`, item, extensionPort);
-
+  const ctx = {
+    remotePort: extensionPort,
+    sendAddItemOnce(item) {
       const message = {
         apiType: APITYPE_INPUTOR_ADDITEM,
         data: { item },
@@ -32,12 +31,25 @@ function initConnection() {
       extensionPort.postMessage(message);
     },
   };
+
+  return ctx;
 }
 
 export function sendMessage(port, data) {
   const message = {
     apiType: APITYPE_SELECTED_PBITEM,
     data,
+  };
+  port.postMessage(message);
+}
+
+export function sendAddItemOnce(port, opts = {}) {
+  const { item, cb } = opts;
+  console.log(`${LOG_PREFFIX}>sendAddItemOnce>>>`, item, port);
+
+  const message = {
+    apiType: APITYPE_INPUTOR_ADDITEM,
+    data: { item },
   };
   port.postMessage(message);
 }
@@ -49,11 +61,11 @@ export function sendMessage(port, data) {
  * @param {*} sendResp
  */
 async function handleExtensionMessage(req, sender, sendResp) {
-  console.log('req', req, sender, sendResp);
+  console.log('Inputor >>>', req, sender, sendResp);
   const { apiType, data } = req;
   if (!data) return;
 
-  const { isUnlocked, BookController, AppStateController } = data;
+  const { isUnlocked, GitbookController, AppStateController } = data;
   const selectedAddress = AppStateController?.selectedAddress || '';
   switch (apiType) {
     case APITYPE_INIT_STATE:
@@ -61,7 +73,7 @@ async function handleExtensionMessage(req, sender, sendResp) {
       await store.dispatch('updateState', {
         isUnlocked,
         selectedAddress,
-        items: BookController ? BookController.items : [],
+        items: GitbookController ? GitbookController.passbook : [],
       });
       break;
     default:

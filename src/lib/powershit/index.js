@@ -36,7 +36,7 @@ const Formatter = {
  * @param {*} words
  * @param {*} address
  */
-export const encrypt = (words, address) => {
+export const encryptor = (words, address) => {
   if (words === undefined || typeof words === 'function') throw new Error(`Words undefined.`);
   if (!validAddress(address)) throw new Error(`Address illegal. ${address}`);
   const origin = splitAddress(address);
@@ -65,7 +65,7 @@ export const encrypt = (words, address) => {
  * @param {*} cipher
  * @param {*} address
  */
-export const decrypt = (cipher, address) => {
+export const decryptor = (cipher, address) => {
   if (typeof cipher !== 'string') throw new Error(`cipher illegal.${cipher}`);
   if (!validAddress(address)) throw new Error(`Address illegal. ${address}`);
   const origin = splitAddress(address);
@@ -78,7 +78,7 @@ export const decrypt = (cipher, address) => {
     iv: origin.iv,
     mode: CryptoJs.mode.CBC,
     padding: CryptoJs.pad.Pkcs7,
-    format: Formatter,
+    // format: Formatter,
   });
 
   var decrypted = bytes.toString(CryptoJs.enc.Utf8);

@@ -141,10 +141,11 @@ async function setupController(initState) {
       }
       const isUnlocked = Boolean(controller.appStateController.isUnlocked);
       let sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked) });
-      console.log('send data connect>>', sendData);
-      if (isUnlocked) {
-        sendData = Object.assign(sendData, { BookController: { items: MOCK_PBOOK_ITEMS } });
-      }
+      // console.log('send data connect>>', sendData);
+      sendData = getSendData(controller);
+      // if (isUnlocked) {
+      //   sendData = getSendData(controller)
+      // }
       remotePort.postMessage({ apiType: 'initState', data: sendData });
     } else {
       if (remotePort.sender && remotePort.sender.tab && remotePort.sender.url) {
@@ -173,29 +174,30 @@ async function setupController(initState) {
     }
 
     portMessageListener(controller, remotePort);
-
-    function getSendData() {
-      const storeState = controller.store.getState();
-      const sendData = controller.appStateController.getAppState();
-      const extendObj = {
-        isUnlocked: Boolean(controller.appStateController.isUnlocked),
-        selectAddress: controller.appStateController.selectAddress,
-        ...controller.appStateController.store.getState(),
-      };
-      return Object.assign({}, storeState, sendData, extendObj);
-    }
   }
 }
 
+function getSendData(controller) {
+  const storeState = controller.store.getState();
+  const sendData = controller.appStateController.getAppState();
+  const GitbookController = controller.gitbookController.memStore.getState();
+
+  const extendObj = {
+    isUnlocked: Boolean(controller.appStateController.isUnlocked),
+    selectAddress: controller.appStateController.selectAddress,
+    ...controller.appStateController.store.getState(),
+  };
+  return Object.assign({}, storeState, sendData, extendObj, { GitbookController });
+}
 // function handleRutimeOnMessage(message,sender,sendResponse) {
 //   console.log(`${LOG_PREFFIX}-runtime Msg`, message, sender, sendResponse)
 //   console.log(`${LOG_PREFFIX}-runtime Msg`, controller)
 // }
 
 function portMessageListener(controller, remotePort) {
-  console.log(`${LOG_PREFFIX}-runtime Msg`, controller);
+  // console.log(`${LOG_PREFFIX}-runtime Msg`, controller);
   remotePort.onMessage.addListener(async (msg) => {
-    console.log('Report>>>>>listener>>>', remotePort);
+    // console.log('Report>>>>>listener>>>', remotePort);
     if (msg && msg.apiType) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
       switch (msg.apiType) {
@@ -209,7 +211,7 @@ function portMessageListener(controller, remotePort) {
             const v3 = await controller.appStateController.unlock(msg.data.password, msg.data.env3);
 
             if (v3) {
-              const newState = getSendData();
+              const newState = getSendData(controller);
               remotePort.postMessage({ apiType: APITYPE_INIT_STATE, data: newState, redirect: '/index' });
             } else {
               remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT, error: { message: 'password incorrect.' } });
@@ -218,7 +220,7 @@ function portMessageListener(controller, remotePort) {
           break;
         case APITYPE_LOGOUT:
           await controller.appStateController.locked();
-          remotePort.postMessage({ apiType: 'initState', data: getSendData() });
+          remotePort.postMessage({ apiType: 'initState', data: getSendData(controller) });
           break;
         case APITYPE_SELECTED_PBITEM:
           const transData = msg.data;
@@ -230,6 +232,12 @@ function portMessageListener(controller, remotePort) {
           if (contentScriptsPorts[tabId]) {
             console.log('transData:ContentScript>>>', contentScriptsPorts[tabId]);
             contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
+          }
+          break;
+        case APITYPE_INPUTOR_ADDITEM:
+          console.log(APITYPE_INPUTOR_ADDITEM, 'addItem>>>', contentScriptsPorts[tabId]);
+          if (msg.data && msg.data.item && controller.getSelectedAddress()) {
+            controller.gitbookController.addBookToStore(msg.data.item, controller.getSelectedAddress());
           }
           break;
         default:

@@ -29,10 +29,13 @@ export default {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
         console.log(`Ext Inputor logo tabs:`, tabs[0].host);
-
-        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tabId, tabUrl }, function (response) {
-          console.log(response);
-        });
+        try {
+          chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tabId, tabUrl }, function (response) {
+            console.log(response);
+          });
+        } catch (e) {
+          console.log(e);
+        }
       });
     },
   },

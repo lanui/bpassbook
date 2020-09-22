@@ -63,7 +63,7 @@ import { APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
 
 import HeadIcon from './widgets/HeadIcon.vue';
 
-import { encrypt, decrypt } from '@/lib/powershit';
+import { encryptor, decryptor } from '@/lib/powershit';
 
 const LOG_PREFFIX = 'BP-inputor:addItem';
 export default {
@@ -74,6 +74,7 @@ export default {
   data() {
     return {
       origin: '',
+      hostname: '',
       tips: '',
       username: '',
       password: '',
@@ -95,14 +96,15 @@ export default {
         origin: this.origin,
         username: this.username,
         password: this.password,
+        hostname: this.hostname,
       };
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', message);
 
       // const address = "0x79F3eD68873E28ad7F72597b56326b2Fc2fEE26B"
 
-      // const entext = encrypt(message,address)
+      // const entext = encryptor(message,address)
       // console.log("enText>>>",entext)
-      // const deText = decrypt(entext,address)
+      // const deText = decryptor(entext,address)
       //  console.log("deText>>>",deText)
 
       function callBack(resp) {
@@ -117,19 +119,22 @@ export default {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
+        console.log(tabs[0].url);
         chrome.tabs.sendMessage(tabId, { apiType: APITYPE_GET_PBITEM, item: {}, tabId, tabUrl }, function (response) {
           console.log(`${LOG_PREFFIX} message back >>>>`, response);
-          const { data } = response;
-          if (response.data) that.fillData(response.data);
+          if (response && response.data) {
+            that.fillData(response.data);
+          }
         });
       });
     },
     fillData(data) {
       if (data) {
-        this.origin = data.origin;
-        this.username = data.username;
-        this.password = data.password;
-        this.tips = data.hostname;
+        this.origin = data.origin || '';
+        this.username = data.username || '';
+        this.password = data.password || '';
+        this.tips = data.hostname || '';
+        this.hostname = data.hostname || '';
       }
     },
   },
