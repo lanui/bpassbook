@@ -4,10 +4,10 @@ import { debounce } from 'lodash';
 import PostMessageDuplexStream from 'post-message-stream';
 
 import { getElPosition } from './inpage/ui-helper';
-import { FieldsController, checkFormFields } from './inpage/fields-controller';
+import { FieldsController } from './inpage/fields-controller';
 
-// import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, CONN_INPUTOR_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
-import { CHANNEL_INJET_CONTENTSCRIPT, CHANNEL_CONTENTSCRIPT_INJET } from '@/corejs/enums';
+import { BACKEND_CONN_CONTENTSCRIPT, CLI_CONN_INJET } from '@/lib/cnst/connection-cnst.js';
+import { APITYPE_FILL_PBITEM, APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
 
 import { INPUTOR_PAGER } from './contents';
 
@@ -17,9 +17,10 @@ global.$ = $;
 const LOG_PREFFIX = 'BP-injet';
 
 const bpassbookStream = new PostMessageDuplexStream({
-  name: CHANNEL_INJET_CONTENTSCRIPT,
-  target: CHANNEL_CONTENTSCRIPT_INJET,
+  name: CLI_CONN_INJET,
+  target: BACKEND_CONN_CONTENTSCRIPT,
 });
+
 injetStartup();
 
 let ctx = null;
@@ -33,24 +34,53 @@ function injetStartup() {
   controller.checkedLoginForm(window.document);
 
   if (controller.hasLoginForm) {
-    console.log(`${LOG_PREFFIX}- document>>>`, controller.getState());
+    console.log(`${LOG_PREFFIX}:ontroller State>>>`, controller.getState());
     windowResizeObserve(controller);
   }
 
-  // window.addEventListener('DOMContentLoaded', domLoadedHandle);
+  bpassbookStream.on('data', function (message) {
+    console.log(`${LOG_PREFFIX}:bpassbookStream on data>>>`, message, controller.hasLoginForm);
 
-  // chrome.runtime.onConnect.addListener(function (inputorPort){
-  //   const { name } = inputorPort
-  //   console.log(`${LOG_PREFFIX} >>> an inputor connected`,name)
-  // })
+    if (controller.hasLoginForm && message.item) {
+      console.log(`${LOG_PREFFIX}:bpassbookStream on ctx>>>`, message.item, controller);
+      controller.fillInputField(message.item);
+    } else {
+    }
+    console.log(`${LOG_PREFFIX} >>bpassbookStream on data>`, window);
+  });
 
-  // chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-  //   // console.log(`${LOG_PREFFIX}-message listener>>>`, message)
-  //   // console.log(`${LOG_PREFFIX}-message sender>>>`, sender)
-  //   // console.log(`${LOG_PREFFIX}-message sendResponse>>>`, sendResponse({ resp: 'ok' }))
-  //   // console.log(`${LOG_PREFFIX}-message document>>>`, document.querySelector('#fm-login-id'))
+  bpassbookStream.on('end', function (message) {
+    console.log(`${LOG_PREFFIX} >>bpassbookStream on End>`, message);
+  });
 
-  // })
+  /**
+   * 接收 inputor message and fill it
+   */
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    const { item, apiType } = message;
+    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, apiType, item, controller.hasLoginForm);
+    console.log(`${LOG_PREFFIX}-sender>>>`, sender);
+    if (controller.hasLoginForm) {
+      const { hostname, origin } = window.location;
+      console.log(`${LOG_PREFFIX}-host>>>`, hostname, origin);
+      switch (apiType) {
+        case APITYPE_FILL_PBITEM:
+          controller.fillInputField(message.item);
+          sendResponse({ data: hostname });
+          break;
+        case APITYPE_GET_PBITEM:
+          const data = controller.getInputFieldData();
+          data.hostname = hostname;
+          data.origin = origin;
+          sendResponse({ data });
+          break;
+        default:
+          break;
+      }
+
+      console.log(`${LOG_PREFFIX}-host>>>`, window.location.hostname);
+    }
+  });
 }
 
 function windowResizeObserve(controller) {
@@ -59,10 +89,10 @@ function windowResizeObserve(controller) {
 
   function handleWindowResize(entries, observer) {
     const state = controller.getState();
-    console.log(`${LOG_PREFFIX}-Store get>>>`, state, entries, observer);
+    //console.log(`${LOG_PREFFIX}-Store get>>>`, state, entries, observer);
     if (controller.currentTarget) {
       const position = getElPosition(controller.currentTarget);
-      console.log(`${LOG_PREFFIX}-Position>>>`, position);
+      console.log(`${LOG_PREFFIX}-Position Changed>>>`, position);
       if (position) {
         controller.updatePosition(position);
       }
@@ -72,51 +102,6 @@ function windowResizeObserve(controller) {
 
 function domLoadedHandle(event) {
   console.log(`${LOG_PREFFIX}-`, event);
-
-  // window.addEventListener('message', handleMessage);
-
-  // let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 100));
-  // if (controller.hasLoginForm) {
-  //   DomSizeObs.observe(window.document.body);
-  //   window.addEventListener('message', handleMessage);
-  // } else {
-  //   console.log('Webpage No login field....');
-  // }
-
-  // function handleWindowResize(entries, observer) {
-  //   const state = controller.getState();
-  //   // console.log('Store get>>>', state, controller.currentTarget);
-  //   if (controller.currentTarget) {
-  //     const position = getElPosition(controller.currentTarget);
-  //     // console.log('namePosition>>>', position);
-  //     controller.updatePosition(position);
-  //   }
-  // }
-
-  // bpassbookStream.on('data', function (message) {
-  //   // console.log(`${LOG_PREFFIX} >>bpassbookStream on data>`, message, window.self === window.top, controller);
-
-  //   if (controller.hasLoginForm && message.item) {
-  //     // console.log(`${LOG_PREFFIX} >>bpassbookStream on ctx>`, message.item, controller);
-  //     controller.fillInputField(message.item);
-  //   }
-  // });
-
-  // function handleMessage(event) {
-  //   const { origin, source, type, data } = event;
-  //   // console.log(`${LOG_PREFFIX} =>>>handleMessage>>>`, event);
-  //   // console.log(
-  //   //   `${LOG_PREFFIX} =>>>handleMessage> Recvi>>`,
-  //   //   origin,
-  //   //   'source>>',
-  //   //   source,
-  //   //   'type>>',
-  //   //   type,
-  //   //   'data>>>',
-  //   //   data
-  //   // );
-  //   // console.log(`${LOG_PREFFIX} ===>> data`, data);
-  // }
 }
 
 function fillField(item, controller) {}

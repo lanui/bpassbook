@@ -7,19 +7,22 @@ import ext from '../lib/extensionizer';
 
 import { name } from '../../package.json';
 
-import { CONN_CONTENTS_NAME, CONN_BPJET_NAME, ENCODING_UTF8 } from '@/lib/cnst/connection-cnst.js';
-import { APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/corejs/enums';
+import {
+  BACKEND_CONN_NAME,
+  BACKEND_CONN_CONTENTSCRIPT,
+  CLI_CONN_INJET,
+  ENCODING_UTF8,
+} from '@/lib/cnst/connection-cnst.js';
 
-import { CHANNEL_INJET_CONTENTSCRIPT, CHANNEL_CONTENTSCRIPT_INJET } from '@/corejs/enums';
+import { APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/lib/cnst/api-cnst';
 
 const LOG_PREFFIX = 'BP-contentScript';
-const injetContent = 'const BPassword="v1.1;"';
 
 const extName = name || 'BPassword';
 
 if (shouldInjectController()) {
   injectCss();
-  injectScript(injetContent);
+  injectScript();
   startup();
 }
 
@@ -35,15 +38,15 @@ function setupMessage() {
 async function setupStream() {
   //创建
   const pageStream = new PostMessageDuplexStream({
-    name: CONN_CONTENTS_NAME,
-    target: CHANNEL_INJET_CONTENTSCRIPT,
+    name: BACKEND_CONN_CONTENTSCRIPT,
+    target: CLI_CONN_INJET,
   });
 
   const extid = chrome.runtime.id;
   // console.log(`${LOG_PREFFIX} >setupStream>>`, ext);
-  pageStream._write('shift from contentscript.........' + extid, ENCODING_UTF8, function (e) {
-    console.log(`${LOG_PREFFIX} >>send callback>>`, e, this);
-  });
+  // pageStream._write('shift from contentscript.........' + extid, ENCODING_UTF8, function (e) {
+  //   console.log(`${LOG_PREFFIX} >>send callback>>`, e, this);
+  // });
 
   // {active:true,currentWindow:true}
 
@@ -56,16 +59,18 @@ async function setupStream() {
   pump(pageMux, pageStream, pageMux, (err) => logStreamDisconnectWarning(`${extName} Injet Multiplex`, err));
 
   //与background 交互长连接
-  const extensionPort = ext.runtime.connect({ name: CONN_CONTENTS_NAME });
+  const extensionPort = ext.runtime.connect({ name: BACKEND_CONN_CONTENTSCRIPT });
 
   extensionPort.onMessage.addListener(function (message, sender) {
     const { apiType, data } = message;
+
+    console.log(`${LOG_PREFFIX}: Recv Backend Message:`, message);
     switch (apiType) {
       case APITYPE_CONTENTSCRIPTS_TRANSFER:
-        console.log(`${LOG_PREFFIX} extensionPort.onMessage.addListener switch>>>`, apiType, data);
+        console.log(`${LOG_PREFFIX}-RECV: ${apiType}>>>`, apiType, data);
         console.log(`${LOG_PREFFIX} >>`, window);
         pageStream._write(data, ENCODING_UTF8, (resp) => {
-          console.log(`${LOG_PREFFIX}>>>>` + 'extensionPort.onMessage.addListener success');
+          console.log(`${LOG_PREFFIX}>>>>` + 'extensionPort.onMessage.addListener success', resp);
         });
         break;
 
@@ -76,7 +81,8 @@ async function setupStream() {
   });
 
   const extensionStream = new PortStream(extensionPort);
-  console.log('>>extensionPort>>', extensionPort, extensionStream);
+
+  console.log(`${LOG_PREFFIX}: Create ExtensionPort`, extensionPort, extensionStream);
   const extensionMux = new ObjectMultiplex();
   extensionMux.setMaxListeners(25);
   pump(extensionMux, extensionStream, extensionMux, (err) =>

@@ -96,6 +96,24 @@ export class FieldsController extends EventEmitter {
     this.removeBPIcon();
   }
 
+  getInputFieldData() {
+    const formData = {
+      username: '',
+      password: '',
+      hostname: '',
+      origin: '',
+    };
+
+    if (this.targetPassword) {
+      formData.password = this.targetPassword.value;
+    }
+    if (this.targetUserName) {
+      formData.username = this.targetUserName.value;
+    }
+
+    return formData;
+  }
+
   removeBPIcon() {
     removeIcon();
   }

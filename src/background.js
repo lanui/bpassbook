@@ -11,30 +11,21 @@ import LocalStore from '@/lib/storage/local-store';
 import ContextController from '@/corejs/context-controller';
 import createStreamSink from '@/lib/storage/createStreamSink';
 
-import {
-  APITYPE_INIT_STATE,
-  APITYPE_UPDATE_UNLOCKED,
-  APITYPE_PWD_INCORRECT,
-  APITYPE_SELECTED_PBITEM,
-  APITYPE_CONTENTSCRIPTS_TRANSFER,
-  APITYPE_LOGIN_PASS,
-  APITYPE_REDIRECT_APP,
-  APITYPE_LOGOUT,
-} from './corejs/enums';
+import { APITYPE_UPDATE_UNLOCKED, APITYPE_PWD_INCORRECT, APITYPE_LOGOUT } from './corejs/enums';
 
 import {
-  BACKEND_CONN_NAME,
   BACKEND_CONN_POPUP,
   BACKEND_CONN_FULLSCREEN,
   BACKEND_CONN_CONTENTSCRIPT,
   CLI_CONN_INPUTOR,
-  CLI_CONN_INJET,
-  CONN_CONTENTS_NAME,
 } from '@/lib/cnst/connection-cnst.js';
+
+import { APITYPE_INIT_STATE, APITYPE_SELECTED_PBITEM, APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/lib/cnst/api-cnst';
 
 import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
 
 import pump from 'pump';
+import { checkFormFields } from './bpjet/inpage/fields-controller';
 
 const LOG_PREFFIX = 'background';
 
@@ -128,6 +119,8 @@ async function setupController(initState) {
   function connectRemote(remotePort) {
     const processName = remotePort.name;
 
+    console.log('cli-connection Create >>>>>', processName, remotePort.sender);
+
     const isInternalProcess = extensionInternalProcessHash[processName];
 
     const data = controller.store.getState();
@@ -172,7 +165,7 @@ async function setupController(initState) {
         } else {
         }
 
-        //remotePort.postMessage({ apiType: 'initState', data: sendData });
+        // remotePort.postMessage({ apiType: 'initState', data: sendData });
         // remotePort.onMessage.addListener((msg)=>{
         //   console.log("Tab msg:",msg)
         // })
@@ -208,10 +201,12 @@ async function setupController(initState) {
           case APITYPE_SELECTED_PBITEM:
             const transData = msg.data;
             const tabId = transData.tabId;
-            console.log('transData>>>>>>>>>>>', transData, tabId);
+            console.log('transData:>>>>>>>>>>>', transData, tabId);
+            console.log('chrome-tab>>>>>>>>>>>', transData, tabId, remotePort);
+
             //remotePort.postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
             if (contentScriptsPorts[tabId]) {
-              console.log('ContentScript>>>', contentScriptsPorts[tabId]);
+              console.log('transData:ContentScript>>>', contentScriptsPorts[tabId]);
               contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
             }
             break;

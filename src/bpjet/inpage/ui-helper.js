@@ -160,17 +160,17 @@ export function getElPosition($target) {
   if (!$target && $target.getClientRects()[0]) return false;
   const rects = $target.getClientRects();
   console.log(`${LOG_PREFFIX}-rects>>>> `, $target, $target.getClientRects());
-  const iconSize = getIconSize(rects[0].height || $target.offsetHeight);
+  const iconSize = getIconSize(rects[0]?.height || $target.offsetHeight || $target.clientHeight);
 
   return {
-    x: rects[0].x,
-    y: rects[0].y,
-    height: rects[0].height,
-    width: rects[0].width,
-    top: rects[0].top,
-    right: rects[0].right,
-    left: rects[0].left,
-    bottom: rects[0].bottom,
+    x: rects[0]?.x || 0,
+    y: rects[0]?.y || 0,
+    height: rects[0]?.height || 0,
+    width: rects[0]?.width || 0,
+    top: rects[0]?.top || 0,
+    right: rects[0]?.right || 0,
+    left: rects[0]?.left || 0,
+    bottom: rects[0]?.bottom || 0,
     offsetWidth: $target.offsetWidth,
     offsetHeight: $target.offsetHeight,
     clientHeight: $target.clientHeight,

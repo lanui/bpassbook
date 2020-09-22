@@ -12,6 +12,8 @@
 <script>
 import icon from '@/icons/icon_128.png';
 import { sendMessage } from '@/inputor/controller';
+
+import { APITYPE_FILL_PBITEM } from '@/lib/cnst/api-cnst.js';
 export default {
   name: 'InputorHeadIcon',
   data() {
@@ -26,7 +28,11 @@ export default {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
-        sendMessage($remotePort, { item, tabId, tabUrl });
+        console.log(`Ext Inputor logo tabs:`, tabs[0].host);
+
+        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tabId, tabUrl }, function (response) {
+          console.log(response);
+        });
       });
     },
   },
