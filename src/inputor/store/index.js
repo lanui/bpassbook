@@ -10,11 +10,13 @@ export default new Vuex.Store({
   actions,
   getters: {
     isUnlocked: (state) => state.isUnlocked,
+    selectedAddress: (state) => state.selectedAddress,
     items: (state) => (state.items ? state.items : []),
   },
   mutations,
   state: {
     isUnlocked: false,
+    selectedAddress: '',
     items: [], //{username,password,hostname,...}
   },
 });

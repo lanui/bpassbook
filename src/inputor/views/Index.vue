@@ -39,6 +39,7 @@ import { postMsgToPage } from '../helper';
 import { sendMessage } from '../controller';
 
 import HeadIcon from './widgets/HeadIcon.vue';
+import { APITYPE_FILL_PBITEM } from '@/lib/cnst/api-cnst.js';
 
 const LOG_PREFFIX = 'BP-inputor:Index-';
 export default {
@@ -47,29 +48,33 @@ export default {
     HeadIcon,
   },
   computed: {
-    ...mapGetters(['items']), //'isUnlocked'
+    ...mapGetters(['items', 'isUnlocked']), //'isUnlocked'
     hasItems() {
       return Boolean(this.items && this.items.length > 0);
     },
   },
   data() {
     return {
-      isUnlocked: true,
+      // isUnlocked: true,
       icon: icon,
       tItems: [],
     };
   },
   methods: {
     sendFillMessage(item) {
-      console.log('Send >> ', item, window.document.querySelector('#username'));
-      console.log('Host>>', window.location.href);
-      postMsgToPage(item);
-      console.log('Host>>', window.location.host);
-
+      // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      //   const tabId = tabs[0].id;
+      //   const tabUrl = tabs[0].url;
+      //   sendMessage($remotePort, { item, tabId, tabUrl });
+      // });
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
-        sendMessage($remotePort, { item, tabId, tabUrl });
+        console.log(`Ext Inputor logo tabs:`, tabs[0].host);
+
+        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tabId, tabUrl }, function (response) {
+          console.log(response);
+        });
       });
     },
     addItemHandle() {

@@ -9,3 +9,5 @@ export const APITYPE_FILL_PBITEM = 'fillPBitemToLoginForm';
 export const APITYPE_GET_PBITEM = 'getPBitemFromLoginForm';
 //
 export const APITYPE_CONTENTSCRIPTS_TRANSFER = 'contentScriptTransfer';
+
+export const APITYPE_INPUTOR_ADDITEM = 'inputorAddItem';

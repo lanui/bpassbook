@@ -5,8 +5,13 @@ const routes = [
   {
     path: '/',
     alias: '/index',
-    component: InputorIndex,
+    component: InputorAddPassbook,
   },
+  // {
+  //   path: '/',
+  //   alias: '/index',
+  //   component: InputorIndex,
+  // },
   {
     path: '/addPassbook',
     component: InputorAddPassbook,

@@ -1,13 +1,14 @@
 import { openDB } from 'idb';
 
 const DEFAULT_DB_SCHEMA = 'bpassbook';
+const DB_VERSION = 2;
 
-import { DB_SCHEMAS, ACCOUNT_SCHEMA, BOOK_SCHEMA } from './enums';
+import { DB_SCHEMAS, ACCOUNT_SCHEMA, BOOK_SCHEMA, GITBOOK_SCHEMA } from './enums';
 
 class IDB {
   constructor(opts = {}) {
     this.dbName = opts.dbName || DEFAULT_DB_SCHEMA;
-    this.dbVersion = opts.dbVersion || 1;
+    this.dbVersion = DB_VERSION;
     this.initialzeDB();
   }
 
@@ -52,6 +53,22 @@ class IDB {
   async setAccount(key, val) {
     _validKey(key);
     return (await this.db).put(ACCOUNT_SCHEMA, val, key);
+  }
+
+  /**
+   *
+   * @param {*} key
+   * @param {*} items
+   */
+  async setGitbook(key, items) {
+    //
+    _validKey(key);
+    return (await this.db).put(GITBOOK_SCHEMA, items, key);
+  }
+
+  async getGitbooks(key) {
+    _validKey(key);
+    return (await this.db).get(GITBOOK_SCHEMA, key);
   }
 
   /** Passbook */

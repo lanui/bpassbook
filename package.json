@@ -31,6 +31,7 @@
     "browser-passworder": "^2.0.3",
     "browserify-unibabel": "^3.0.0",
     "bs58": "^4.0.1",
+    "crypto-js": "^4.0.0",
     "debounce-stream": "^2.0.0",
     "end-of-stream": "^1.4.4",
     "eth-keyring-controller": "^6.1.0",

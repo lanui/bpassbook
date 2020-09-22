@@ -8,8 +8,8 @@ import store from './store';
 import router from './router';
 
 //
-import remotePort from './controller';
-global.$remotePort = remotePort;
+import ctx from './controller';
+global.$ctx = ctx;
 
 global.$inputor = new Vue({
   el: '#RootInputor',

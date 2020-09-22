@@ -19,9 +19,6 @@ import Web3Client from '@/corejs/web3';
 import idbMgr from '@/corejs/indexdb';
 global.$idb = idbMgr;
 
-import { utils } from 'web3';
-global.Web3Util = utils;
-
 // import { getInitChainId } from '@/corejs/local-storage-load.js'
 
 global.browser = require('webextension-polyfill');

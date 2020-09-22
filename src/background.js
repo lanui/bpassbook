@@ -20,12 +20,16 @@ import {
   CLI_CONN_INPUTOR,
 } from '@/lib/cnst/connection-cnst.js';
 
-import { APITYPE_INIT_STATE, APITYPE_SELECTED_PBITEM, APITYPE_CONTENTSCRIPTS_TRANSFER } from '@/lib/cnst/api-cnst';
+import {
+  APITYPE_INIT_STATE,
+  APITYPE_SELECTED_PBITEM,
+  APITYPE_CONTENTSCRIPTS_TRANSFER,
+  APITYPE_INPUTOR_ADDITEM,
+} from '@/lib/cnst/api-cnst';
 
 import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
 
 import pump from 'pump';
-import { checkFormFields } from './bpjet/inpage/fields-controller';
 
 const LOG_PREFFIX = 'background';
 
@@ -62,10 +66,6 @@ async function initialize() {
   const initState = await loadStateFromPersistence();
   console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);
   setupController(initState || {});
-
-  // window.addEventListener('message', function (event) {
-  //   console.log(`${LOG_PREFFIX}-Back revc Window Message>>>`, event);
-  // });
 }
 
 async function setupController(initState) {
@@ -172,49 +172,7 @@ async function setupController(initState) {
       }
     }
 
-    remotePort.onMessage.addListener(async (msg) => {
-      console.log('Report>>>>>listener>>>', remotePort);
-      if (msg && msg.apiType) {
-        log.warn(`recive --type:${msg.apiType}`, msg.data);
-        switch (msg.apiType) {
-          case APITYPE_UPDATE_UNLOCKED:
-            const curstate = controller.store.getState();
-            console.log('APITYPE_UPDATE_UNLOCKED', msg.data, curstate);
-            if (msg.data && msg.data.password && msg.data.env3) {
-              log.warn('send local...', msg.data.password, curstate.env3);
-              const env3 = msg.data.env3;
-              controller.store.updateState({ env3 });
-              const v3 = await controller.appStateController.unlock(msg.data.password, msg.data.env3);
-
-              if (v3) {
-                const newState = getSendData();
-                remotePort.postMessage({ apiType: APITYPE_INIT_STATE, data: newState, redirect: '/index' });
-              } else {
-                remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT, error: { message: 'password incorrect.' } });
-              }
-            }
-            break;
-          case APITYPE_LOGOUT:
-            await controller.appStateController.locked();
-            remotePort.postMessage({ apiType: 'initState', data: getSendData() });
-            break;
-          case APITYPE_SELECTED_PBITEM:
-            const transData = msg.data;
-            const tabId = transData.tabId;
-            console.log('transData:>>>>>>>>>>>', transData, tabId);
-            console.log('chrome-tab>>>>>>>>>>>', transData, tabId, remotePort);
-
-            //remotePort.postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
-            if (contentScriptsPorts[tabId]) {
-              console.log('transData:ContentScript>>>', contentScriptsPorts[tabId]);
-              contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    });
+    portMessageListener(controller, remotePort);
 
     function getSendData() {
       const storeState = controller.store.getState();
@@ -227,6 +185,58 @@ async function setupController(initState) {
       return Object.assign({}, storeState, sendData, extendObj);
     }
   }
+}
+
+// function handleRutimeOnMessage(message,sender,sendResponse) {
+//   console.log(`${LOG_PREFFIX}-runtime Msg`, message, sender, sendResponse)
+//   console.log(`${LOG_PREFFIX}-runtime Msg`, controller)
+// }
+
+function portMessageListener(controller, remotePort) {
+  console.log(`${LOG_PREFFIX}-runtime Msg`, controller);
+  remotePort.onMessage.addListener(async (msg) => {
+    console.log('Report>>>>>listener>>>', remotePort);
+    if (msg && msg.apiType) {
+      log.warn(`recive --type:${msg.apiType}`, msg.data);
+      switch (msg.apiType) {
+        case APITYPE_UPDATE_UNLOCKED:
+          const curstate = controller.store.getState();
+          console.log('APITYPE_UPDATE_UNLOCKED', msg.data, curstate);
+          if (msg.data && msg.data.password && msg.data.env3) {
+            log.warn('send local...', msg.data.password, curstate.env3);
+            const env3 = msg.data.env3;
+            controller.store.updateState({ env3 });
+            const v3 = await controller.appStateController.unlock(msg.data.password, msg.data.env3);
+
+            if (v3) {
+              const newState = getSendData();
+              remotePort.postMessage({ apiType: APITYPE_INIT_STATE, data: newState, redirect: '/index' });
+            } else {
+              remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT, error: { message: 'password incorrect.' } });
+            }
+          }
+          break;
+        case APITYPE_LOGOUT:
+          await controller.appStateController.locked();
+          remotePort.postMessage({ apiType: 'initState', data: getSendData() });
+          break;
+        case APITYPE_SELECTED_PBITEM:
+          const transData = msg.data;
+          const tabId = transData.tabId;
+          console.log('transData:>>>>>>>>>>>', transData, tabId);
+          console.log('chrome-tab>>>>>>>>>>>', transData, tabId, remotePort);
+
+          //remotePort.postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
+          if (contentScriptsPorts[tabId]) {
+            console.log('transData:ContentScript>>>', contentScriptsPorts[tabId]);
+            contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  });
 }
 
 /**

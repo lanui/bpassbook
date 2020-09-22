@@ -11,19 +11,37 @@
           <div class="bp-form-control">
             <div class="label">提示</div>
             <div class="input-field">
-              <input type="text" placeholder="提示" :value="tips" name="tips" />
+              <input
+                type="text"
+                placeholder="提示"
+                @input="$emit('input', $event.target.value)"
+                v-model="tips"
+                name="tips"
+              />
             </div>
           </div>
           <div class="bp-form-control">
             <div class="label">用户名</div>
             <div class="input-field">
-              <input type="text" placeholder="用户名" :value="username" name="username" />
+              <input
+                type="text"
+                @input="$emit('input', $event.target.value)"
+                placeholder="用户名"
+                v-model="username"
+                name="username"
+              />
             </div>
           </div>
           <div class="bp-form-control">
             <div class="label">密码</div>
             <div class="input-field">
-              <input type="text" placeholder="密码" :value="password" name="password" />
+              <input
+                type="text"
+                @input="$emit('input', $event.target.value)"
+                placeholder="密码"
+                v-model="password"
+                name="password"
+              />
             </div>
           </div>
           <div class="bp-form-control">
@@ -45,6 +63,8 @@ import { APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
 
 import HeadIcon from './widgets/HeadIcon.vue';
 
+import { encrypt, decrypt } from '@/lib/powershit';
+
 const LOG_PREFFIX = 'BP-inputor:addItem';
 export default {
   name: 'InputorAddPassbook',
@@ -53,7 +73,7 @@ export default {
   },
   data() {
     return {
-      origin: 'https://vuetifyjs.com/',
+      origin: '',
       tips: '',
       username: '',
       password: '',
@@ -68,7 +88,29 @@ export default {
   methods: {
     resetValid() {},
     saveHandle() {
-      this.getFormDataFromInjet();
+      //this.getFormDataFromInjet();
+
+      const message = {
+        tips: this.tips,
+        origin: this.origin,
+        username: this.username,
+        password: this.password,
+      };
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', message);
+
+      // const address = "0x79F3eD68873E28ad7F72597b56326b2Fc2fEE26B"
+
+      // const entext = encrypt(message,address)
+      // console.log("enText>>>",entext)
+      // const deText = decrypt(entext,address)
+      //  console.log("deText>>>",deText)
+
+      function callBack(resp) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>.', resp);
+      }
+      callBack.bind(this);
+
+      $ctx.sendAddItemOnce(message, callBack);
     },
     getFormDataFromInjet() {
       const that = this;
@@ -78,7 +120,7 @@ export default {
         chrome.tabs.sendMessage(tabId, { apiType: APITYPE_GET_PBITEM, item: {}, tabId, tabUrl }, function (response) {
           console.log(`${LOG_PREFFIX} message back >>>>`, response);
           const { data } = response;
-          that.fillData(response.data);
+          if (response.data) that.fillData(response.data);
         });
       });
     },

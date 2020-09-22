@@ -7,4 +7,7 @@ export default {
   [types.UPDATE_ITEMS](state, items) {
     state.items = typeof items === 'object' && items.length ? items : [];
   },
+  [types.UPDATE_SELECTED_ADDRESS](state, selectedAddress) {
+    state.selectedAddress = selectedAddress;
+  },
 };
