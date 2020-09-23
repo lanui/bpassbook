@@ -6,3 +6,11 @@ export const updateState = async ({ commit }, payload = {}) => {
   if (items) commit(types.UPDATE_ITEMS, items);
   commit(types.UPDATE_SELECTED_ADDRESS, selectedAddress);
 };
+
+export const updateInitState = async ({ commit }, initState = {}) => {
+  const { isUnlocked, GitbookController, AppStateController } = initState;
+  commit(types.UPDATE_ISUNLOCK, isUnlocked);
+  commit(types.UPDATE_SELECTED_ADDRESS, AppStateController?.selectedAddress || '');
+  const items = GitbookController?.passbook;
+  if (items) commit(types.UPDATE_ITEMS, items);
+};

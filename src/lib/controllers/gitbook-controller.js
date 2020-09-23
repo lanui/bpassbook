@@ -64,7 +64,7 @@ class GitbookController extends EventEmitter {
   async addBookToStore(item, address) {
     if (!validBookItem(item)) {
       log.warn('item miss,no update store');
-      return;
+      throw { code: 200001, message: 'params lost.' };
     }
     const ts = new Date().getTime();
     const state = await this.store.getState();
@@ -73,7 +73,7 @@ class GitbookController extends EventEmitter {
     }
     if (address == '') {
       log.warn('address miss,no update store');
-      return;
+      return false;
     }
     const storeCipher = state?.cipher || '';
     let items = [];
@@ -92,7 +92,7 @@ class GitbookController extends EventEmitter {
     }
 
     const originJSONStr = JSON.stringify(items);
-    const newCipher = encryptor(originJSONStr, address);
+    const newCipher = await encryptor(originJSONStr, address);
 
     const newState = {
       ts,
@@ -133,7 +133,7 @@ class GitbookController extends EventEmitter {
       items.splice(index, 1);
     }
     const originJSONStr = JSON.stringify(items);
-    const newCipher = encryptor(originJSONStr, address);
+    const newCipher = await encryptor(originJSONStr, address);
 
     const newState = {
       ts,

@@ -14,7 +14,7 @@
       <v-col cols="10" class="mt-4">
         <v-form ref="passItemForm">
           <v-text-field
-            v-model="data.url"
+            v-model="data.origin"
             :label="'URL'"
             outlined
             rounded
@@ -76,6 +76,10 @@
 </template>
 
 <script>
+import WhispererController from '@/lib/controllers/whisperer-controller';
+import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
+import { validItem } from '@/ui/constants/valid-rules';
+
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
 export default {
   name: 'AddPassbookItem',
@@ -86,7 +90,8 @@ export default {
         keystone: LOCKED_LINK_MDI,
       },
       data: {
-        url: '',
+        hostname: '',
+        origin: '',
         tips: '',
         username: '',
         password: '',
@@ -94,6 +99,7 @@ export default {
       ctrl: {
         loading: false,
       },
+      error: '',
       rules: {
         required: [(v) => !!v || 'required'],
       },
@@ -102,22 +108,53 @@ export default {
   methods: {
     saveHandle() {
       if (this.$refs.passItemForm.validate()) {
-        const item = this.data;
+        const item = Object.assign(
+          {
+            hostname: '',
+          },
+          this.data
+        );
         console.log('data>>>>', item);
+
+        try {
+          validItem(item);
+        } catch (e) {
+          this.error = e;
+          setTimeout(() => {
+            this.error = '';
+          }, 6000);
+          return;
+        }
         this.ctrl.loading = true;
-        this.$store
-          .dispatch('passbook/addItem', item)
-          .then((ret) => {
-            console.log('save success', ret);
-            setTimeout(() => {
-              this.ctrl.loading = false;
-              this.$refs.passItemForm.reset();
-              //this.$store.dispatch('passbook/reloadItemsFromLocal');
-            }, 1000);
+        const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
+
+        whisperer
+          .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)
+          .then(async (initstate) => {
+            await this.$store.dispatch('updateInitState', initstate);
+            this.ctrl.loading = false;
+            this.$router.go(-1);
           })
           .catch((err) => {
             this.ctrl.loading = false;
+            this.error = err;
+            setTimeout(() => {
+              this.error = '';
+            }, 6000);
           });
+        // this.$store
+        //   .dispatch('passbook/addItem', item)
+        //   .then((ret) => {
+        //     console.log('save success', ret);
+        //     setTimeout(() => {
+        //       this.ctrl.loading = false;
+        //       this.$refs.passItemForm.reset();
+        //       //this.$store.dispatch('passbook/reloadItemsFromLocal');
+        //     }, 1000);
+        //   })
+        //   .catch((err) => {
+        //     this.ctrl.loading = false;
+        //   });
       }
     },
   },

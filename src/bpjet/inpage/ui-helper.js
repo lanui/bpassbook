@@ -159,7 +159,7 @@ export function createSelectLockBox(opts, list, isUnlocked) {
 export function getElPosition($target) {
   if (!$target && $target.getClientRects()[0]) return false;
   const rects = $target.getClientRects();
-  console.log(`${LOG_PREFFIX}-rects>>>> `, $target, $target.getClientRects());
+  // console.log(`${LOG_PREFFIX}-rects>>>> `, $target, $target.getClientRects());
   const iconSize = getIconSize(rects[0]?.height || $target.offsetHeight || $target.clientHeight);
 
   return {

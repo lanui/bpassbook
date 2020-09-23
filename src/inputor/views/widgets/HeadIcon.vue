@@ -23,6 +23,7 @@ export default {
   },
   methods: {
     clickHandle() {
+      return;
       const item = { username: 'llll', password: 'xxx' };
       console.log('Ext Inputor logo>>>>', item, chrome.tabs);
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

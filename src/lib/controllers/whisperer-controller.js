@@ -29,7 +29,7 @@ class WhispererController {
             if (response.error) {
               reject(response.error);
             } else {
-              resolve(response.data);
+              resolve(response);
             }
           }
         );

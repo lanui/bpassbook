@@ -6,8 +6,19 @@
     <v-row justify="center">
       <v-col cols="10" class="py-0 px-2">
         <v-form class="inputor-item-form">
-          <div class="text-center my-1">{{ origin }}</div>
-
+          <div class="text-center my-1" v-if="Boolean(hostname)">{{ origin }}</div>
+          <div class="bp-form-control my-1" v-if="!Boolean(hostname)">
+            <div class="label">网站</div>
+            <div class="input-field">
+              <input
+                type="text"
+                placeholder="网站地址"
+                @input="$emit('input', $event.target.value)"
+                v-model="origin"
+                name="origin"
+              />
+            </div>
+          </div>
           <div class="bp-form-control">
             <div class="label">提示</div>
             <div class="input-field">
@@ -45,7 +56,9 @@
             </div>
           </div>
           <div class="bp-form-control">
-            <div class="error text-danger" v-if="!!error">密码不能为空</div>
+            <div class="error text-danger" v-if="!!error">
+              {{ error }}
+            </div>
           </div>
         </v-form>
       </v-col>
@@ -65,7 +78,12 @@ import HeadIcon from './widgets/HeadIcon.vue';
 
 import { encryptor, decryptor } from '@/lib/powershit';
 
+import WhispererController from '@/lib/controllers/whisperer-controller';
+import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
+import { validItem } from '@/ui/constants/valid-rules';
+
 const LOG_PREFFIX = 'BP-inputor:addItem';
+
 export default {
   name: 'InputorAddPassbook',
   components: {
@@ -91,29 +109,40 @@ export default {
     saveHandle() {
       //this.getFormDataFromInjet();
 
-      const message = {
+      const item = {
         tips: this.tips,
         origin: this.origin,
         username: this.username,
         password: this.password,
         hostname: this.hostname,
       };
-      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>', message);
 
-      // const address = "0x79F3eD68873E28ad7F72597b56326b2Fc2fEE26B"
-
-      // const entext = encryptor(message,address)
-      // console.log("enText>>>",entext)
-      // const deText = decryptor(entext,address)
-      //  console.log("deText>>>",deText)
-
-      function callBack(resp) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>.', resp);
+      try {
+        validItem(item);
+      } catch (e) {
+        this.error = e;
+        setTimeout(() => {
+          this.error = '';
+        }, 6000);
+        return;
       }
-      callBack.bind(this);
 
-      $ctx.sendAddItemOnce(message, callBack);
+      const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
+
+      whisperer
+        .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)
+        .then(async (initstate) => {
+          await this.$store.dispatch('updateInitState', initstate);
+          this.$router.go(-1);
+        })
+        .catch((err) => {
+          this.error = err;
+          setTimeout(() => {
+            this.error = '';
+          }, 6000);
+        });
     },
+
     getFormDataFromInjet() {
       const that = this;
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {

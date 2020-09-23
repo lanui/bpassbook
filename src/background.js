@@ -232,7 +232,20 @@ async function setupController(initState) {
           }
         });
         break;
-
+      case APITYPE_INPUTOR_ADDITEM:
+        controller.gitbookController
+          .addBookToStore(message.data, controller.getSelectedAddress())
+          .then(async (resp) => {
+            if (isFn && resp) {
+              sendResponse(controller.getInitState());
+            }
+          })
+          .catch((err) => {
+            if (isFn && err) {
+              sendResponse(controller.getInitState());
+            }
+          });
+        break;
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
           .addBookToStore(message.data, controller.getSelectedAddress())
@@ -288,12 +301,12 @@ function portMessageListener(controller, remotePort) {
             contentScriptsPorts[tabId].postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
           }
           break;
-        case APITYPE_INPUTOR_ADDITEM:
-          console.log(APITYPE_INPUTOR_ADDITEM, 'addItem>>>', contentScriptsPorts[tabId]);
-          if (msg.data && msg.data.item && controller.getSelectedAddress()) {
-            controller.gitbookController.addBookToStore(msg.data.item, controller.getSelectedAddress());
-          }
-          break;
+        // case APITYPE_INPUTOR_ADDITEM:
+        //   console.log(APITYPE_INPUTOR_ADDITEM, 'addItem>>>', contentScriptsPorts[tabId]);
+        //   if (msg.data && msg.data.item && controller.getSelectedAddress()) {
+        //     controller.gitbookController.addBookToStore(msg.data.item, controller.getSelectedAddress());
+        //   }
+        //   break;
         default:
           break;
       }

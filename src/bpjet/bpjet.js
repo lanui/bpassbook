@@ -36,6 +36,7 @@ function injetStartup() {
   if (controller.hasLoginForm) {
     console.log(`${LOG_PREFFIX}:ontroller State>>>`, controller.getState());
     windowResizeObserve(controller);
+    windowScrollObserve(controller);
   }
 
   bpassbookStream.on('data', function (message) {
@@ -84,15 +85,27 @@ function injetStartup() {
 }
 
 function windowResizeObserve(controller) {
-  let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 50));
+  let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 10));
   DomSizeObs.observe(window.document.body);
 
   function handleWindowResize(entries, observer) {
-    const state = controller.getState();
     //console.log(`${LOG_PREFFIX}-Store get>>>`, state, entries, observer);
     if (controller.currentTarget) {
       const position = getElPosition(controller.currentTarget);
-      console.log(`${LOG_PREFFIX}-Position Changed>>>`, position);
+      // console.log(`${LOG_PREFFIX}-Position Changed>>>`, position);
+      if (position) {
+        controller.updatePosition(position);
+      }
+    }
+  }
+}
+
+function windowScrollObserve(controller) {
+  window.addEventListener('scroll', debounce(handleWindowResize, 5));
+
+  function handleWindowResize(e) {
+    if (controller.currentTarget) {
+      const position = getElPosition(controller.currentTarget);
       if (position) {
         controller.updatePosition(position);
       }

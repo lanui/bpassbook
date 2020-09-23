@@ -16,7 +16,20 @@
       <v-col cols="10" v-if="isUnlocked" class="px-0 py-0 pt-1">
         <v-virtual-scroll v-if="hasItems" :items="items" :item-height="28" height="56">
           <template v-slot="{ item }">
-            <v-btn block text small @click="sendFillMessage(item)">{{ item.username }}</v-btn>
+            <v-btn block text small @click="sendFillMessage(item)">
+              <span style="text-transform: none;">
+                {{ item.username }}
+              </span>
+              <span style="font-size: 0.75rem; text-transform: uppercase;">
+                {{
+                  item.hostname && item.hostname.split('.').length > 2
+                    ? '-' + item.hostname.split('.')[1]
+                    : item.hostname && item.hostname.split('.').length == 2
+                    ? '-' + item.hostname.split('.')[0]
+                    : ''
+                }}
+              </span>
+            </v-btn>
           </template>
         </v-virtual-scroll>
         <div class="body-1" v-if="!hasItems">
@@ -89,4 +102,8 @@ export default {
   mounted() {},
 };
 </script>
-<style></style>
+<style>
+.v-btn-none {
+  text-transform: none;
+}
+</style>
