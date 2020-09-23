@@ -17,3 +17,4 @@ export const APITYPE_LOGOUT = 'logout';
 
 export const APITYPE_UPDATE_PBITEM = 'updatePassbookItemProps';
 export const APITYPE_DELETE_PBITEM = 'deletePassbookItemProps';
+export const APITYPE_CREATE_ENV3 = 'createEnv3Wallet';

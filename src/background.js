@@ -22,6 +22,7 @@ import {
 
 import {
   APITYPE_INIT_STATE,
+  APITYPE_CREATE_ENV3,
   APITYPE_SELECTED_PBITEM,
   APITYPE_CONTENTSCRIPTS_TRANSFER,
   APITYPE_INPUTOR_ADDITEM,
@@ -197,6 +198,18 @@ async function setupController(initState) {
     const { apiType } = message;
     const isFn = typeof sendResponse === 'function';
     switch (apiType) {
+      case APITYPE_CREATE_ENV3:
+        controller
+          .createWalletData(message.data)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(resp);
+            }
+          })
+          .catch((err) => {
+            sendResponse({ error: err.message });
+          });
+        break;
       case APITYPE_UPDATE_UNLOCKED:
         controller
           .unlocked(message.password)

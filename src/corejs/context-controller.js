@@ -125,6 +125,24 @@ class ContextController extends EventEmitter {
 
     return this.getInitState();
   }
+
+  async createWalletData(data) {
+    const { env3, password, v3 } = data;
+
+    if (!env3) throw new { code: 100009, message: 'lost env3' }();
+
+    if (!password || !v3) throw { code: 100008, message: 'lost v3 or password' };
+
+    try {
+      const initState = Object.assign(this.store.getState(), { env3 });
+      await this.store.putState(initState);
+      const v3 = await this.appStateController.unlock(password, env3);
+      return this.getInitState();
+    } catch (err) {
+      console.warn(err);
+      throw err;
+    }
+  }
 }
 
 export default ContextController;

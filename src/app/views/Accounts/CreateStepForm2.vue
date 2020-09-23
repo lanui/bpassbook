@@ -1,11 +1,11 @@
 <template>
-  <v-card class="mx-auto px-2"
-    outlined>
+  <v-card class="mx-auto px-2" outlined>
     <v-card-title>
       Generator Mnemonic Seeds
     </v-card-title>
     <v-form ref="EIP39" class="mx-2">
-      <v-row class="d-flex" >
+      <input type="hidden" v-model="mnemonics" ref="mnemonicsText" />
+      <v-row class="d-flex">
         <v-col class="flex-grow-1 flex-shrink-0">
           <v-textarea
             dense
@@ -20,12 +20,12 @@
             :value="mnemonics"
             label="Mnemonics"
             type="text"
-            >
+          >
           </v-textarea>
         </v-col>
+        <!-- @click="clipboradSeeds" -->
         <v-col class="flex-grow-0 flex-shrink-1 align-self-end pb-8">
-          <v-btn @click.stop="clipboradSeeds"
-            icon :disabled="!Boolean(mnemonics)">
+          <v-btn ref="clipboardBtn" :data-clipboard-text="mnemonics" icon :disabled="!Boolean(mnemonics)">
             <v-icon>
               mdi-clipboard-text-multiple-outline
             </v-icon>
@@ -35,21 +35,17 @@
     </v-form>
     <v-card-actions class="">
       <v-row justify="center">
-        <v-col class="text-center ">
-          <v-btn @click="stepTo(1)"
-            outlined  color="indigo" class="mx-4 ma-6">
+        <v-col class="text-center">
+          <v-btn @click="stepTo(1)" outlined color="indigo" class="mx-4 ma-6">
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
             Previous
           </v-btn>
-          <v-btn @click="generateSeeds"
-            :disabled="saved"
-            outlined  color="indigo" class="mx-4 ma-6">
+          <v-btn @click="generateSeeds" :disabled="saved" outlined color="indigo" class="mx-4 ma-6">
             Generate
           </v-btn>
-          <v-btn @click="stepTo(3)"
-            outlined  color="indigo" class="mx-4 ma-6">
+          <v-btn @click="stepTo(3)" outlined color="indigo" class="mx-4 ma-6">
             Next
             <v-icon right>
               mdi-chevron-double-right
@@ -58,20 +54,10 @@
         </v-col>
       </v-row>
     </v-card-actions>
-    <v-snackbar :timeout="4000"
-      v-model="showNotifier"
-      centered
-      :elevation="1">
-
+    <v-snackbar :timeout="4000" v-model="showNotifier" centered :elevation="1">
       {{ notifyMessage }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          text
-          icon
-          v-bind="attrs"
-          @click="showNotifier = false"
-        >
+        <v-btn color="pink" text icon v-bind="attrs" @click="showNotifier = false">
           <v-icon>
             mdi-close
           </v-icon>
@@ -82,43 +68,52 @@
 </template>
 
 <script>
+import Clipboard from 'clipboard';
 export default {
   name: 'CreateStepFormTwo',
   data() {
     return {
-      pwdHide:true,
-      mnemonics:'',
-      showNotifier:false,
-      notifyMessage:'Mnemonic words Copied.'
-    }
+      pwdHide: true,
+      mnemonics: '',
+      showNotifier: false,
+      notifyMessage: 'Mnemonic words Copied.',
+    };
   },
   methods: {
     generateSeeds() {
-      this.$emit('generateSeeds',this)
+      this.$emit('generateSeeds', this);
     },
-    stepTo(n){
-      this.$emit('stepClick',n)
+    stepTo(n) {
+      this.$emit('stepClick', n);
     },
     clipboradSeeds() {
-      console.log(">>>>>>>>>>>>>>>>")
-      if(this.mnemonics){
-        this.showNotifier = true
-        // setTimeout(() => {
-        //   this.showNotifier = false
-        // }, 10000);
+      console.log(this.$refs.mnemonicsText);
+      const $el = this.$refs.mnemonicsText.$el.querySelector('textarea');
+
+      if (this.mnemonics && $el) {
+        $el.select();
+        document.execCommand('copy');
+        this.showNotifier = true;
       }
-    }
+    },
+    initClipboard() {
+      const clip = new Clipboard(this.$refs.clipboardBtn.$el);
+
+      clip.on('success', (e) => {
+        this.showNotifier = true;
+      });
+    },
   },
   mounted() {
-    this.$emit('initMnemonic',this)
+    this.initClipboard();
+    this.$emit('initMnemonic', this);
   },
-  props:{
-    saved:{
-      type:Boolean,
-      required:true
-    }
+  props: {
+    saved: {
+      type: Boolean,
+      required: true,
+    },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

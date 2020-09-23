@@ -79,6 +79,11 @@ export const createAndSaveAccount = async ({ commit }, creator) => {
   }
 };
 
+/**
+ * 创建账号
+ * @param {*} password
+ * @param {*} env3
+ */
 function sendUnlockBackEnd(password, env3) {
   const clientPort = global.$conn.clientPort;
   clientPort.sendUnlockedReq.bind(clientPort);

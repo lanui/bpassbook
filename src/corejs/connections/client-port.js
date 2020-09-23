@@ -6,7 +6,7 @@ import store from '@/store';
 
 import { APITYPE_UPDATE_UNLOCKED, APITYPE_LOGOUT } from '@/corejs/enums';
 
-import { APITYPE_INIT_STATE } from '@/lib/cnst/api-cnst';
+import { APITYPE_INIT_STATE, APITYPE_CREATE_ENV3 } from '@/lib/cnst/api-cnst';
 
 class ClientConnectionPort extends EventEmitter {
   constructor(opts) {
@@ -47,6 +47,11 @@ class ClientConnectionPort extends EventEmitter {
     console.log('clientPort>>', this);
     remotePort.postMessage({ apiType: APITYPE_UPDATE_UNLOCKED, data: { password, env3 } });
     console.log('Cli Send unlock env3>>>', remotePort, env3, password);
+  }
+
+  sendNewEnv3Wallet(password, env3) {
+    const remotePort = this.remotePort;
+    remotePort.postMessage({ apiType: APITYPE_CREATE_ENV3, data: { password, env3 } });
   }
 }
 

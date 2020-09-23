@@ -1,6 +1,5 @@
 <template>
-  <v-card class="mx-auto px-2"
-    outlined>
+  <v-card class="mx-auto px-2" outlined>
     <v-card-title>
       Confirm Mnemonic Words
     </v-card-title>
@@ -8,12 +7,15 @@
     <v-card-text>
       <v-card class="my-2" min-height="80">
         <v-card-text>
-          <v-chip close
+          <v-chip
+            close
             text-color="white"
             color="teal darken-1"
-            v-for="(text,i) in mnemonics"
+            v-for="(text, i) in mnemonics"
             @click:close="removeMnemonics(text)"
-            class="ma-2" :key="'sel_'+i">
+            class="ma-2"
+            :key="'sel_' + i"
+          >
             {{ text }}
           </v-chip>
         </v-card-text>
@@ -24,41 +26,38 @@
           Select mnemonic in order
         </v-card-title>
         <v-card-text>
-          <v-chip dense
-            v-for="(text,i) in sortableSeeds"
+          <v-chip
+            dense
+            v-for="(text, i) in sortableSeeds"
             @click="addMnemonics(text)"
-            class="ma-2" color="grey" :key="i">
+            class="ma-2"
+            color="grey"
+            :key="i"
+          >
             {{ text }}
           </v-chip>
         </v-card-text>
         <div class="my-2 ml-4">
-          <v-checkbox
-              v-model="skipValid"
-              :label="'Skip verification'"
-            >
-          </v-checkbox>
+          <v-checkbox v-model="skipValid" :label="'Skip verification'"> </v-checkbox>
         </div>
-
       </v-card>
     </v-card-text>
 
     <v-card-actions>
       <v-row justify="center">
-        <v-col  class="text-center ">
-          <v-btn @click="previous(2)"
-            :disabled="loading"
-            outlined  color="indigo" class="mx-4 ma-6">
+        <v-col class="text-center">
+          <v-btn @click="previous(2)" :disabled="loading" outlined color="indigo" class="mx-4 ma-6">
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
             Previous
           </v-btn>
 
-          <v-btn @click="next(4)"
-            :disabled="canStore"
-            outlined  color="indigo" class="mx-4 ma-6">
-            <v-progress-circular v-if="loading"
-              indeterminate :size="22"
+          <v-btn @click="next(4)" :disabled="canStore" outlined color="indigo" class="mx-4 ma-6">
+            <v-progress-circular
+              v-if="loading"
+              indeterminate
+              :size="22"
               :width="2"
               color="primary"
             ></v-progress-circular>
@@ -74,72 +73,72 @@
 </template>
 
 <script>
-
 export default {
   name: 'CreateStepFormThree',
   computed: {
-    sortableSeeds(){
-      const dseeds = this.originSeeds || []
-      return dseeds.sort()
+    sortableSeeds() {
+      const dseeds = this.originSeeds || [];
+      return dseeds.sort();
     },
     canStore() {
-      if(!this.skipValid){
-        return !this.pwd || !this.seedStr || this.mnemonics.join(' ') !== this.seedStr
-      }else {
-        return !this.pwd || !this.seedStr
+      if (!this.skipValid) {
+        return !this.pwd || !this.seedStr || this.mnemonics.join(' ') !== this.seedStr;
+      } else {
+        return !this.pwd || !this.seedStr;
       }
-    }
+    },
   },
   data() {
     return {
-      pwdHide:true,
-      comments:'',
-      seedStr:'',
-      pwd:'',
+      pwdHide: true,
+      comments: '',
+      seedStr: '',
+      pwd: '',
       mnemonics: [],
-      originSeeds:[],
-      skipValid:false,
-      loading:false
-    }
+      originSeeds: [],
+      skipValid: false,
+      loading: false,
+    };
   },
   methods: {
     previous(id) {
-      this.$emit('stepClick',id)
+      this.$emit('stepClick', id);
     },
     async next(id) {
-      this.loading = true
-      await this.$emit('saveWallet')
+      await this.$emit('saveWallet');
     },
     addMnemonics(text) {
-      const index = this.originSeeds.findIndex(v => v === text)
-      if(index >=0 ) {
-        this.originSeeds.splice(index,1)
-        this.mnemonics.push(text)
+      const index = this.originSeeds.findIndex((v) => v === text);
+      if (index >= 0) {
+        this.originSeeds.splice(index, 1);
+        this.mnemonics.push(text);
       }
     },
     removeMnemonics(text) {
-      const idx = this.mnemonics.findIndex(v => v===text)
-      console.log("remove",text,idx)
-      if( idx >=0) {
-        this.mnemonics.splice(idx,1)
-        if(!this.originSeeds.includes(text)){
-          this.originSeeds.push(text)
+      const idx = this.mnemonics.findIndex((v) => v === text);
+      console.log('remove', text, idx);
+      if (idx >= 0) {
+        this.mnemonics.splice(idx, 1);
+        if (!this.originSeeds.includes(text)) {
+          this.originSeeds.push(text);
         }
-        this.originSeeds.sort()
+        this.originSeeds.sort();
       }
+    },
+    updateLoading(loading) {
+      this.loading = loading;
     },
   },
   mounted() {
-    this.$emit('initSeeds',this)
-    this.loading = false
+    this.$emit('initSeeds', this);
+    this.loading = false;
   },
-  props:{
+  props: {
     creating: {
-      default:false,
-      type:Boolean
-    }
-  }
+      default: false,
+      type: Boolean,
+    },
+  },
 };
 </script>
-<style>
-</style>
+<style></style>
