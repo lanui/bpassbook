@@ -23,7 +23,7 @@
           没有记录
         </div>
       </v-col>
-      <v-col cols="10" class="px-2" v-if="isUnlocked && !hasItems">
+      <v-col cols="10" class="px-2" v-if="isUnlocked">
         <v-btn @click="addItemHandle" outlined rounded block small style="border: solid 1px rgba(0, 0, 0, 0.06);">
           添加到BPassword 保存?
         </v-btn>

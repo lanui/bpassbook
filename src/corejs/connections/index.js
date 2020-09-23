@@ -1,11 +1,12 @@
 import ClientConnectionPort from './client-port';
 import { APITYPE_LOGOUT } from '@/corejs/enums';
+import { BACKEND_CONN_POPUP } from '@/lib/cnst/connection-cnst';
 
 class ConnectionManager {
   constructor(opts) {
     const { portName } = opts;
     this.clientPort = new ClientConnectionPort({
-      portName: portName || 'bpext-popup',
+      portName: portName || BACKEND_CONN_POPUP,
     });
 
     this.clientPort.on('redirect', appRedirect);

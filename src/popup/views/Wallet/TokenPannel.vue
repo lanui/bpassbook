@@ -1,9 +1,6 @@
 <template>
-  <v-card :elevation="0"
-    class="mx-0 fill-height px-0" width="100%">
-    <v-list two-list
-      color=""
-      class="token-list-wrapper px-0">
+  <v-card :elevation="0" class="mx-0 fill-height px-0" width="100%">
+    <v-list two-list color="" class="token-list-wrapper px-0">
       <v-divider></v-divider>
       <ether-list-item />
       <token-list-item />
@@ -12,35 +9,33 @@
 </template>
 
 <script>
-import EtherListItem from './components/EtherListItem'
-import TokenListItem from './components/TokenListItem'
+import EtherListItem from './components/EtherListItem';
+import TokenListItem from './components/TokenListItem';
 
 export default {
   name: 'TokenPannel',
-  components:{
+  components: {
     EtherListItem,
     TokenListItem,
   },
   data() {
-    return {
-
-    }
+    return {};
   },
   methods: {
-    tokenSelected(hash){
-
-    },
-    getBalance(hash){
-
-    }
+    tokenSelected(hash) {},
+    getBalance(hash) {},
   },
   mounted() {
-    this.$store.dispatch('acc/loadBalances')
+    this.$store.dispatch('acc/loadBalances');
   },
 };
 </script>
 <style>
 .list-bg {
-  background: #EFECFF;
+  background: #efecff;
+}
+
+.light-rounded-border {
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 </style>

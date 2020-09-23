@@ -8,6 +8,7 @@ import OptionsIndex from '@popup/views/Options/Index';
 import ImportWallet from '@popup/views/Login/ImportWallet';
 import ExportWallet from '@/popup/views/Wallet/ExportWallet';
 import AddPassBookItem from '@popup/views/PassBook/AddPassItem';
+import EditPassBookItem from '@popup/views/PassBook/EditPassItem';
 
 export default [
   {
@@ -63,6 +64,13 @@ export default [
       {
         path: 'add',
         component: AddPassBookItem,
+        meta: {
+          auth: true,
+        },
+      },
+      {
+        path: 'edit',
+        component: EditPassBookItem,
         meta: {
           auth: true,
         },

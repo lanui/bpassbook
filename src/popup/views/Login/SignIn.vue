@@ -25,22 +25,17 @@
             @click:append="pwdShow = !pwdShow"
             :error-messages="err"
             :placeholder="$t('l.passwordPlaceHolder')"
-            v-model="password">
+            v-model="password"
+          >
           </v-text-field>
         </v-form>
       </v-col>
     </v-row>
     <v-row justify="center">
       <v-col cols="10">
-        <v-btn
-          @click="login"
-          block larage color="light-blue darken-1" dark>
-          <v-progress-circular v-if="loading"
-            indeterminate :size="22"
-            :width="2"
-            color="white"
-          ></v-progress-circular>
-          {{$t('nav.login.unlock')}}
+        <v-btn @click="login" block larage color="light-blue darken-1" dark>
+          <v-progress-circular v-if="loading" indeterminate :size="22" :width="2" color="white"></v-progress-circular>
+          {{ $t('nav.login.unlock') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -48,83 +43,84 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from 'vuex';
 
 import LogoBig from '@/widgets/ExtLogo';
-import {passwordRules} from '@/ui/constants/valid-rules'
+import { passwordRules } from '@/ui/constants/valid-rules';
+
+import MessageController from '@/popup/controllers/message-controller';
 
 export default {
   name: 'PopupSignIn',
   components: {
-    LogoBig
+    LogoBig,
   },
   computed: {
-    ...mapState([
-      'isUnlocked',
-      'loginLoading',
-      'loginError'
-    ])
+    ...mapState(['isUnlocked', 'loginLoading', 'loginError']),
   },
   data() {
     return {
-      password:'',
-      pwdShow:false,
-      pwdHint:'',
-      err:'',
-      loading:false,
-      rules:{
-        password: [
-          ...passwordRules
-        ]
-      }
-    }
+      password: '',
+      pwdShow: false,
+      pwdHint: '',
+      err: '',
+      loading: false,
+      rules: {
+        password: [...passwordRules],
+      },
+    };
   },
   methods: {
     async login() {
-      if(this.$refs.signInForm.validate()){
-        const pwd = this.password
-        const env3 = await this.$store.getters['env3']
+      if (this.$refs.signInForm.validate()) {
+        const password = this.password;
+        const env3 = await this.$store.getters['env3'];
+        const controller = new MessageController();
+        this.loading = true;
+        controller
+          .login(password)
+          .then(async (initState) => {
+            console.log('data>Success>>>', initState);
+            this.loading = false;
 
-        try{
-          this.loading = true
-          await this.$store.dispatch('setLoginLoading',true)
-          $conn.clientPort.sendUnlockedReq(pwd,env3)
-          this.loading = false
-        }catch(err){
-          this.loading = false
-          this.err = err.message
-        }
+            await this.$store.dispatch('updateInitState', initState);
+            this.gotoIndex();
+          })
+          .catch((err) => {
+            this.loading = false;
+            this.err = err;
+          });
       }
     },
-    gotoIndex(){
-      this.$router.push({path:'/index'})
-    }
+    gotoIndex() {
+      this.$router.push({ path: '/index' });
+    },
   },
   mounted() {
-    this.loading = false
-    const isUnlocked = this.$store.getters['isUnlocked']
-    if(isUnlocked){
-      this.gotoIndex()
+    this.loading = false;
+    const isUnlocked = this.$store.getters['isUnlocked'];
+    if (isUnlocked) {
+      this.gotoIndex();
     }
   },
   watch: {
-    password:function(val,old){
-      this.loading = false
-      if(val===''){
-        this.$store.dispatch('setLoginError','')
+    password: function (val, old) {
+      this.loading = false;
+      this.$refs.signInForm.resetValidation();
+      if (val === '') {
+        this.$store.dispatch('setLoginError', '');
       }
-      if(val!==old){
-        this.$store.dispatch('setLoginError','')
+      if (val !== old) {
+        this.$store.dispatch('setLoginError', '');
       }
     },
-    isUnlocked:function(val,old) {
-      console.log("watch:",val,old)
-      if(val){
-        this.gotoIndex()
+    isUnlocked: function (val, old) {
+      console.log('watch:', val, old);
+      if (val) {
+        this.gotoIndex();
       }
     },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

@@ -61,13 +61,13 @@ class GitbookController extends EventEmitter {
     }
   }
 
-  addBookToStore(item, address) {
+  async addBookToStore(item, address) {
     if (!validBookItem(item)) {
       log.warn('item miss,no update store');
       return;
     }
     const ts = new Date().getTime();
-    const state = this.store.getState();
+    const state = await this.store.getState();
     if (state) {
       address = address || state.selectedAddress || '';
     }
@@ -84,7 +84,7 @@ class GitbookController extends EventEmitter {
       }
     } catch (e) {}
 
-    const index = items.findIndex((it) => it.tips === item.tips);
+    const index = items.findIndex((it) => it.username === item.username && item.hostname === it.hostname);
     if (index >= 0) {
       items.splice(index, 1, item);
     } else {
@@ -101,6 +101,49 @@ class GitbookController extends EventEmitter {
     };
 
     this.store.putState(newState);
+
+    return true;
+  }
+
+  async deleteBookToStore(item, address) {
+    if (!validBookItem(item)) {
+      log.warn('item miss,no update store');
+      return;
+    }
+    const ts = new Date().getTime();
+    const state = await this.store.getState();
+    if (state) {
+      address = address || state.selectedAddress || '';
+    }
+    if (address == '') {
+      log.warn('address miss,no update store');
+      return;
+    }
+    const storeCipher = state?.cipher || '';
+    let items = [];
+    try {
+      if (storeCipher) {
+        const jsontext = decryptor(storeCipher, address);
+        items = JSON.parse(jsontext);
+      }
+    } catch (e) {}
+
+    const index = items.findIndex((it) => it.username === item.username && item.hostname === it.hostname);
+    if (index >= 0) {
+      items.splice(index, 1);
+    }
+    const originJSONStr = JSON.stringify(items);
+    const newCipher = encryptor(originJSONStr, address);
+
+    const newState = {
+      ts,
+      selectedAddress: address,
+      cipher: newCipher,
+    };
+
+    this.store.putState(newState);
+
+    return true;
   }
 }
 

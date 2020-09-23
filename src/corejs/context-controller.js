@@ -52,7 +52,7 @@ class ContextController extends EventEmitter {
 
     this.memStore = new MergeableObservableStore(null, {
       AppStateController: this.appStateController.store,
-      GitbookController: this.gitbookController.store,
+      GitbookController: this.gitbookController.memStore,
     });
 
     this.memStore.subscribe(this.sendUpdate.bind(this));
@@ -82,6 +82,26 @@ class ContextController extends EventEmitter {
     }
   }
 
+  /**
+   * login ,change state
+   * return client
+   */
+  getInitState() {
+    const isUnlocked = this.appStateController.isUnlocked;
+    const AppStateController = this.appStateController.store.getState() || {};
+    const GitbookController = this.gitbookController.memStore.getState() || {};
+    const v3 = this.appStateController.v3 || null;
+    const env3 = this.store.getState().env3 || null;
+
+    return {
+      isUnlocked,
+      AppStateController,
+      GitbookController,
+      env3,
+      v3,
+    };
+  }
+
   privateSendUpdate() {
     this.emit('update', this.getState());
   }
@@ -93,6 +113,17 @@ class ContextController extends EventEmitter {
     if (!addresses.length) {
       return;
     }
+  }
+
+  async unlocked(password) {
+    const state = this.store.getState();
+    const env3 = state.env3;
+    if (!env3) throw new Error('100001:no account.');
+
+    const ret = await this.appStateController.unlock(password, env3);
+    if (!ret) throw new Error('100002:password incorrect.');
+
+    return this.getInitState();
   }
 }
 

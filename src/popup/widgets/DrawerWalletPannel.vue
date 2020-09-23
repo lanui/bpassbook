@@ -4,13 +4,11 @@
       <v-row class="flex-column fill-height text-center">
         <v-col class="px-0 pt-2">
           <v-avatar tile size="48px">
-            <img :src="logo" alt="BPassword">
+            <img :src="logo" alt="BPassword" />
           </v-avatar>
         </v-col>
         <v-col class="px-0 py-1">
-          <h2 class="white--text">
-            BPassword
-          </h2>
+          <h2 class="white--text">BPassword <span class="body-2">测试版</span></h2>
         </v-col>
         <v-col class="px-0 py-1">
           <h5 class="white--text">
@@ -23,19 +21,15 @@
 </template>
 
 <script>
-
-import ExtLogo from '@/icons/icon_128.png'
+import ExtLogo from '@/icons/icon_128.png';
 
 export default {
   name: 'DrawerWalletPannel',
-  computed: {
-
-  },
+  computed: {},
   data() {
     return {
-
-      logo:ExtLogo
-    }
+      logo: ExtLogo,
+    };
   },
 };
 </script>

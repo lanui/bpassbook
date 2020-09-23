@@ -67,13 +67,14 @@ async function handleExtensionMessage(req, sender, sendResp) {
 
   const { isUnlocked, GitbookController, AppStateController } = data;
   const selectedAddress = AppStateController?.selectedAddress || '';
+  const passbook = GitbookController?.passbook || [];
   switch (apiType) {
     case APITYPE_INIT_STATE:
       console.log('UPDATE store recvie>>>>', data);
       await store.dispatch('updateState', {
         isUnlocked,
         selectedAddress,
-        items: GitbookController ? GitbookController.passbook : [],
+        items: passbook,
       });
       break;
     default:

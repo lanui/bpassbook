@@ -11,3 +11,9 @@ export const APITYPE_GET_PBITEM = 'getPBitemFromLoginForm';
 export const APITYPE_CONTENTSCRIPTS_TRANSFER = 'contentScriptTransfer';
 
 export const APITYPE_INPUTOR_ADDITEM = 'inputorAddItem';
+
+export const APITYPE_UPDATE_UNLOCKED = 'updateUnLocked';
+export const APITYPE_LOGOUT = 'logout';
+
+export const APITYPE_UPDATE_PBITEM = 'updatePassbookItemProps';
+export const APITYPE_DELETE_PBITEM = 'deletePassbookItemProps';

@@ -4,7 +4,7 @@
       <v-icon @click.stop="$router.go(-1)" larage>
         {{ icons.left }}
       </v-icon>
-      <span>Add Password</span>
+      <span>Edit Password</span>
       <v-spacer></v-spacer>
 
       <v-icon>{{ icons.keystone }}</v-icon>
@@ -14,7 +14,7 @@
       <v-col cols="10" class="mt-4">
         <v-form ref="passItemForm">
           <v-text-field
-            v-model="data.url"
+            v-model="item.origin"
             :label="'URL'"
             outlined
             rounded
@@ -24,7 +24,7 @@
             dense
           />
           <v-text-field
-            v-model="data.tips"
+            v-model="item.tips"
             :label="'Tips'"
             outlined
             rounded
@@ -35,7 +35,7 @@
           />
 
           <v-text-field
-            v-model="data.username"
+            v-model="item.username"
             :label="'Username'"
             outlined
             rounded
@@ -45,7 +45,7 @@
             dense
           />
           <v-text-field
-            v-model="data.password"
+            v-model="item.password"
             :label="'Password'"
             outlined
             rounded
@@ -53,6 +53,9 @@
             :loading="ctrl.loading"
             :rules="rules.required"
             :counter="true"
+            :type="ctrl.showpwd ? 'text' : 'password'"
+            :append-icon="ctrl.showpwd ? 'mdi-eye' : 'mdi-eye-off'"
+            @click:append="togglePwd"
             dense
           />
         </v-form>
@@ -77,22 +80,25 @@
 
 <script>
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
+import MessageController from '@/popup/controllers/message-controller';
 export default {
-  name: 'AddPassbookItem',
+  name: 'EditPassbookItem',
   data() {
     return {
       icons: {
         left: ARROW_LEFT_MDI,
         keystone: LOCKED_LINK_MDI,
       },
-      data: {
-        url: '',
+      item: {
+        hostname: '',
+        origin: '',
         tips: '',
         username: '',
         password: '',
       },
       ctrl: {
         loading: false,
+        showpwd: false,
       },
       rules: {
         required: [(v) => !!v || 'required'],
@@ -100,26 +106,32 @@ export default {
     };
   },
   methods: {
-    saveHandle() {
-      if (this.$refs.passItemForm.validate()) {
-        const item = this.data;
-        console.log('data>>>>', item);
-        this.ctrl.loading = true;
-        this.$store
-          .dispatch('passbook/addItem', item)
-          .then((ret) => {
-            console.log('save success', ret);
-            setTimeout(() => {
-              this.ctrl.loading = false;
-              this.$refs.passItemForm.reset();
-              //this.$store.dispatch('passbook/reloadItemsFromLocal');
-            }, 1000);
-          })
-          .catch((err) => {
-            this.ctrl.loading = false;
-          });
-      }
+    togglePwd() {
+      this.ctrl.showpwd = !this.ctrl.showpwd;
     },
+    saveHandle() {
+      if (!this.$refs.passItemForm.validate()) {
+        return;
+      }
+      const item = this.item;
+      const controller = new MessageController();
+      this.ctrl.loading = true;
+      controller
+        .updatePassbookItem(item)
+        .then(async (initState) => {
+          await this.$store.dispatch('updateInitState', initState);
+          this.ctrl.loading = false;
+          this.$router.go(-1);
+        })
+        .catch(async (initState) => {
+          await this.$store.dispatch('updateInitState', initState);
+          this.ctrl.loading = false;
+        });
+    },
+  },
+  mounted() {
+    const query = this.$route.query;
+    this.item = query;
   },
 };
 </script>

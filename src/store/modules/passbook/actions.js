@@ -19,3 +19,7 @@ export const reloadItemsFromLocal = async ({ commit }) => {
   const items = (await idb.getAllPassbook()) || [];
   commit(types.UPDATE_ITEMS, items);
 };
+
+export const updateItems = async ({ commit }, items) => {
+  commit(types.UPDATE_ITEMS, items || []);
+};

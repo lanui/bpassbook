@@ -11,7 +11,7 @@ import LocalStore from '@/lib/storage/local-store';
 import ContextController from '@/corejs/context-controller';
 import createStreamSink from '@/lib/storage/createStreamSink';
 
-import { APITYPE_UPDATE_UNLOCKED, APITYPE_PWD_INCORRECT, APITYPE_LOGOUT } from './corejs/enums';
+import { APITYPE_PWD_INCORRECT } from './corejs/enums';
 
 import {
   BACKEND_CONN_POPUP,
@@ -25,6 +25,10 @@ import {
   APITYPE_SELECTED_PBITEM,
   APITYPE_CONTENTSCRIPTS_TRANSFER,
   APITYPE_INPUTOR_ADDITEM,
+  APITYPE_UPDATE_UNLOCKED,
+  APITYPE_LOGOUT,
+  APITYPE_UPDATE_PBITEM,
+  APITYPE_DELETE_PBITEM,
 } from '@/lib/cnst/api-cnst';
 
 import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
@@ -45,13 +49,14 @@ let popupIsOpen = false;
 
 let versionedData;
 
-const openTabsIDs = {};
 const openTabsConnectPorts = {};
 
 const contentScriptsPorts = {};
+//Inputor Connnection
+const BPTabsPort = {};
 
 const clientOpenStatus = () => {
-  return Boolean(popupIsOpen) || Boolean(Object.keys(openTabsIDs).length);
+  return Boolean(popupIsOpen) || Boolean(Object.keys(BPTabsPort).length);
 };
 
 const extensionInternalProcessHash = {
@@ -111,6 +116,7 @@ async function setupController(initState) {
 
   //
   extension.runtime.onConnect.addListener(connectRemote);
+  extension.runtime.onMessage.addListener(handleMessage);
 
   /**
    *
@@ -135,18 +141,22 @@ async function setupController(initState) {
           popupIsOpen = false;
           controller.isClientOpen = clientOpenStatus();
         });
-      } else if (processName === BACKEND_CONN_FULLSCREEN) {
+      }
+
+      if (processName === CLI_CONN_INPUTOR || processName === BACKEND_CONN_FULLSCREEN) {
         const tabId = remotePort.sender.tab.id;
-        openTabsIDs[tabId] = true;
+        BPTabsPort[tabId] = true;
+        endOfStream(portStream, () => {
+          delete BPTabsPort[tabId];
+          controller.isClientOpen = clientOpenStatus();
+        });
       }
       const isUnlocked = Boolean(controller.appStateController.isUnlocked);
-      let sendData = Object.assign({}, data, { isUnlocked: Boolean(isUnlocked) });
+
       // console.log('send data connect>>', sendData);
-      sendData = getSendData(controller);
-      // if (isUnlocked) {
-      //   sendData = getSendData(controller)
-      // }
-      remotePort.postMessage({ apiType: 'initState', data: sendData });
+      let sendState = controller.getInitState();
+
+      remotePort.postMessage({ apiType: 'initState', data: sendState });
     } else {
       if (remotePort.sender && remotePort.sender.tab && remotePort.sender.url) {
         const tabId = remotePort.sender.tab.id;
@@ -175,24 +185,76 @@ async function setupController(initState) {
 
     portMessageListener(controller, remotePort);
   }
-}
 
-function getSendData(controller) {
-  const storeState = controller.store.getState();
-  const sendData = controller.appStateController.getAppState();
-  const GitbookController = controller.gitbookController.memStore.getState();
+  /**
+   *
+   * @param {*} message
+   * @param {*} sender
+   * @param {*} sendResponse
+   */
+  function handleMessage(message, sender, sendResponse) {
+    console.log(`${LOG_PREFFIX}-runtime.message>listener>>`, message, sender);
+    const { apiType } = message;
+    const isFn = typeof sendResponse === 'function';
+    switch (apiType) {
+      case APITYPE_UPDATE_UNLOCKED:
+        controller
+          .unlocked(message.password)
+          .then((resp) => {
+            console.log(`${LOG_PREFFIX}`, resp);
+            if (isFn) {
+              sendResponse(resp);
+            }
+          })
+          .catch((err) => {
+            if (isFn) {
+              sendResponse({ error: err.message });
+            }
+          });
+        break;
+      case APITYPE_LOGOUT:
+        controller.appStateController.locked().then((resp) => {
+          if (isFn) {
+            sendResponse(controller.getInitState());
+          }
+        });
+        break;
 
-  const extendObj = {
-    isUnlocked: Boolean(controller.appStateController.isUnlocked),
-    selectAddress: controller.appStateController.selectAddress,
-    ...controller.appStateController.store.getState(),
-  };
-  return Object.assign({}, storeState, sendData, extendObj, { GitbookController });
+      case APITYPE_UPDATE_PBITEM:
+        controller.gitbookController
+          .addBookToStore(message.data, controller.getSelectedAddress())
+          .then((r) => {
+            if (isFn) {
+              sendResponse(controller.getInitState());
+            }
+          })
+          .catch((err) => {
+            console.log(`APITYPE_UPDATE_PBITEM >>> error>>>`, err);
+            if (isFn) {
+              sendResponse(controller.getInitState());
+            }
+          });
+        break;
+      case APITYPE_DELETE_PBITEM:
+        controller.gitbookController
+          .deleteBookToStore(message.data, controller.getSelectedAddress())
+          .then((r) => {
+            if (isFn) {
+              sendResponse(controller.getInitState());
+            }
+          })
+          .catch((err) => {
+            console.log(`APITYPE_UPDATE_PBITEM >>> error>>>`, err);
+            if (isFn) {
+              sendResponse(controller.getInitState());
+            }
+          });
+        break;
+      default:
+        break;
+    }
+  }
 }
-// function handleRutimeOnMessage(message,sender,sendResponse) {
-//   console.log(`${LOG_PREFFIX}-runtime Msg`, message, sender, sendResponse)
-//   console.log(`${LOG_PREFFIX}-runtime Msg`, controller)
-// }
 
 function portMessageListener(controller, remotePort) {
   // console.log(`${LOG_PREFFIX}-runtime Msg`, controller);
@@ -201,27 +263,6 @@ function portMessageListener(controller, remotePort) {
     if (msg && msg.apiType) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
       switch (msg.apiType) {
-        case APITYPE_UPDATE_UNLOCKED:
-          const curstate = controller.store.getState();
-          console.log('APITYPE_UPDATE_UNLOCKED', msg.data, curstate);
-          if (msg.data && msg.data.password && msg.data.env3) {
-            log.warn('send local...', msg.data.password, curstate.env3);
-            const env3 = msg.data.env3;
-            controller.store.updateState({ env3 });
-            const v3 = await controller.appStateController.unlock(msg.data.password, msg.data.env3);
-
-            if (v3) {
-              const newState = getSendData(controller);
-              remotePort.postMessage({ apiType: APITYPE_INIT_STATE, data: newState, redirect: '/index' });
-            } else {
-              remotePort.postMessage({ apiType: APITYPE_PWD_INCORRECT, error: { message: 'password incorrect.' } });
-            }
-          }
-          break;
-        case APITYPE_LOGOUT:
-          await controller.appStateController.locked();
-          remotePort.postMessage({ apiType: 'initState', data: getSendData(controller) });
-          break;
         case APITYPE_SELECTED_PBITEM:
           const transData = msg.data;
           const tabId = transData.tabId;

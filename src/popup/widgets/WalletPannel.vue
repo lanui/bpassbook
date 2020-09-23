@@ -3,17 +3,16 @@
     <v-row class="flex-column fill-height">
       <v-col class="px-0 py-1">
         <div class="inner inner-nickname">
-          {{nickname}}
+          {{ defToken ? 'BTs Balance' : 'ETH Balance' }}
         </div>
       </v-col>
       <v-col class="px-0 py-0">
         <div class="inner inner-wallet">
-          {{shortAddress}}
+          {{ shortAddress }}
         </div>
       </v-col>
       <v-col class="px-0 py-2">
-        <v-btn @click.stop="toggleToken"
-          icon color="grey lighten-5" outlined rounded ripple x-large>
+        <v-btn @click.stop="toggleToken" icon color="grey lighten-5" outlined rounded ripple x-large>
           <v-icon>
             {{ defToken ? 'mdi-diamond-stone' : 'mdi-ethereum' }}
           </v-icon>
@@ -21,18 +20,15 @@
       </v-col>
       <v-col class="px-0 py-1">
         <div class="balance">
-          <h2 >{{defToken ? btsBalText : ethBalText}}</h2>
+          <h2>{{ defToken ? btsBalText : ethBalText }}</h2>
         </div>
       </v-col>
     </v-row>
-    <div v-if="true"
-      class="float-right mb-2 mr-2">
+    <div v-if="true" class="float-right mb-2 mr-2">
       <!-- <v-btn icon ripple color="white">
         <v-icon>mdi-qrcode-edit</v-icon>
       </v-btn> -->
-      <v-btn icon ripple
-        @click.stop="openExtURL"
-        color="white">
+      <v-btn icon ripple @click.stop="locking" color="white">
         <v-icon>
           mdi-shield-key-outline
         </v-icon>
@@ -44,41 +40,55 @@
 <script>
 import { mapState, mapGetters } from 'vuex';
 
-import {ETH_MDI,LOCKED_MDI} from '@/ui/constants/icon-cnsts'
+import MessageController from '@/popup/controllers/message-controller';
+
+import { ETH_MDI, LOCKED_MDI } from '@/ui/constants/icon-cnsts';
 
 export default {
   name: 'WGWalletPannel',
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
     ...mapGetters(['shortAddress', 'networkColor']),
-    ...mapGetters('acc', ['ethBalText','btsBalText']),
+    ...mapGetters('acc', ['ethBalText', 'btsBalText']),
   },
   data() {
     return {
-      defToken:true,
-      ethIcon:ETH_MDI,
-      lockIcon:LOCKED_MDI,
+      defToken: true,
+      ethIcon: ETH_MDI,
+      lockIcon: LOCKED_MDI,
     };
   },
   methods: {
-    openExtURL(){
-      const subpath = 'popup/popup.html'
-      const url = this.$browser.extension.getURL(subpath)
-      console.log(subpath)
-      console.log(this.$browser.tabs)
+    openExtURL() {
+      const subpath = 'popup/popup.html';
+      const url = this.$browser.extension.getURL(subpath);
+      console.log(subpath);
+      console.log(this.$browser.tabs);
 
-      chrome.tabs.create({active:true,url:url},function(tab) {
-        console.log(tab)
+      chrome.tabs.create({ active: true, url: url }, function (tab) {
+        console.log(tab);
         //todo notify backend
-      })
+      });
     },
-    toggleToken(){
-      this.defToken = !this.defToken
-    }
+    toggleToken() {
+      this.defToken = !this.defToken;
+    },
+    async locking() {
+      console.log('>>>>>>>>logout');
+      const controller = new MessageController();
+      controller
+        .logout()
+        .then(async (initState) => {
+          console.log('data>Success>>>', initState);
+          await this.$store.dispatch('updateInitState', initState);
+          this.$router.push({ path: '/signin' });
+        })
+        .catch((err) => {});
+    },
   },
   async mounted() {
-    this.$store.dispatch('acc/loadBalances')
-    console.log(await this.$store.state.selectedAddress)
+    this.$store.dispatch('acc/loadBalances');
+    console.log(await this.$store.state.selectedAddress);
   },
 };
 </script>

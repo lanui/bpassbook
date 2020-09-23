@@ -14,9 +14,12 @@
           <v-list-item-subtitle v-text="item.username"></v-list-item-subtitle>
         </v-list-item-content>
 
-        <v-list-item-action>
-          <v-btn icon color="deep-purple accent-2">
+        <v-list-item-action style="flex-direction: row;">
+          <v-btn @click="goEditItem(item)" x-small icon color="deep-purple accent-2 mx-1">
             <v-icon>mdi-file-document-edit-outline</v-icon>
+          </v-btn>
+          <v-btn @click="deletItem(item)" x-small icon color="deep-purple accent-2 mx-1">
+            <v-icon>mdi-delete-forever-outline</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -26,6 +29,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
+import MessageController from '@/popup/controllers/message-controller';
+
 export default {
   name: 'BPassword',
   computed: {
@@ -34,16 +40,34 @@ export default {
   data() {
     return {
       datas: [],
+      processing: false,
     };
   },
   methods: {
     selectItem(it) {},
+    goEditItem(item) {
+      this.$router.push({ path: '/passbook/edit', query: item });
+    },
+    deletItem(item) {
+      const controller = new MessageController();
+      this.processing = true;
+      controller
+        .deletePassbookItem(item)
+        .then(async (initState) => {
+          await this.$store.dispatch('updateInitState', initState);
+          this.processing = false;
+        })
+        .catch(async (initState) => {
+          await this.$store.dispatch('updateInitState', initState);
+          this.processing = false;
+        });
+    },
   },
   mounted() {
     //this.$store.dispatch('passbook/reloadItemsFromLocal')
   },
   async beforeMount() {
-    await this.$store.dispatch('passbook/reloadItemsFromLocal');
+    // await this.$store.dispatch('passbook/reloadItemsFromLocal');
   },
 };
 </script>
