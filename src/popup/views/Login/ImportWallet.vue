@@ -8,8 +8,8 @@
         <v-form ref="importForm">
           <v-container fluid>
             <v-radio-group v-model="importType" row>
-              <v-radio dense label="JSON String" value="json"></v-radio>
-              <v-radio dense label="Mnemonic Words" value="v3"></v-radio>
+              <v-radio dense :label="$t('l.jsonKeystore')" value="json"></v-radio>
+              <v-radio dense :label="$t('l.mnemonics')" value="v3"></v-radio>
             </v-radio-group>
           </v-container>
 
@@ -24,7 +24,7 @@
             color="indigo"
             v-model="mnemonics"
             :value="mnemonics"
-            label="Mnemonics"
+            :label="$t('l.mnemonics')"
             type="text"
           ></v-textarea>
           <v-textarea
@@ -38,7 +38,7 @@
             color="indigo"
             v-model="v3json"
             :value="v3json"
-            label="JSON String"
+            :label="$t('l.jsonKeystore')"
             type="text"
           ></v-textarea>
           <v-text-field
@@ -46,7 +46,7 @@
             outlined
             clearable
             counter
-            label="Password"
+            :label="$t('l.password')"
             prepend-inner-icon="mdi-key"
             :append-icon="pwdHide ? 'mdi-eye-off' : 'mdi-eye'"
             :type="pwdHide ? 'password' : 'text'"
@@ -60,15 +60,15 @@
             name="password"
           ></v-text-field>
 
-          <div v-if="Boolean(env3)"
-            class="mt-4 text-center amber--text text--darken-1"
-          >import new wallet will recover current wallet.</div>
+          <div v-if="Boolean(env3)" class="mt-4 text-center amber--text text--darken-1">
+            导入将会覆盖现有钱包,建议先备份现有钱包.
+          </div>
         </v-form>
       </v-col>
     </v-row>
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
-        <v-btn block larage color="light-blue darken-1" dark>Import Wallet</v-btn>
+        <v-btn block larage color="light-blue darken-1" dark>导入钱包</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -80,7 +80,7 @@ import { passwordRules } from '@/ui/constants/valid-rules';
 export default {
   name: 'PopupImportWallet',
   computed: {
-    ...mapGetters(['env3'])
+    ...mapGetters(['env3']),
   },
   data() {
     return {
@@ -99,5 +99,4 @@ export default {
   methods: {},
 };
 </script>
-<style>
-</style>
+<style></style>

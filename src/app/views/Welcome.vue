@@ -6,19 +6,17 @@
       </v-col>
     </v-row>
     <v-row justify="center" class="text-center">
-      <v-col cols="12" >
-        <h1 style="font-size:2.75rem;font-weight:400;">
-          Welcome to BPassword
+      <v-col cols="12">
+        <h1 style="font-size: 2.75rem; font-weight: 400;">
+          {{ $t('p.welcome.title') }}
         </h1>
-        <p style="font-size:1.2rem">
-          BPassword helps you manage passwords
+        <p style="font-size: 1.2rem;">
+          {{ $t('p.welcome.tips') }}
         </p>
       </v-col>
-      <v-col cols="2"  width="270">
-        <v-btn block outlined
-          x-large @click="getStarted"
-          color="indigo" class="mx-4 ma-6">
-          Get Started
+      <v-col cols="2" width="270">
+        <v-btn block outlined x-large @click="getStarted" color="indigo" class="mx-4 ma-6">
+          {{ $t('btn.getStarted') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -26,24 +24,21 @@
 </template>
 
 <script>
-import Logo from '@/widgets/ExtLogo.vue'
+import Logo from '@/widgets/ExtLogo.vue';
 
 export default {
   name: 'AppWelcome',
-  components:{
+  components: {
     Logo,
   },
   data() {
-    return {
-
-    }
+    return {};
   },
   methods: {
-    getStarted(){
-      this.$router.push({path:'/init/privacy'})
-    }
+    getStarted() {
+      this.$router.push({ path: '/init/privacy' });
+    },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

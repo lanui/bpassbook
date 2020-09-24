@@ -6,84 +6,80 @@
           <v-card-title class="my-4">
             <logo size="60" />
             <span class="text-md-h2 mx-4">
-              BPassword Privacy Policy
+              {{ $t('p.policy.title') }}
             </span>
           </v-card-title>
           <v-card-subtitle>
             <p class="text-md-h4">
-              Help Us Improve BPassword
+              {{ $t('p.policy.subtitle') }}
             </p>
           </v-card-subtitle>
           <v-card-text>
             <div class="text-justify font-weight-medium">
-              <p v-for="(text,idx) in advantage"
-                class="secret" :key="idx">
+              <p v-for="(text, idx) in advantage" class="secret" :key="idx">
                 <v-icon small color="green">mdi-check</v-icon>
                 <span class="ml-2 subtitle-1">
-                  {{text}}
+                  {{ text }}
                 </span>
               </p>
-              <v-divider class="my-2"/>
-              <p v-for="(text,id) in nevers"
-                class="secret" :key="'nv_'+id">
+              <v-divider class="my-2" />
+              <p v-for="(text, id) in nevers" class="secret" :key="'nv_' + id">
                 <v-icon small color="red darken-4">mdi-close</v-icon>
                 <span class="ml-2 subtitle-1">
-                  {{text}}
+                  {{ text }}
                 </span>
               </p>
             </div>
-
           </v-card-text>
           <v-card-actions>
-
-            <v-btn @click="$router.push({path:'/init/welcome'})"
-              outlined x-large
-              color="grey darken-1" class="mx-4 ma-6" min-width="160">
-              No Thanks
+            <v-btn
+              @click="$router.push({ path: '/init/welcome' })"
+              outlined
+              x-large
+              color="grey darken-1"
+              class="mx-4 ma-6"
+              min-width="160"
+            >
+              {{ $t('btn.noThanks') }}
             </v-btn>
-            <v-btn @click="agreeHandler"
-              outlined x-large
-              color="indigo" class="mx-4 ma-6" min-width="160">
-              I Agree
+            <v-btn @click="agreeHandler" outlined x-large color="indigo" class="mx-4 ma-6" min-width="160">
+              {{ $t('btn.iAgree') }}
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
-import Logo from '@/widgets/ExtLogo.vue'
+import Logo from '@/widgets/ExtLogo.vue';
 
 export default {
   name: 'AppAccountPrivacyPolicy',
-  components:{
+  components: {
     Logo,
   },
   data() {
     return {
-      advantage:[
-        'The password is encrypted and stored on the blockchain.',
-        'Desktop, mobile device multi-terminal sharing.',
-        'Uses the ECDSA algorithm with elliptic curve secp256k1'
+      advantage: [
+        '密码已加密并存储在区块链上(当前测试版,本地存储)。',
+        '台式机，移动设备多终端共享。',
+        '将ECDSA算法与椭圆曲线secp256k1一起使用,加强账号安全',
       ],
-      nevers:[
-        'Never collect keys,address,password,balances,hashes,or any personal information.',
-        'Never collect your IP address.',
-        'Never collect your device information.',
-        'Never sell data for profit.Ever.'
-      ]
-    }
+      nevers: [
+        '不会收集钥匙，地址，密码，天平，哈希或任何个人信息。',
+        '不会收集您的IP地址。',
+        '不会收集设备信息。',
+        '永远不会为了盈利而出售数据。',
+      ],
+    };
   },
   methods: {
-    agreeHandler(){
-      this.$router.push({path:'/creator/index'})
+    agreeHandler() {
+      this.$router.push({ path: '/creator/index' });
     },
-
   },
 };
 </script>
-<style>
-</style>
+<style></style>

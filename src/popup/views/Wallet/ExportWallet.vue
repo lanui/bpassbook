@@ -9,12 +9,14 @@
     </v-row>
     <v-row justify="center" v-if="!unlocked">
       <v-col cols="10">
-        <v-form ref="exportForm" >
+        <v-form ref="exportForm">
           <v-text-field
             :loading="loading"
-            dense outlined clearable
+            dense
+            outlined
+            clearable
             counter
-            label="Password"
+            :label="$t('l.password')"
             prepend-inner-icon="mdi-key"
             :append-icon="pwdHide ? 'mdi-eye-off' : 'mdi-eye'"
             :type="pwdHide ? 'password' : 'text'"
@@ -30,36 +32,21 @@
         </v-form>
       </v-col>
       <v-col cols="10">
-        <v-btn
-          block larage
-          @click="unlockedHandle"
-          color="light-blue darken-1" dark>
-         <v-progress-circular v-if="loading"
-            indeterminate :size="22"
-            :width="2"
-            color="white"
-          ></v-progress-circular>
-          Unlocked
+        <v-btn block larage @click="unlockedHandle" color="light-blue darken-1" dark>
+          <v-progress-circular v-if="loading" indeterminate :size="22" :width="2" color="white"></v-progress-circular>
+          解锁
         </v-btn>
       </v-col>
     </v-row>
-    <v-row justify="center" >
+    <v-row justify="center">
       <v-col cols="10" v-if="unlocked">
         <v-img :src="qrcode" width="150" class="mx-auto"></v-img>
       </v-col>
     </v-row>
     <v-row justify="center" v-if="unlocked">
       <v-col cols="10">
-        <v-textarea
-          dense outlined readonly
-          rows="5"
-          :value="v3json"
-          label="Keystore"
-          class="body-2">
-        </v-textarea>
-        <v-btn tile text x-small
-          @click="copyJson"
-          class="my-1 float-right">
+        <v-textarea dense outlined readonly rows="5" :value="v3json" label="Keystore" class="body-2"> </v-textarea>
+        <v-btn tile text x-small @click="copyJson" class="my-1 float-right">
           <v-icon left>mdi-clipboard-text-multiple</v-icon>
           Copyed
         </v-btn>
@@ -71,80 +58,79 @@
 </template>
 
 <script>
-import QRCode from 'qrcode'
+import QRCode from 'qrcode';
 
-import {passwordRules} from '@/ui/constants/valid-rules'
+import { passwordRules } from '@/ui/constants/valid-rules';
 import DemoQrCode from '@/assets/icons/demo-qrcode.png';
-import GobackBtn from '@/widgets/GobackButton.vue'
+import GobackBtn from '@/widgets/GobackButton.vue';
 
 export default {
   name: 'PopupExportWallet',
-  components:{
+  components: {
     GobackBtn,
   },
   data() {
     return {
-      qrcode:'',
-      privKey:"",
-      hideMnemonic:true,
-      v3json:"",
-      pwdHide:true,
-      password:"",
-      error:"",
-      unlocked:false,
-      loading:false,
-      rules:{
-        password: [
-          ...passwordRules
-        ]
-      }
-    }
+      qrcode: '',
+      privKey: '',
+      hideMnemonic: true,
+      v3json: '',
+      pwdHide: true,
+      password: '',
+      error: '',
+      unlocked: false,
+      loading: false,
+      rules: {
+        password: [...passwordRules],
+      },
+    };
   },
   methods: {
-    unlockedHandle(){
-      if(this.$refs.exportForm.validate()){
-        const pwd = this.password
-        this.loading = true
-        this.$store.dispatch('decryptFromEnv3',pwd).then(ret => {
-          this.v3json = ret.json
-          this.unlocked = true
-          this.loading = false
-          return ret.json
-        }).then(jsonText=>{
-          console.log(jsonText)
-          QRCode.toDataURL(jsonText)
-          .then(url => {
-            console.log(url)
-            this.qrcode = url
+    unlockedHandle() {
+      if (this.$refs.exportForm.validate()) {
+        const pwd = this.password;
+        this.loading = true;
+        this.$store
+          .dispatch('decryptFromEnv3', pwd)
+          .then((ret) => {
+            this.v3json = ret.json;
+            this.unlocked = true;
+            this.loading = false;
+            return ret.json;
           })
-          .catch(err => {
-            console.error(err)
+          .then((jsonText) => {
+            console.log(jsonText);
+            QRCode.toDataURL(jsonText)
+              .then((url) => {
+                console.log(url);
+                this.qrcode = url;
+              })
+              .catch((err) => {
+                console.error(err);
+              });
           })
-        }).catch(err=>{
-          this.loading = false
-          this.error = err.message
-        })
+          .catch((err) => {
+            this.loading = false;
+            this.error = err.message;
+          });
       }
     },
-    copyJson(){
-
+    copyJson() {},
+    resetstate() {
+      this.loading = false;
+      this.unlocked = false;
+      this.password = '';
+      this.v3json = '';
     },
-    resetstate(){
-      this.loading = false
-      this.unlocked = false
-      this.password = ''
-      this.v3json = ''
-    }
   },
   mounted() {
-    this.resetstate()
+    this.resetstate();
   },
   watch: {
-    password:function(val,old) {
-      this.error = ''
-    }
+    password: function (val, old) {
+      this.error = '';
+    },
   },
 };
 </script>
-<style>
-</style>
+<style></style>

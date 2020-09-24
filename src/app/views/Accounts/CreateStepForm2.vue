@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto px-2" outlined>
     <v-card-title>
-      Generator Mnemonic Seeds
+      {{ $t('p.creator.step2Title') }}
     </v-card-title>
     <v-form ref="EIP39" class="mx-2">
       <input type="hidden" v-model="mnemonics" ref="mnemonicsText" />
@@ -12,13 +12,13 @@
             outlined
             clearable
             disabled
-            placeholder="Click Generate Button get mnemonics"
+            :placeholder="$t('l.mnemonicsPlaceHolder')"
             name="Seeds"
             rows="4"
             color="indigo"
             v-model="mnemonics"
             :value="mnemonics"
-            label="Mnemonics"
+            :label="$t('l.mnemonics')"
             type="text"
           >
           </v-textarea>
@@ -40,13 +40,13 @@
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
-            Previous
+            {{ $t('btn.previous') }}
           </v-btn>
           <v-btn @click="generateSeeds" :disabled="saved" outlined color="indigo" class="mx-4 ma-6">
-            Generate
+            {{ $t('btn.generate') }}
           </v-btn>
           <v-btn @click="stepTo(3)" outlined color="indigo" class="mx-4 ma-6">
-            Next
+            {{ $t('btn.next') }}
             <v-icon right>
               mdi-chevron-double-right
             </v-icon>

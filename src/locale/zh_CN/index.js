@@ -1,9 +1,13 @@
-import { Menu, Label} from '../grp-types'
+import { Menu, Label, Button, Page } from '../grp-types';
 
-import labels from './labels'
-import menus from './navmenus'
+import labels from './labels';
+import menus from './navmenus';
+import buttons from './buttons';
+import pages from './pages';
 
 export default {
-  [Label]:labels,
-  [Menu]: menus
-}
+  [Button]: buttons,
+  [Label]: labels,
+  [Menu]: menus,
+  [Page]: pages,
+};

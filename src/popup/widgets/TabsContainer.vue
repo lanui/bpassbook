@@ -2,13 +2,13 @@
   <v-container class="px-0 py-0">
     <v-tabs v-model="activeTab" dense centered icons-and-text ripple fixed-tabs>
       <v-tab class="primary--text">
-        PassBook
+        {{ $t('l.passbook') }}
         <v-icon>
           mdi-shield-key-outline
         </v-icon>
       </v-tab>
       <v-tab class="primary--text">
-        Activity
+        {{ $t('l.activity') }}
         <v-icon>
           mdi-bank-transfer
         </v-icon>

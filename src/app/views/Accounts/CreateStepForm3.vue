@@ -1,7 +1,7 @@
 <template>
   <v-card class="mx-auto px-2" outlined>
     <v-card-title>
-      Confirm Mnemonic Words
+      {{ $t('p.creator.step3Title') }}
     </v-card-title>
 
     <v-card-text>
@@ -23,7 +23,7 @@
       <v-divider></v-divider>
       <v-card class="my-2">
         <v-card-title>
-          Select mnemonic in order
+          {{ $t('p.creator.selectOrder') }}
         </v-card-title>
         <v-card-text>
           <v-chip
@@ -38,7 +38,7 @@
           </v-chip>
         </v-card-text>
         <div class="my-2 ml-4">
-          <v-checkbox v-model="skipValid" :label="'Skip verification'"> </v-checkbox>
+          <v-checkbox v-model="skipValid" :label="$t('p.creator.skipVerify')"> </v-checkbox>
         </div>
       </v-card>
     </v-card-text>
@@ -50,7 +50,7 @@
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
-            Previous
+            {{ $t('btn.previous') }}
           </v-btn>
 
           <v-btn @click="next(4)" :disabled="canStore" outlined color="indigo" class="mx-4 ma-6">
@@ -61,7 +61,7 @@
               :width="2"
               color="primary"
             ></v-progress-circular>
-            <span class="ml-1">Next</span>
+            <span class="ml-1">{{ $t('btn.next') }}</span>
             <v-icon right>
               mdi-chevron-double-right
             </v-icon>

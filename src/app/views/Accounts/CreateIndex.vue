@@ -44,7 +44,7 @@
               <step-form-four @stepClick="stepHandler" :address="firstAddress" v-if="stepid === 4" />
             </v-col>
             <v-col cols="4" class="flex-grow-0 flex-shrink-1">
-              <p class="text-h5">Comments:</p>
+              <p class="text-h5">帮助说明:</p>
               <p class style="max-width: 220px;">{{ comments }}</p>
             </v-col>
           </v-row>
@@ -85,27 +85,27 @@ export default {
           id: 1,
           icon: 'mdi-account-key-outline',
           text: 'PIN',
-          comments: 'The password is encrypt your wallet data,please remember it.',
+          comments: '该密码用于解锁钱包账号,请牢记.', //The password is encrypt your wallet data,please remember it.
         },
         {
           id: 2,
           icon: 'mdi-keyboard-variant',
           text: 'EIP39 Words',
           comments:
-            'This BIP describes the implementation of a mnemonic code or mnemonic sentence -- a group of easy to remember words -- for the generation of deterministic wallets.',
+            '助记词是区块链钱包生成的一组易于记住的密码词组,请勿泄露.当您钱包删除或丢失,需要通过这组助记词来找回.',
+          //This BIP describes the implementation of a mnemonic code or mnemonic sentence -- a group of easy to remember words -- for the generation of deterministic wallets.
         },
         {
           id: 3,
           icon: 'mdi-account-plus-outline',
           text: 'Create Account Address',
-          comments: 'Make sure you have written down the mnemonic words, once they are lost, they cannot be retrieved.',
+          comments: '确保记下了助记词，一旦它们丢失，就无法找回。',
         },
         {
           id: 4,
           icon: 'mdi-account-check-outline',
           text: 'Checked Account',
-          comments:
-            'This BIP describes the implementation of a mnemonic code or mnemonic sentence -- a group of easy to remember words -- for the generation of deterministic wallets.',
+          comments: 'Address 为您当前钱包下的一个地址,你可以使用该地址接收ETH或其他Token',
         },
       ],
       pwdHide: true,
@@ -171,13 +171,15 @@ export default {
           whiperer
             .sendCreateEnv3(data)
             .then(async (resp) => {
-              // console.log('>>>>>>>>>>>>>>>>>>>&&&&&&&',resp)
+              console.log('>>>>>>>>>>>>>>>>>>>&&&&&&&', resp);
               step3Comp.updateLoading(false);
               that.completed = true;
               that.stepHandler(4);
             })
             .catch((err) => {
+              console.log('>>>>>>>>>>>>>>>>>>>&&&&&&&', err);
               step3Comp.updateLoading(false);
+              that.stepHandler(4);
             });
 
           //await that.$store.dispatch('createAndSaveAccount',creator)

@@ -50,7 +50,9 @@ class WhispererController {
           {
             includeTlsChannelId: this.includeTlsChannelId,
           },
-          (response) => {
+          function (response) {
+            console.log('<<<<response>>>>', response);
+            if (!response) reject('none');
             if (response.error) {
               reject(response.error);
             } else {

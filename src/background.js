@@ -202,9 +202,8 @@ async function setupController(initState) {
         controller
           .createWalletData(message.data)
           .then(async (resp) => {
-            if (isFn) {
-              sendResponse(resp);
-            }
+            console.log('APITYPE_CREATE_ENV3', resp);
+            sendResponse(resp);
           })
           .catch((err) => {
             sendResponse({ error: err.message });

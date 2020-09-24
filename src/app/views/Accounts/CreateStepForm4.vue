@@ -1,11 +1,11 @@
 <template>
   <v-card class="mx-auto px-2" outlined>
     <v-card-title class="flex-column">
-      <div class="text-h1">
+      <div class="text-h1 my-2">
         {{ congemoji }}
       </div>
-      <p class="text-h2">
-        Congratulations
+      <p class="text-h3">
+        {{ $t('p.creator.congratulations') }}
       </p>
       <p class="text-h5">Address: {{ address }}</p>
     </v-card-title>
@@ -14,7 +14,7 @@
       <v-row justify="center">
         <v-col class="text-center">
           <v-btn @click="goHome" outlined color="indigo" class="mx-4 ma-6">
-            Completed
+            {{ $t('btn.completed') }}
             <v-icon left>
               mdi-check-all
             </v-icon>

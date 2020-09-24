@@ -137,7 +137,9 @@ class ContextController extends EventEmitter {
       const initState = Object.assign(this.store.getState(), { env3 });
       await this.store.putState(initState);
       const v3 = await this.appStateController.unlock(password, env3);
-      return this.getInitState();
+      const sendInitState = await this.getInitState();
+      console.log('<<<<<<<<<<__>>>>>>>>>>>>>', sendInitState);
+      return sendInitState;
     } catch (err) {
       console.warn(err);
       throw err;

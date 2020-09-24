@@ -4,7 +4,9 @@
       <v-icon @click.stop="$router.go(-1)" larage>
         {{ icons.left }}
       </v-icon>
-      <span>Add Password</span>
+      <span>
+        {{ $t('p.passbook.addItemTitle') }}
+      </span>
       <v-spacer></v-spacer>
 
       <v-icon>{{ icons.keystone }}</v-icon>
@@ -15,7 +17,7 @@
         <v-form ref="passItemForm">
           <v-text-field
             v-model="data.origin"
-            :label="'URL'"
+            :label="$t('l.origin')"
             outlined
             rounded
             :clearable="true"
@@ -25,7 +27,7 @@
           />
           <v-text-field
             v-model="data.tips"
-            :label="'Tips'"
+            :label="$t('l.tips')"
             outlined
             rounded
             :clearable="true"
@@ -36,7 +38,7 @@
 
           <v-text-field
             v-model="data.username"
-            :label="'Username'"
+            :label="$t('l.username')"
             outlined
             rounded
             :clearable="true"
@@ -46,7 +48,7 @@
           />
           <v-text-field
             v-model="data.password"
-            :label="'Password'"
+            :label="$t('l.password')"
             outlined
             rounded
             :clearable="true"
@@ -59,7 +61,7 @@
       </v-col>
       <v-col cols="10">
         <v-btn @click="saveHandle" block rounded :loading="ctrl.loading" color="primary" dark>
-          Save
+          {{ $t('btn.save') }}
         </v-btn>
       </v-col>
     </v-row>
