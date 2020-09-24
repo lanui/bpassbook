@@ -37,6 +37,11 @@
             {{ text }}
           </v-chip>
         </v-card-text>
+        <div class="mx-2 my-1 text-center" v-if="Boolean(remoteSaveError)">
+          <p class="body-1 deep-orange--text">
+            {{ remoteSaveError }}
+          </p>
+        </div>
         <div class="my-2 ml-4">
           <v-checkbox v-model="skipValid" :label="$t('p.creator.skipVerify')"> </v-checkbox>
         </div>
@@ -46,7 +51,7 @@
     <v-card-actions>
       <v-row justify="center">
         <v-col class="text-center">
-          <v-btn @click="previous(2)" :disabled="loading" outlined color="indigo" class="mx-4 ma-6">
+          <v-btn @click="previous(2)" :disabled="remoteSaving" outlined color="indigo" class="mx-4 ma-6">
             <v-icon left>
               mdi-chevron-double-left
             </v-icon>
@@ -55,7 +60,7 @@
 
           <v-btn @click="next(4)" :disabled="canStore" outlined color="indigo" class="mx-4 ma-6">
             <v-progress-circular
-              v-if="loading"
+              v-if="remoteSaving"
               indeterminate
               :size="22"
               :width="2"
@@ -73,9 +78,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   name: 'CreateStepFormThree',
   computed: {
+    ...mapGetters('app', ['remoteSaving', 'remoteSaveError']),
     sortableSeeds() {
       const dseeds = this.originSeeds || [];
       return dseeds.sort();

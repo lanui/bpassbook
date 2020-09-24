@@ -74,16 +74,17 @@ export default {
       this.defToken = !this.defToken;
     },
     async locking() {
-      console.log('>>>>>>>>logout');
       const controller = new MessageController();
       controller
         .logout()
         .then(async (initState) => {
-          console.log('data>Success>>>', initState);
+          await this.$store.dispatch('setLoginError');
           await this.$store.dispatch('updateInitState', initState);
           this.$router.push({ path: '/signin' });
         })
-        .catch((err) => {});
+        .catch(async (err) => {
+          await this.$store.dispatch('setLoginError');
+        });
     },
   },
   async mounted() {

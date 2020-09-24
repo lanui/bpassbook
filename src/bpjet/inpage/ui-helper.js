@@ -2,7 +2,7 @@ const $ = require('jquery');
 
 export const ICON_WRAPPER_ID = '__icon_name_Wrapper';
 export const Z_INDEX = 2247483646;
-export const Ext_GID = 'chrome-extension://beobdgahalpbmiohplgchnjjhppfmmnp/inputor/inputor.html';
+export const Ext_GID = 'chrome-extension://beobdgahapbmiohplgchnjjhppfmmnp/inputor/inputor.html';
 
 const LOG_PREFFIX = 'BP-ui-helper';
 export const iconSrcBase64 =
@@ -43,7 +43,7 @@ export const getIconSize = (height) => {
   return ICON_SIZES.small;
 };
 
-export function createBPIcon(el) {
+export function createBPIcon(el, url) {
   if (!el) return;
   // console.log('BPInjetTop>>>>>', window);
   const _win = window;
@@ -55,7 +55,7 @@ export function createBPIcon(el) {
   const position = getElPosition(el);
   const fLeft = calcIconFloatLeft(position);
   const fTop = calcIconFloatTop(position);
-  // console.log('createBPIcon>>>', position);
+  // console.log('createBPIcon>>>>>>>>>>>url>>', url);
 
   const { iconSize } = position;
   const id = ICON_WRAPPER_ID;
@@ -79,14 +79,14 @@ export function createBPIcon(el) {
     removeIcon();
   });
 
-  createIFrame(position);
+  createIFrame(position, url);
 }
 
 /**
  *
  * @param {*} position
  */
-export function createIFrame(position) {
+export function createIFrame(position, url) {
   const extIframe = window.document.querySelectorAll(OPTIONS_WRAP_TAG);
   if (extIframe && extIframe.length) {
     window.document.querySelector(OPTIONS_WRAP_TAG).remove();
@@ -95,7 +95,7 @@ export function createIFrame(position) {
 
   const iframe = window.document.createElement('iframe');
   iframe.setAttribute('id', BP_IFRAME_MENU_ID);
-  iframe.setAttribute('src', Ext_GID);
+  iframe.setAttribute('src', url);
   const fTop = calcBoxFloatTop(position);
   const fLeft = calcBoxFloatLeft(position);
   iframe.style.cssText =

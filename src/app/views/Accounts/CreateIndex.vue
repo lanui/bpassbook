@@ -55,6 +55,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import StepFormOne from './CreateStepForm1';
 import StepFormTwo from './CreateStepForm2';
 import StepFormThree from './CreateStepForm3';
@@ -73,12 +74,14 @@ export default {
     StepFormThree,
     StepFormFour,
   },
-  computed: {},
+  computed: {
+    ...mapGetters('app', ['stepid']),
+  },
   data() {
     return {
       cardHeight: 400,
       cardWidth: 650,
-      stepid: 1,
+      // stepid: 1,
       comments: '',
       stepnavs: [
         {
@@ -117,7 +120,7 @@ export default {
   methods: {
     stepHandler(id) {
       const curStep = this.stepnavs.find((s) => s.id === id);
-      this.stepid = curStep ? curStep.id : 1;
+      this.$store.dispatch('app/setCreateStepid', curStep.id);
       this.comments = curStep ? curStep.comments || '' : '';
     },
     setPassword(password) {
@@ -152,43 +155,49 @@ export default {
     async saveWallet() {
       const that = this;
       const step3Comp = this.$refs.step3Comp;
-      step3Comp.updateLoading(true);
+      //step3Comp.updateLoading(true);
+      await this.$store.dispatch('app/setRemoteResponseState', { error: '', loading: true });
       creator
         .createWallet()
         .then(async function (wallet) {
           that.firstAddress = creator.getAddress();
           console.log('this.firstAddress>>', that.firstAddress, creator.getV3());
           const env3 = await creator.getEnv3();
+          if (!env3 || creator.password === undefined || !creator.password.trim().length) {
+            const errMsg = 'An unknown error occurred,please refresh this page and try again.';
+            await that.$store.dispatch('app/setRemoteResponseState', { error: errMsg, loading: false });
+          }
           const data = {
             selectedAddress: creator.getAddress(),
             password: creator.password,
             env3,
             v3: creator.getV3(),
           };
-          console.log('>>>>>>>>>', data);
-          const whiperer = new WhispererController('App-create');
 
-          whiperer
-            .sendCreateEnv3(data)
-            .then(async (resp) => {
-              console.log('>>>>>>>>>>>>>>>>>>>&&&&&&&', resp);
-              step3Comp.updateLoading(false);
-              that.completed = true;
-              that.stepHandler(4);
-            })
-            .catch((err) => {
-              console.log('>>>>>>>>>>>>>>>>>>>&&&&&&&', err);
-              step3Comp.updateLoading(false);
-              that.stepHandler(4);
-            });
+          // const whiperer = new WhispererController('App-create');
 
-          //await that.$store.dispatch('createAndSaveAccount',creator)
+          // whiperer
+          //   .sendCreateEnv3(data)
+          //   .then(async (resp) => {
+          //     step3Comp.updateLoading(false);
+          //     that.completed = true;
+          //     that.stepHandler(4);
+          //   })
+          //   .catch((err) => {
+          //     step3Comp.updateLoading(false);
+          //     that.stepHandler(4);
+          //   });
 
           //
+          $livedManager.sendNewWallet(data);
         })
-        .catch((err) => {
+        .catch(async (err) => {
           console.log('create>>>', err);
-          step3Comp.updateLoading(false);
+          await this.$store.dispatch('app/setRemoteResponseState', {
+            error: typeof err === 'object' ? err.message : err,
+            loading: false,
+          });
+          // step3Comp.updateLoading(false);
         });
     },
   },

@@ -12,8 +12,9 @@ import App from './App';
 import store from '../store';
 import router from './router';
 import i18n from '@/locale';
-import ConnectionManager from '@/corejs/connections';
+// import ConnectionManager from '@/corejs/connections';
 import { BACKEND_CONN_POPUP } from '@/lib/cnst/connection-cnst';
+import ConnManager from './controllers/connection-manager';
 
 import Web3Client from '@/corejs/web3';
 import idbMgr from '@/corejs/indexdb';
@@ -25,8 +26,10 @@ global.browser = require('webextension-polyfill');
 const web3Cli = new Web3Client();
 global.web3Cli = web3Cli;
 
-const connection = new ConnectionManager({ portName: BACKEND_CONN_POPUP, web3Cli });
-global.$conn = connection;
+// const connection = new ConnectionManager({ portName: BACKEND_CONN_POPUP, web3Cli });
+
+const connManager = new ConnManager({ portName: BACKEND_CONN_POPUP, store });
+global.$connManager = connManager;
 
 Vue.prototype.$browser = global.browser;
 import '../assets/css/core.css';

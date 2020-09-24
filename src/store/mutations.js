@@ -13,6 +13,7 @@ export default {
     state.bipinit = key || DEFAULF_BIPKEY;
   },
   [types.CLEAN_BIPINIT](state) {
+    s;
     state.bipinit = null;
   },
   [types.UPDATE_ISUNLOCKED](state, isUnlocked = false) {
@@ -47,5 +48,11 @@ export default {
     state.publicKey = publicKey;
     state.selectedAddress = selectedAddress;
     state.chainId = chainId;
+  },
+  [types.SET_LIVE_LOADING](state, loading = fasle) {
+    state.liveLoadig = Boolean(loading);
+  },
+  [types.SET_LIVE_ERROR](state, error = '') {
+    state.liveError = error;
   },
 };

@@ -25,6 +25,10 @@ class MessageController {
           includeTlsChannelId: true,
         },
         (initState) => {
+          console.log('>>>>>>>>>>>>>>login>>>>>>>>>>>>>>>>>>', initState, this.runtime.lastError);
+          if (!initState) {
+            reject({ code: 100002, message: 'Error: Incorrect password' });
+          }
           if (initState.error) {
             reject(initState.error);
           } else {

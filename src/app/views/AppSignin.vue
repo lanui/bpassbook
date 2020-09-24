@@ -7,7 +7,7 @@
     </v-row>
     <v-row justify="center" class="text-center">
       <v-col cols="8" md="4" lg="4">
-        <h1 style="font-size:2.75rem;font-weight:400;">Welcome to BPassword</h1>
+        <h1 style="font-size: 2.75rem; font-weight: 400;">Welcome to BPassword</h1>
         <v-form ref="signInForm">
           <v-text-field
             :loading="loginLoading"
@@ -21,29 +21,24 @@
             @click:append="pwdShow = !pwdShow"
             :error-messages="loginError"
             :placeholder="$t('l.passwordPlaceHolder')"
-            v-model="password">
+            v-model="password"
+          >
           </v-text-field>
         </v-form>
       </v-col>
-
     </v-row>
     <v-row justify="center" class="text-center">
       <v-col cols="2" width="270">
-        <v-btn
-          block
-          outlined
-          x-large
-          @click="login"
-          color="indigo"
-          class="mx-4 ma-6"
-        >{{$t('nav.login.unlock')}}</v-btn>
+        <v-btn block outlined x-large @click="login" color="indigo" class="mx-4 ma-6">{{
+          $t('nav.login.unlock')
+        }}</v-btn>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import {mapState} from 'vuex'
+import { mapState } from 'vuex';
 import Logo from '@/widgets/ExtLogo.vue';
 
 import { passwordRules } from '@/ui/constants/valid-rules';
@@ -54,11 +49,7 @@ export default {
     Logo,
   },
   computed: {
-    ...mapState([
-      'isUnlocked',
-      'loginLoading',
-      'loginError'
-    ])
+    ...mapState(['isUnlocked', 'loginLoading', 'loginError']),
   },
   data() {
     return {
@@ -72,48 +63,33 @@ export default {
     };
   },
   methods: {
-    async login() {
-      if(this.$refs.signInForm.validate()){
-        const pwd = this.password
-        const $vue = this
-
-        try{
-          const env3 = await this.$store.getters['env3']
-          await this.$store.dispatch('setLoginLoading',true)
-          $conn.clientPort.sendUnlockedReq(pwd,env3)
-
-        }catch(err){
-          this.err = err.message
-        }
-      }
+    async login() {},
+    goHome() {
+      this.$router.push({ path: '/index' });
     },
-    goHome(){
-      this.$router.push({path:"/index"})
-    }
   },
   mounted() {
-    const isUnlocked = this.$store.getters['isUnlocked']
-    if(isUnlocked){
-      this.goHome()
+    const isUnlocked = this.$store.getters['isUnlocked'];
+    if (isUnlocked) {
+      this.goHome();
     }
   },
-  watch:{
-    isUnlocked:function(val,old) {
-      console.log("watch:",val,old)
-      if(val){
-        this.goHome()
+  watch: {
+    isUnlocked: function (val, old) {
+      console.log('watch:', val, old);
+      if (val) {
+        this.goHome();
       }
     },
-    password:function(val,old){
-      if(val===''){
-        this.$store.dispatch('setLoginError','')
+    password: function (val, old) {
+      if (val === '') {
+        this.$store.dispatch('setLoginError', '');
       }
-      if(val!==old){
-        this.$store.dispatch('setLoginError','')
+      if (val !== old) {
+        this.$store.dispatch('setLoginError', '');
       }
-    }
-  }
+    },
+  },
 };
 </script>
-<style>
-</style>
+<style></style>

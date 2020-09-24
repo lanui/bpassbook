@@ -3,13 +3,27 @@ import { fromV3 } from 'ethereumjs-wallet';
 import * as types from './mutation-types';
 
 import LocalStore from '@/lib/storage/local-store';
-import { version } from '@/manifest.json';
 
 const passworder = require('browser-passworder');
 
-export const setLoginError = ({ commit }, errMsg) => {
+/**
+ * login response Error
+ * @param {*} param0
+ * @param {*} errMsg
+ */
+export const setLoginError = ({ commit }, errMsg = '') => {
   commit(types.SET_LOGINERROR, errMsg);
   commit(types.SET_LOGINLOADING, false);
+};
+
+/**
+ * common connect response error
+ * @param {*} param0
+ * @param {*} param1
+ */
+export const setLiveError = ({ commit }, { errMsg = '', loading = false }) => {
+  commit(types.SET_LIVE_ERROR, errMsg);
+  commit(types.SET_LIVE_LOADING, loading);
 };
 
 export const setLoginLoading = ({ commit }, loading) => {
@@ -51,56 +65,12 @@ export const loadBipinit = async ({ commit }, payload) => {
 };
 
 /**
- *
- * @param {*} param0
- * @param {*} creator
- */
-export const createAndSaveAccount = async ({ commit }, creator) => {
-  try {
-    const local = new LocalStore();
-    const v3 = creator.getV3();
-    if (v3) {
-      const password = creator.password;
-      const env3s = await passworder.encrypt(creator.password, v3);
-      if (!env3s) throw new Error('encrypt v3 fail');
-      let localStore = (await local.get()) || { firstTimeInfo: { version, date: Date.now() } };
-      const env3 = JSON.parse(env3s);
-      localStore = Object.assign({}, localStore, { data: { env3 } });
-
-      await local.set(localStore);
-      commit(types.SET_ENV3, env3);
-      commit(types.SET_V3, v3);
-      commit(types.UPDATE_ISUNLOCKED, true);
-
-      sendUnlockBackEnd(password, env3);
-    }
-  } catch (err) {
-    throw err;
-  }
-};
-
-/**
- * 创建账号
- * @param {*} password
- * @param {*} env3
- */
-function sendUnlockBackEnd(password, env3) {
-  const clientPort = global.$conn.clientPort;
-  clientPort.sendUnlockedReq.bind(clientPort);
-  clientPort.sendUnlockedReq(password, env3);
-}
-
-/**
  * set vuex state from backend message
  * @param {*} param0
  * @param {*} payload
  */
 export const updateFromBackground = async ({ commit }, payload) => {
   console.log('action>>', payload);
-
-  // if (web3Cli && payload.AppStateController && payload.AppStateController.chainId){
-  //   web3Cli.chainStore.putState(payload.AppStateController.chainId)
-  // }
 
   commit(types.SET_BIPINIT, true);
   commit(types.SET_ENV3, payload.env3 || null);
@@ -152,7 +122,8 @@ export const updateInitState = async ({ commit, dispatch }, initState) => {
     commit(types.SET_WALLET_OPEN, { chainId, privateKey, publicKey, selectedAddress });
     commit(types.UPDATE_NICKNAME, nickname);
   }
-
-  const passbook = GitbookController.passbook;
-  await dispatch('passbook/updateItems', passbook);
+  if (GitbookController) {
+    const passbook = GitbookController.passbook;
+    await dispatch('passbook/updateItems', passbook);
+  }
 };

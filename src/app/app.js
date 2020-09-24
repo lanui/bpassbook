@@ -12,7 +12,7 @@ import router from './router';
 
 import i18n from '@/locale';
 
-import ConnectionManager from '@/corejs/connections';
+import LivedManager from '@/lib/controllers/lived-manager';
 import { BACKEND_CONN_FULLSCREEN } from '@/lib/cnst/connection-cnst';
 
 global.browser = require('webextension-polyfill');
@@ -30,12 +30,11 @@ global.extension = extension;
 Vue.prototype.$browser = global.browser;
 Vue.prototype.$local = new LocalStore();
 
-const connection = new ConnectionManager({ portName: BACKEND_CONN_FULLSCREEN });
+const livedManager = new LivedManager({ portName: BACKEND_CONN_FULLSCREEN });
+global.$livedManager = livedManager;
 
 import Web3Client from '@/corejs/web3';
 global.web3Cli = new Web3Client();
-
-global.$conn = connection;
 
 global.app = new Vue({
   el: '#app',

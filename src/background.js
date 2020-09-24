@@ -5,13 +5,12 @@ import asStream from 'obs-store/lib/asStream';
 import debounce from 'debounce-stream';
 import endOfStream from 'end-of-stream';
 import PortStream from 'extension-port-stream';
+import pump from 'pump';
 
 import extension from '@/lib/extensionizer';
 import LocalStore from '@/lib/storage/local-store';
 import ContextController from '@/corejs/context-controller';
 import createStreamSink from '@/lib/storage/createStreamSink';
-
-import { APITYPE_PWD_INCORRECT } from './corejs/enums';
 
 import {
   BACKEND_CONN_POPUP,
@@ -27,14 +26,11 @@ import {
   APITYPE_CONTENTSCRIPTS_TRANSFER,
   APITYPE_INPUTOR_ADDITEM,
   APITYPE_UPDATE_UNLOCKED,
+  APITYPE_LOGIN,
   APITYPE_LOGOUT,
   APITYPE_UPDATE_PBITEM,
   APITYPE_DELETE_PBITEM,
 } from '@/lib/cnst/api-cnst';
-
-import { MOCK_PBOOK_ITEMS } from '@/mocks/bp-items-mock';
-
-import pump from 'pump';
 
 const LOG_PREFFIX = 'background';
 
@@ -123,19 +119,17 @@ async function setupController(initState) {
    *
    * @param {*} remotePort
    */
-  function connectRemote(remotePort) {
+  async function connectRemote(remotePort) {
     const processName = remotePort.name;
 
     console.log('cli-connection Create >>>>>', processName, remotePort.sender);
 
     const isInternalProcess = extensionInternalProcessHash[processName];
 
-    const data = controller.store.getState();
+    const originStoreData = controller.store.getState();
     if (isInternalProcess) {
       const portStream = new PortStream(remotePort);
-      console.log('New Connection listened at Background >>>>>', processName, data);
-      console.log('New Connection listened at Background from sender>>>>>', remotePort.sender);
-
+      console.log('New Connection listened at Background >>originStoreData>>>', originStoreData);
       if (processName === BACKEND_CONN_POPUP) {
         popupIsOpen = true;
         endOfStream(portStream, () => {
@@ -152,10 +146,9 @@ async function setupController(initState) {
           controller.isClientOpen = clientOpenStatus();
         });
       }
-      const isUnlocked = Boolean(controller.appStateController.isUnlocked);
 
       // console.log('send data connect>>', sendData);
-      let sendState = controller.getInitState();
+      let sendState = await controller.getInitState();
 
       remotePort.postMessage({ apiType: 'initState', data: sendState });
     } else {
@@ -188,27 +181,28 @@ async function setupController(initState) {
   }
 
   /**
-   *
+   * once Message
    * @param {*} message
    * @param {*} sender
    * @param {*} sendResponse
    */
-  function handleMessage(message, sender, sendResponse) {
+  async function handleMessage(message, sender, sendResponse) {
     console.log(`${LOG_PREFFIX}-runtime.message>listener>>`, message, sender);
     const { apiType } = message;
     const isFn = typeof sendResponse === 'function';
     switch (apiType) {
-      case APITYPE_CREATE_ENV3:
-        controller
-          .createWalletData(message.data)
-          .then(async (resp) => {
-            console.log('APITYPE_CREATE_ENV3', resp);
-            sendResponse(resp);
-          })
-          .catch((err) => {
-            sendResponse({ error: err.message });
-          });
-        break;
+      // case APITYPE_CREATE_ENV3:
+      //   controller
+      //     .createWalletData(message.data)
+      //     .then(async (resp) => {
+      //       console.log('APITYPE_CREATE_ENV3', resp);
+      //       sendResponse(resp);
+      //     })
+      //     .catch((err) => {
+      //       sendResponse({ error: err.message });
+      //     });
+      //   if (isFn) return true
+      //   break;
       case APITYPE_UPDATE_UNLOCKED:
         controller
           .unlocked(message.password)
@@ -220,9 +214,10 @@ async function setupController(initState) {
           })
           .catch((err) => {
             if (isFn) {
-              sendResponse({ error: err.message });
+              sendResponse({ error: err });
             }
           });
+
         break;
       case APITYPE_LOGOUT:
         controller.appStateController.locked().then((resp) => {
@@ -230,6 +225,8 @@ async function setupController(initState) {
             sendResponse(controller.getInitState());
           }
         });
+
+        if (isFn) return true;
         break;
       case APITYPE_INPUTOR_ADDITEM:
         controller.gitbookController
@@ -244,6 +241,7 @@ async function setupController(initState) {
               sendResponse(controller.getInitState());
             }
           });
+
         break;
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
@@ -282,18 +280,25 @@ async function setupController(initState) {
 }
 
 function portMessageListener(controller, remotePort) {
-  // console.log(`${LOG_PREFFIX}-runtime Msg`, controller);
-  remotePort.onMessage.addListener(async (msg) => {
-    // console.log('Report>>>>>listener>>>', remotePort);
+  // console.log(`${LOG_PREFFIX}-runtime Msg`, remotePort);
+  remotePort.onMessage.addListener(async (msg, sender) => {
+    let sendInitState = await controller.getInitState();
     if (msg && msg.apiType) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
+      console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
+        case APITYPE_CREATE_ENV3:
+          const saveWalletResp = await controller.saveNewWalletForLived(msg);
+          sender.postMessage(saveWalletResp);
+          break;
+        case APITYPE_LOGIN:
+          const logResp = await controller.login(msg);
+
+          remotePort.postMessage(logResp);
+          break;
         case APITYPE_SELECTED_PBITEM:
           const transData = msg.data;
           const tabId = transData.tabId;
-          console.log('transData:>>>>>>>>>>>', transData, tabId);
-          console.log('chrome-tab>>>>>>>>>>>', transData, tabId, remotePort);
-
           //remotePort.postMessage({ apiType: APITYPE_CONTENTSCRIPTS_TRANSFER, data: transData });
           if (contentScriptsPorts[tabId]) {
             console.log('transData:ContentScript>>>', contentScriptsPorts[tabId]);
@@ -307,6 +312,7 @@ function portMessageListener(controller, remotePort) {
         //   }
         //   break;
         default:
+          //remotePort.postMessage({ apiType: APITYPE_INIT_STATE, sendInitState})
           break;
       }
     }

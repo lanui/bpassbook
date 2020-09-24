@@ -16,8 +16,6 @@ import {
   buildUserNameSelector,
 } from './ui-helper';
 
-import { WEB_PAGE_MSG, GET_IS_UNLOCKED } from './api-cnst';
-
 const initState = {
   type: 'username',
   id: ICON_WRAPPER_ID,
@@ -31,7 +29,8 @@ export class FieldsController extends EventEmitter {
   constructor(opts = {}) {
     super();
     const { initState } = opts;
-
+    this.url = initState.inputorURL;
+    console.log('>>>>>>>>>>>initState.inputorURL>>>>>>>>>>>>', this.url);
     this.store = new ObservableStore(initState);
     this.hasLoginForm = false;
   }
@@ -132,12 +131,13 @@ export class FieldsController extends EventEmitter {
     const targetPassword = this.targetPassword;
     const targetUserName = this.targetUserName;
     const _ctx = this;
+    const inputorURL = this.url;
 
     if (targetPassword) {
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
         // console.log('BPinjet>>> focusin', e, e.target);
-        createBPIcon(this);
+        createBPIcon(this, inputorURL);
         _ctx.currentTarget = e.target;
         $(e.target).on('click', function (e) {
           e.stopPropagation();
@@ -151,7 +151,7 @@ export class FieldsController extends EventEmitter {
         $(targetUserName).on('focusin', function (e) {
           e.stopPropagation();
           // console.log('BPinjet>>> focusin', e, e.target);
-          createBPIcon(this);
+          createBPIcon(this, inputorURL);
           _ctx.currentTarget = e.target;
           $(e.target).on('click', function (e) {
             e.stopPropagation();

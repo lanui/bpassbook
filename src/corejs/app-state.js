@@ -47,9 +47,20 @@ export default class AppStateController extends EventEmitter {
       this.v3 = v3;
       return v3;
     } catch (err) {
-      log.warn(err);
-      return false;
+      log.warn('>>>>>>>>>>>>>>>>', err);
+      throw err;
     }
+  }
+
+  /**
+   *
+   * @param {*} param0
+   */
+  async loginUpdateState({ v3, isUnlocked, wallet, selectedAddress, privateKey, publicKey }) {
+    this.v3 = v3;
+    this.isUnlocked = isUnlocked;
+    this.wallet = wallet;
+    await this.store.updateState({ selectedAddress, privateKey, publicKey });
   }
 
   async locked() {

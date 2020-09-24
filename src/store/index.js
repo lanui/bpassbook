@@ -41,6 +41,8 @@ export default new Vuex.Store({
     publicKey: null,
     selectedAddress: '',
     nickname: '',
+    liveError: '', //common connect error
+    liveLoadig: false, //post a live-long message will not back
     networks: [
       {
         text: 'Ropsten',

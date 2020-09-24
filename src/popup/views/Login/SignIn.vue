@@ -14,7 +14,7 @@
       <v-col cols="10">
         <v-form ref="signInForm">
           <v-text-field
-            :loading="loading"
+            :loading="loginLoading"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
@@ -23,7 +23,7 @@
             counter
             :hint="pwdHint"
             @click:append="pwdShow = !pwdShow"
-            :error-messages="err"
+            :error-messages="loginError"
             :placeholder="$t('l.passwordPlaceHolder')"
             v-model="password"
           >
@@ -34,7 +34,13 @@
     <v-row justify="center">
       <v-col cols="10">
         <v-btn @click="login" block larage color="light-blue darken-1" dark>
-          <v-progress-circular v-if="loading" indeterminate :size="22" :width="2" color="white"></v-progress-circular>
+          <v-progress-circular
+            v-if="loginLoading"
+            indeterminate
+            :size="22"
+            :width="2"
+            color="white"
+          ></v-progress-circular>
           {{ $t('nav.login.unlock') }}
         </v-btn>
       </v-col>
@@ -49,6 +55,8 @@ import LogoBig from '@/widgets/ExtLogo';
 import { passwordRules } from '@/ui/constants/valid-rules';
 
 import MessageController from '@/popup/controllers/message-controller';
+
+import { APITYPE_LOGIN } from '@/lib/cnst/api-cnst.js';
 
 export default {
   name: 'PopupSignIn',
@@ -74,22 +82,7 @@ export default {
     async login() {
       if (this.$refs.signInForm.validate()) {
         const password = this.password;
-        const env3 = await this.$store.getters['env3'];
-        const controller = new MessageController();
-        this.loading = true;
-        controller
-          .login(password)
-          .then(async (initState) => {
-            console.log('data>Success>>>', initState);
-            this.loading = false;
-
-            await this.$store.dispatch('updateInitState', initState);
-            this.gotoIndex();
-          })
-          .catch((err) => {
-            this.loading = false;
-            this.err = err;
-          });
+        await $connManager.login(password);
       }
     },
     gotoIndex() {
