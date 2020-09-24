@@ -31,7 +31,8 @@ export function validUrl(url) {
     '(:[0-9]{1,4})?' + // 端口- :80
     '((/?)|' + // a slash isn't required if there is no file name
     "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
-  const re = new RegExp(strRegex);
+
+  const re = new RegExp(/(http|https):\/\/([\w.]+\/?)\S*/);
 
   return re.test(url);
 }

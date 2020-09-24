@@ -127,7 +127,7 @@ export default {
         return;
       }
 
-      const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
+      const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: false });
 
       whisperer
         .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)

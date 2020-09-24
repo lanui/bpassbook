@@ -92,13 +92,10 @@ export default {
     },
     addItemHandle() {
       console.log(`${LOG_PREFFIX} >Document>>`, window.self);
-
       this.$router.push({ path: 'addPassbook', query: { username: '', password: '', origin: '' } });
     },
   },
-  beforeCreate() {
-    console.log('Create App>>>>>>>>>', chrome.runtime);
-  },
+  beforeCreate() {},
   mounted() {},
 };
 </script>

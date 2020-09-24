@@ -233,12 +233,12 @@ async function setupController(initState) {
           .addBookToStore(message.data, controller.getSelectedAddress())
           .then(async (resp) => {
             if (isFn && resp) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           })
-          .catch((err) => {
+          .catch(async (err) => {
             if (isFn && err) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           });
 
@@ -246,30 +246,31 @@ async function setupController(initState) {
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
           .addBookToStore(message.data, controller.getSelectedAddress())
-          .then((r) => {
+          .then(async (r) => {
+            console.log('>>>>>>>>>>>>>>>');
             if (isFn) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           })
-          .catch((err) => {
+          .catch(async (err) => {
             console.log(`APITYPE_UPDATE_PBITEM >>> error>>>`, err);
             if (isFn) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           });
         break;
       case APITYPE_DELETE_PBITEM:
         controller.gitbookController
           .deleteBookToStore(message.data, controller.getSelectedAddress())
-          .then((r) => {
+          .then(async (r) => {
             if (isFn) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           })
-          .catch((err) => {
+          .catch(async (err) => {
             console.log(`APITYPE_UPDATE_PBITEM >>> error>>>`, err);
             if (isFn) {
-              sendResponse(controller.getInitState());
+              sendResponse(await controller.getInitState());
             }
           });
         break;

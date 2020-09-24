@@ -23,6 +23,7 @@
             :clearable="true"
             :loading="ctrl.loading"
             :rules="rules.required"
+            :error-messages="error"
             dense
           />
           <v-text-field
@@ -121,6 +122,7 @@ export default {
         try {
           validItem(item);
         } catch (e) {
+          console.log('>>>>>>>>>>>>>', e);
           this.error = e;
           setTimeout(() => {
             this.error = '';

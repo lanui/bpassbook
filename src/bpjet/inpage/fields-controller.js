@@ -182,7 +182,7 @@ export class FieldsController extends EventEmitter {
  * @param {*} state
  */
 function handleStateChanged(state) {
-  console.log(`${LOG_PREFFIX}- state`, this, state);
+  // console.log(`${LOG_PREFFIX}- state>>>`, this, state);
   updateIconPosition(state.position);
   updateIFramePosition(state.position);
 }

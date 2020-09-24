@@ -68,9 +68,10 @@ class MessageController {
           data: item,
         },
         {
-          includeTlsChannelId: true,
+          includeTlsChannelId: false,
         },
         (initState) => {
+          console.log('>>>>>>>>updatePassbookItem>>>>>>>>>>>>>>>>>>', initState);
           if (initState.error) {
             console.log(LOG_PREFIFIX + '>>>>', initState);
             reject(initState.error);
