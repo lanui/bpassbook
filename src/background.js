@@ -129,7 +129,7 @@ async function setupController(initState) {
     const originStoreData = controller.store.getState();
     if (isInternalProcess) {
       const portStream = new PortStream(remotePort);
-      console.log('New Connection listened at Background >>originStoreData>>>', originStoreData);
+      // console.log('New Connection listened at Background >>originStoreData>>>', originStoreData);
       if (processName === BACKEND_CONN_POPUP) {
         popupIsOpen = true;
         endOfStream(portStream, () => {
@@ -141,8 +141,9 @@ async function setupController(initState) {
       if (processName === CLI_CONN_INPUTOR || processName === BACKEND_CONN_FULLSCREEN) {
         const tabId = remotePort.sender.tab.id;
         BPTabsPort[tabId] = true;
-        endOfStream(portStream, () => {
+        endOfStream(portStream, (err) => {
           delete BPTabsPort[tabId];
+          console.log('closed processName>>>', processName, err);
           controller.isClientOpen = clientOpenStatus();
         });
       }
@@ -225,8 +226,6 @@ async function setupController(initState) {
             sendResponse(controller.getInitState());
           }
         });
-
-        if (isFn) return true;
         break;
       case APITYPE_INPUTOR_ADDITEM:
         controller.gitbookController
@@ -277,6 +276,9 @@ async function setupController(initState) {
       default:
         break;
     }
+
+    // this handle no match message add continues constentscript message
+    return true;
   }
 }
 

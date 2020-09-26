@@ -4,9 +4,9 @@
       <v-list-item @click="selectItem" dense>
         <v-list-item-avatar outlined color="grey lighten-4">
           <v-img v-if="Boolean(item.logo)" :src="item.logo" />
-          <span class="deep-purple--text text--accent-2" v-if="!Boolean(item.logo)">{{
-            item.iconText > 2 ? item.iconText : item.tips.substr(0, 1)
-          }}</span>
+          <div class="deep-purple--text text--accent-2" v-if="!Boolean(item.logo)">
+            {{ item.iconText > 2 ? item.iconText : item.tips.substr(0, 1) }}
+          </div>
         </v-list-item-avatar>
 
         <v-list-item-content class="text-left">
@@ -15,10 +15,10 @@
         </v-list-item-content>
 
         <v-list-item-action style="flex-direction: row;">
-          <v-btn @click="goEditItem(item)" x-small icon color="deep-purple accent-2 mx-1">
+          <v-btn @click="goEditItem(item)" small icon color="deep-purple accent-2 mr-2">
             <v-icon>mdi-file-document-edit-outline</v-icon>
           </v-btn>
-          <v-btn @click="deletItem(item)" x-small icon color="deep-purple accent-2 mx-1">
+          <v-btn @click="deletItem(item)" small icon color="deep-purple accent-2">
             <v-icon>mdi-delete-forever-outline</v-icon>
           </v-btn>
         </v-list-item-action>

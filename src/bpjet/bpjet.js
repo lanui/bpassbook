@@ -31,10 +31,15 @@ function injetStartup() {
     inputorURL: chrome.runtime.getURL(INPUTOR_PAGER),
   };
   const controller = new FieldsController({ initState });
+  controller.setMaxListeners(100);
   controller.checkedLoginForm(window.document);
 
+  if (controller && !controller.hasLoginForm) {
+    controller.bindMutationObserver(window.document);
+  }
+
   if (controller.hasLoginForm) {
-    console.log(`${LOG_PREFFIX}:ontroller State>>>`, controller.getState());
+    // console.log(`${LOG_PREFFIX}:ontroller State>>>`, controller);
     windowResizeObserve(controller);
     windowScrollObserve(controller);
   }
@@ -43,44 +48,42 @@ function injetStartup() {
     console.log(`${LOG_PREFFIX}:bpassbookStream on data>>>`, message, controller.hasLoginForm);
 
     if (controller.hasLoginForm && message.item) {
-      console.log(`${LOG_PREFFIX}:bpassbookStream on ctx>>>`, message.item, controller);
+      // console.log(`${LOG_PREFFIX}:bpassbookStream on ctx>>>`, message.item, controller);
       controller.fillInputField(message.item);
     } else {
     }
-    console.log(`${LOG_PREFFIX} >>bpassbookStream on data>`, window);
+    // console.log(`${LOG_PREFFIX} >>bpassbookStream on data>`, window);
   });
 
   bpassbookStream.on('end', function (message) {
-    console.log(`${LOG_PREFFIX} >>bpassbookStream on End>`, message);
+    // console.log(`${LOG_PREFFIX} >>bpassbookStream on End>`, message);
   });
 
   /**
    * 接收 inputor message and fill it
    */
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    const { item, apiType } = message;
-    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, apiType, item, controller.hasLoginForm);
-    console.log(`${LOG_PREFFIX}-sender>>>`, sender);
-    if (controller.hasLoginForm) {
-      const { hostname, origin } = window.location;
-      console.log(`${LOG_PREFFIX}-host>>>`, hostname, origin);
+    const { item, apiType, tabUrl } = message;
+    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, message, controller);
+    console.log(`${LOG_PREFFIX}-Reciv Once Message>>>`, sender, document.querySelector('input[type="password"]'));
+
+    const data = controller.getInputFieldData();
+    // console.log(`${LOG_PREFFIX}-host>>>`, hostname, origin);
+    if (data.hasLoginForm) {
       switch (apiType) {
         case APITYPE_FILL_PBITEM:
           controller.fillInputField(message.item);
-          sendResponse({ data: hostname });
+          sendResponse({ data: data.hostname });
           break;
         case APITYPE_GET_PBITEM:
-          const data = controller.getInputFieldData();
-          data.hostname = hostname;
-          data.origin = origin;
           sendResponse({ data });
           break;
         default:
           break;
       }
-
-      console.log(`${LOG_PREFFIX}-host>>>`, window.location.hostname);
     }
+
+    return true;
   });
 }
 

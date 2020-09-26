@@ -127,7 +127,7 @@ export default {
         return;
       }
 
-      const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: false });
+      const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
 
       whisperer
         .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)
@@ -148,13 +148,21 @@ export default {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
-        console.log(tabs[0].url);
+        console.log('>>>>getFormDataFromInjet>>>>>>>>>>>', tabs, tabUrl, tabs[0].favIconUrl);
         chrome.tabs.sendMessage(tabId, { apiType: APITYPE_GET_PBITEM, item: {}, tabId, tabUrl }, function (response) {
           console.log(`${LOG_PREFFIX} message back >>>>`, response);
-          if (response && response.data) {
-            that.fillData(response.data);
+          if (chrome.runtime.lastError) {
+            console.log('>>>>>>>chrome.runtime.lastError>>>>', chrome.runtime.lastError);
+          } else {
+            if (response && response.data) {
+              that.fillData(response.data);
+            }
           }
         });
+
+        // window.postMessage({
+
+        // })
       });
     },
     fillData(data) {

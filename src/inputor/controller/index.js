@@ -70,7 +70,7 @@ async function handleExtensionMessage(req, sender, sendResp) {
   const passbook = GitbookController?.passbook || [];
   switch (apiType) {
     case APITYPE_INIT_STATE:
-      console.log('UPDATE store recvie>>>>', data);
+      // console.log('UPDATE store recvie>>>>', data);
       await store.dispatch('updateState', {
         isUnlocked,
         selectedAddress,
