@@ -15,6 +15,9 @@ const actions = {
     commit(types.UPDATE_CREATING_STATE, creating);
     commit(types.UPDATE_CREAT_ERROR, error);
   },
+  async updateTransferPassbook({ commit }, item) {
+    commit(types.UPDATE_UPDATE_PASSBOOK, item);
+  },
 };
 
 export default actions;

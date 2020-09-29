@@ -17,7 +17,7 @@ export function checkForError() {
 }
 
 export function validBookItem(item) {
-  const keysRequired = ['username', 'password', 'tips', 'origin'];
+  const keysRequired = ['username', 'password', 'tips', 'hostname'];
   if (typeof item !== 'object') return false;
   for (let i = 0; i < keysRequired.length; i++) {
     if (!item.hasOwnProperty(keysRequired[i]) || item[keysRequired[i]] == '') return false;

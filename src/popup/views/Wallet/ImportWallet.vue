@@ -6,12 +6,12 @@
       </v-col>
       <v-col cols="10">
         <v-form ref="importForm">
-          <v-container fluid>
+          <!-- <v-container fluid>
             <v-radio-group v-model="importType" row>
               <v-radio dense :label="$t('l.jsonKeystore')" value="json"></v-radio>
               <v-radio dense :label="$t('l.mnemonics')" value="v3"></v-radio>
             </v-radio-group>
-          </v-container>
+          </v-container> -->
 
           <v-textarea
             v-if="importType !== 'json'"
@@ -38,8 +38,11 @@
             color="indigo"
             v-model="v3json"
             :value="v3json"
+            :error="Boolean(jsonError)"
+            :error-messages="jsonError"
             :label="$t('l.jsonKeystore')"
             type="text"
+            :rules="rules.json"
           ></v-textarea>
           <v-text-field
             dense
@@ -68,7 +71,9 @@
     </v-row>
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
-        <v-btn block larage color="light-blue darken-1" dark>导入钱包</v-btn>
+        <v-btn @click="importHandle" block larage color="light-blue darken-1" dark>
+          导入钱包
+        </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -77,6 +82,9 @@
 <script>
 import { mapGetters } from 'vuex';
 import { passwordRules } from '@/ui/constants/valid-rules';
+import { APITYPE_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
+import { OpenWallet } from '@/bglib/account-creator';
+import WhispererController from '@/lib/controllers/whisperer-controller';
 export default {
   name: 'PopupImportWallet',
   computed: {
@@ -90,13 +98,48 @@ export default {
       v3json: '',
       password: '',
       error: '',
+      jsonError: '',
       loading: false,
       rules: {
         password: [...passwordRules],
+        json: [(v) => (v && typeof v === 'string') || 'please entry json string.'],
       },
     };
   },
-  methods: {},
+  methods: {
+    async importHandle() {
+      if (this.$refs.importForm.validate()) {
+        const controller = new WhispererController({ name: 'Importor-Whisperer' });
+        try {
+          const env3 = JSON.parse(this.v3json);
+          const password = this.password;
+          // console.log(">>>>>>jsonText>>>>>>>>>",jsonText)
+          const dev3 = OpenWallet(env3, password);
+          const data = {
+            env3,
+            dev3,
+            password,
+          };
+        } catch (err) {
+          if (err.message === 'message authentication code mismatch') {
+            this.error = 'Keystore and password do not match.';
+          } else if (err.message === 'Unexpected end of JSON input') {
+            this.jsonError = 'keystore format incorrect.';
+          } else {
+            console.warn(err.message);
+          }
+        }
+      }
+    },
+  },
+  watch: {
+    v3json: function (val) {
+      this.jsonError = '';
+    },
+    password: function (val) {
+      this.error = '';
+    },
+  },
 };
 </script>
 <style></style>

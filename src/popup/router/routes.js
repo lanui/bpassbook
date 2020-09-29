@@ -6,7 +6,7 @@ import SignInIndex from '@popup/views/Login/SignIn';
 import SignUpIndex from '@popup/views/Login/SignUp';
 import WalletIndex from '@popup/views/Wallet/Index';
 import OptionsIndex from '@popup/views/Options/Index';
-import ImportWallet from '@popup/views/Login/ImportWallet';
+import ImportWallet from '@popup/views/Wallet/ImportWallet';
 import ExportWallet from '@/popup/views/Wallet/ExportWallet';
 import AddPassBookItem from '@popup/views/PassBook/AddPassItem';
 import EditPassBookItem from '@popup/views/PassBook/EditPassItem';
@@ -63,6 +63,7 @@ export default [
         },
       },
       {
+        name: 'addPassbook',
         path: 'add',
         component: AddPassBookItem,
         meta: {
@@ -70,6 +71,7 @@ export default [
         },
       },
       {
+        name: 'editPassbook',
         path: 'edit',
         component: EditPassBookItem,
         meta: {

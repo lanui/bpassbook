@@ -46,11 +46,21 @@
     <v-row justify="center" v-if="unlocked">
       <v-col cols="10">
         <v-textarea dense outlined readonly rows="5" :value="v3json" label="Keystore" class="body-2"> </v-textarea>
-        <v-btn tile text x-small @click="copyJson" class="my-1 float-right">
+        <v-btn tile text x-small ref="clipJsonIcon" :data-clipboard-text="v3json" class="my-1 float-right">
           <v-icon left>mdi-clipboard-text-multiple</v-icon>
           Copyed
         </v-btn>
       </v-col>
+      <v-snackbar width="220px" :timeout="4000" v-model="showNotifier" centered :elevation="1">
+        {{ 'Keystore copied.' }}
+        <template v-slot:action="{ attrs }">
+          <v-btn color="pink" text icon v-bind="attrs" @click="showNotifier = false">
+            <v-icon>
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-snackbar>
     </v-row>
     <v-row class="fill-height"></v-row>
     <goback-btn />
@@ -59,7 +69,7 @@
 
 <script>
 import QRCode from 'qrcode';
-
+import Clipboard from 'clipboard';
 import { passwordRules } from '@/ui/constants/valid-rules';
 import DemoQrCode from '@/assets/icons/demo-qrcode.png';
 import GobackBtn from '@/widgets/GobackButton.vue';
@@ -80,6 +90,7 @@ export default {
       error: '',
       unlocked: false,
       loading: false,
+      showNotifier: false,
       rules: {
         password: [...passwordRules],
       },
@@ -99,10 +110,9 @@ export default {
             return ret.json;
           })
           .then((jsonText) => {
-            console.log(jsonText);
+            this.initClipboard();
             QRCode.toDataURL(jsonText)
               .then((url) => {
-                console.log(url);
                 this.qrcode = url;
               })
               .catch((err) => {
@@ -121,6 +131,12 @@ export default {
       this.unlocked = false;
       this.password = '';
       this.v3json = '';
+    },
+    initClipboard() {
+      const clip = new Clipboard(this.$refs.clipJsonIcon.$el);
+      clip.on('success', (e) => {
+        this.showNotifier = true;
+      });
     },
   },
   mounted() {

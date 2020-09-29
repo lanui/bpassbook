@@ -10,6 +10,7 @@ const p3 = {
     drawer: (state) => state.drawer,
     creating: (state) => state.creating,
     creatError: (state) => state.creatError,
+    passbook: (state) => state.passbook,
     ...getters,
   },
   mutations,
@@ -19,6 +20,14 @@ const p3 = {
     drawer: false,
     creating: false,
     creatError: '',
+    passbook: {
+      tips: '',
+      hostname: '',
+      username: '',
+      password: '',
+      origin: '',
+      favIconUrl: '',
+    },
   },
 };
 

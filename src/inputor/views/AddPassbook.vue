@@ -19,7 +19,7 @@
             <div class="input-field">
               <input
                 type="text"
-                placeholder="网站地址"
+                :placeholder="$t('l.domain')"
                 @input="$emit('input', $event.target.value)"
                 v-model="hostname"
                 name="hostname"
@@ -172,6 +172,7 @@ export default {
             that.fillData(fillItemData);
           } else {
             if (response && response.data) {
+              console.log('>>>>>>>>>>>', response);
               that.fillData(response.data);
             }
           }

@@ -25,20 +25,33 @@
         <password-list v-if="t.name == 'passbook'" />
 
         <activity-list v-if="t.name == 'activity'" />
-        <v-btn
-          @click.stop="addItemHandle"
-          v-if="t.name == 'passbook' && !drawer"
-          color="pink"
-          dark
-          x-small
+        <!-- mdi-shield-sync-outline,mdi-chevron-double-down -->
+
+        <v-speed-dial
+          v-model="opened"
+          v-if="!drawer"
           absolute
-          top
-          center
+          bottom
+          left
           fab
-          style="bottom: -10px;"
+          direction="top"
+          :open-on-hover="true"
+          :transition="transition"
+          style="bottom: -10px; left: 50%;"
         >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
+          <template v-slot:activator>
+            <v-btn x-small v-model="opened" dark fab color="indigo lighten-1">
+              <v-icon v-if="opened">mdi-close</v-icon>
+              <v-icon v-else>mdi-chevron-double-up</v-icon>
+            </v-btn>
+          </template>
+          <v-btn @click.stop="addItemHandle" dark color="indigo accent-1" x-small fab>
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+          <v-btn @click.stop="syncItemHandle" dark color="indigo accent-1" x-small fab>
+            <v-icon>mdi-link-plus</v-icon>
+          </v-btn>
+        </v-speed-dial>
       </v-tab-item>
     </v-tabs-items>
   </v-container>
@@ -64,6 +77,8 @@ export default {
   data() {
     return {
       activeTab: null,
+      opened: false,
+      transition: 'bottom',
       tabs: [
         { name: 'passbook', text: 'PassBook', icon: 'mdi-shield-key-outline', path: '' },
         { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
@@ -74,7 +89,16 @@ export default {
     addItemHandle() {
       this.$router.push({ path: '/passbook/add' });
     },
+    async syncItemHandle() {},
   },
 };
 </script>
-<style></style>
+<style>
+#operators .v-speed-dial {
+  position: absolute;
+}
+
+#operators .v-btn--floating {
+  position: relative;
+}
+</style>

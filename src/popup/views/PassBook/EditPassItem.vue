@@ -14,7 +14,7 @@
       <v-col cols="10" class="mt-4">
         <v-form ref="passItemForm">
           <v-text-field
-            v-model="item.hostname"
+            v-model="passbook.hostname"
             :label="$t('l.domain')"
             outlined
             rounded
@@ -25,7 +25,7 @@
             dense
           />
           <v-text-field
-            v-model="item.tips"
+            v-model="passbook.tips"
             :label="$t('l.tips')"
             disabled
             outlined
@@ -37,7 +37,7 @@
           />
 
           <v-text-field
-            v-model="item.username"
+            v-model="passbook.username"
             :label="$t('l.username')"
             outlined
             rounded
@@ -47,7 +47,7 @@
             dense
           />
           <v-text-field
-            v-model="item.password"
+            v-model="passbook.password"
             :label="$t('l.password')"
             outlined
             rounded
@@ -81,10 +81,14 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
 import MessageController from '@/popup/controllers/message-controller';
 export default {
   name: 'EditPassbookItem',
+  computed: {
+    ...mapGetters('p3', ['passbook']),
+  },
   data() {
     return {
       icons: {
@@ -115,13 +119,14 @@ export default {
       if (!this.$refs.passItemForm.validate()) {
         return;
       }
-      const item = this.item;
+      const item = this.passbook;
       const controller = new MessageController();
       this.ctrl.loading = true;
       controller
         .updatePassbookItem(item)
         .then(async (initState) => {
           await this.$store.dispatch('updateInitState', initState);
+          await this.$store.dispatch('p3/updateTransferPassbook', {});
           this.ctrl.loading = false;
           this.$router.go(-1);
         })
@@ -132,8 +137,9 @@ export default {
     },
   },
   mounted() {
-    const query = this.$route.query;
-    this.item = query;
+    const params = this.$store.getters['passbook'];
+    console.log('>>>>>>>addPassbook>>>>>>>', params);
+    this.item = Object.assign({}, this.item, params);
   },
 };
 </script>

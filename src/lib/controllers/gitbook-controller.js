@@ -61,6 +61,11 @@ class GitbookController extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param {*} item
+   * @param {*} address
+   */
   async addBookToStore(item, address) {
     if (!validBookItem(item)) {
       log.warn('item miss,no update store');
@@ -84,7 +89,7 @@ class GitbookController extends EventEmitter {
       }
     } catch (e) {}
 
-    const index = items.findIndex((it) => it.username === item.username && item.hostname === it.hostname);
+    const index = items.findIndex((it) => it.tips === item.tips);
     if (index >= 0) {
       items.splice(index, 1, item);
     } else {
@@ -128,7 +133,7 @@ class GitbookController extends EventEmitter {
       }
     } catch (e) {}
 
-    const index = items.findIndex((it) => it.username === item.username && item.hostname === it.hostname);
+    const index = items.findIndex((it) => it.tips === item.tips);
     if (index >= 0) {
       items.splice(index, 1);
     }

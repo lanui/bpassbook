@@ -5,7 +5,7 @@
         <v-list-item-avatar outlined color="grey lighten-4 text-center">
           <v-img v-if="Boolean(item.favIconUrl)" :src="item.favIconUrl" />
           <div class="deep-purple--text text--accent-2 mx-auto" style="width: 100%;" v-if="!Boolean(item.favIconUrl)">
-            {{ item.iconText > 2 ? item.iconText : item.tips.substr(0, 1) }}
+            {{ item.iconText > 2 ? item.iconText : item.username.substr(0, 1) }}
           </div>
         </v-list-item-avatar>
 
@@ -45,8 +45,9 @@ export default {
   },
   methods: {
     selectItem(it) {},
-    goEditItem(item) {
-      this.$router.push({ path: '/passbook/edit', query: item });
+    async goEditItem(item) {
+      await this.$store.dispatch('p3/updateTransferPassbook', item);
+      await this.$router.push({ name: 'editPassbook', query: item });
     },
     deletItem(item) {
       const controller = new MessageController();

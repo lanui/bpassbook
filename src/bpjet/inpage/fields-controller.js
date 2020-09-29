@@ -119,6 +119,10 @@ export class FieldsController extends EventEmitter {
       this.targetUserName = targetUserName;
       this.targetPassword = targetPassword;
       this.currentTarget = currentTarget;
+      if (hasLoginForm) {
+        //console.log("Find LoginForm>> window.location>>>>",window)
+        this.hostname = window.location.host;
+      }
 
       this.store.updateState({ position, usernameSelector, passwordSelector });
 
@@ -160,7 +164,7 @@ export class FieldsController extends EventEmitter {
       hasLoginForm: this.hasLoginForm,
       username: '',
       password: '',
-      hostname: hostname,
+      hostname: this.hostname || hostname,
       origin: origin || href,
     };
 

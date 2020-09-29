@@ -7,11 +7,11 @@ export const passwordRules = [
 export const validItem = (item) => {
   if (!item) throw 'username and password is null.';
 
-  if (!item.origin || !item.origin.length) throw 'please entry the website url.';
-  if (!validUrl(item.origin)) throw 'url format is incorrect.';
-  if (!item.hostname) {
-    const url = new URL(item.origin);
-    item.hostname = url.hostname;
+  // if (!item.origin || !item.origin.length) throw 'please entry the website url.';
+  // if (!validUrl(item.origin)) throw 'url format is incorrect.';
+
+  if (!item.hostname || !validDomain(item.hostname)) {
+    throw 'Website Domain incorrect.';
   }
 
   if (!item.username || item.username.trim().length == 0) throw 'please entry username.';
@@ -35,4 +35,8 @@ export function validUrl(url) {
   const re = new RegExp(/(http|https):\/\/([\w.]+\/?)\S*/);
 
   return re.test(url);
+}
+
+export function validDomain(domain) {
+  return /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/.test(domain);
 }

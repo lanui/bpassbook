@@ -80,9 +80,9 @@ function injetStartup() {
         default:
           break;
       }
+    } else {
+      return true;
     }
-
-    return true;
   });
 
   function getFieldFormData(controller) {

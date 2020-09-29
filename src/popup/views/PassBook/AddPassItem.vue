@@ -31,6 +31,7 @@
             :label="$t('l.tips')"
             outlined
             rounded
+            :disabled="true"
             :clearable="true"
             :loading="ctrl.loading"
             :rules="rules.required"
@@ -117,7 +118,7 @@ export default {
           },
           this.data
         );
-        console.log('data>>>>', item);
+        // console.log('data>>>>', item);
 
         try {
           validItem(item);
@@ -159,6 +160,40 @@ export default {
         //   .catch((err) => {
         //     this.ctrl.loading = false;
         //   });
+      }
+    },
+  },
+  mounted() {
+    this.data.tips = '';
+  },
+  watch: {
+    'data.hostname': function (val) {
+      const parts = [];
+      if (val !== undefined && (val + '').trim().length > 0) {
+        parts.push((val + '').trim());
+      }
+
+      const uname = this.data.username;
+      if (uname !== undefined && (uname + '').trim().length > 0) {
+        parts.push((uname + '').trim());
+      }
+
+      if (parts.length) {
+        this.data.tips = parts.join(';');
+      }
+    },
+    'data.username': function (val) {
+      const parts = [];
+      const hostname = this.data.hostname;
+      if (hostname !== undefined && (hostname + '').trim().length > 0) {
+        parts.push((hostname + '').trim());
+      }
+      if (val !== undefined && (val + '').trim().length > 0) {
+        parts.push((val + '').trim());
+      }
+
+      if (parts.length) {
+        this.data.tips = parts.join(';');
       }
     },
   },

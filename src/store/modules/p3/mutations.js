@@ -16,4 +16,7 @@ export default {
   [types.UPDATE_CREAT_ERROR](state, error) {
     state.creatError = error || '';
   },
+  [types.UPDATE_UPDATE_PASSBOOK](state, pb = {}) {
+    state.passbook = Object.assign({}, pb);
+  },
 };
