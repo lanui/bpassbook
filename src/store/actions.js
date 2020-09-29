@@ -1,10 +1,6 @@
-import { fromV3 } from 'ethereumjs-wallet';
-
+// import { fromV3 } from 'ethereumjs-wallet';
+import { OpenWallet } from '@/bglib/account-creator';
 import * as types from './mutation-types';
-
-import LocalStore from '@/lib/storage/local-store';
-
-const passworder = require('browser-passworder');
 
 /**
  * login response Error
@@ -47,19 +43,6 @@ export const unlockWallet = ({ commit }, password) => {
   commit(types.UPDATE_ISUNLOCKED, Boolean(password));
 };
 
-export const loadLocalVault = async ({ commit, state }, password) => {
-  console.log('loadLocalVault>>>>>');
-  const key = state.key;
-  const local = new LocalStore();
-  const localStore = await local.get();
-
-  if (localStore && localStore.data && localStore.data.env3) {
-    const v3 = await passworder.decrypt(password, localStore.data.env3);
-    commit(types.SET_BIPINIT, true);
-    commit(types.SET_V3, v3);
-  }
-};
-
 export const loadBipinit = async ({ commit }, payload) => {
   commit(types.SET_BIPINIT, payload);
 };
@@ -85,22 +68,34 @@ export const updateFromBackground = async ({ commit }, payload) => {
   }
 };
 
+/**
+ *
+ * @param {*} param0
+ * @param {*} password
+ */
 export const decryptFromEnv3 = async ({ state }, password) => {
   const { env3 } = state;
   console.log('decryptFromEnv3', env3, password);
   if (!env3) throw new Error('no found env3');
   try {
-    const evn3Json = JSON.stringify(env3);
+    // const evn3Json = JSON.stringify(env3);
 
-    const v3 = await passworder.decrypt(password, evn3Json);
+    // const v3 = await passworder.decrypt(password, evn3Json);
 
-    const wallet = await fromV3(v3, password);
-    const priKey = wallet.getPrivateKeyString();
+    // const wallet = await fromV3(v3, password);
+    // const priKey = wallet.getPrivateKeyString();
     // const pubKey = wallet.getPublicKeyString()
 
+    // return {
+    //   json: JSON.stringify(v3),
+    //   privateKey: priKey,
+    // };
+
+    const dev3 = OpenWallet(env3, password);
+
     return {
-      json: JSON.stringify(v3),
-      privateKey: priKey,
+      json: JSON.stringify(env3),
+      dev3,
     };
   } catch (err) {
     throw err;

@@ -4,31 +4,32 @@
       <head-icon />
     </v-card-subtitle>-->
     <v-row justify="center">
-      <v-col cols="10" class="py-0 px-2">
+      <v-col cols="10" class="py-0 px-0">
         <v-form class="inputor-item-form">
-          <div class="text-center my-1" v-if="Boolean(hostname)">{{ origin }}</div>
+          <div
+            class="text-center my-1 origin-url-wrapper"
+            v-if="Boolean(hostname)"
+            style="line-height: 20px; display: inline-flex;"
+          >
+            <img :src="favIconUrl" v-if="false" style="width: 18px; height: 18px;" />
+            <span class="ml-1">{{ hostname }}</span>
+          </div>
           <div class="bp-form-control my-1" v-if="!Boolean(hostname)">
-            <div class="label">网站</div>
+            <div class="label">{{ $t('l.domain') }}</div>
             <div class="input-field">
               <input
                 type="text"
                 placeholder="网站地址"
                 @input="$emit('input', $event.target.value)"
-                v-model="origin"
-                name="origin"
+                v-model="hostname"
+                name="hostname"
               />
             </div>
           </div>
           <div class="bp-form-control">
             <div class="label">提示</div>
             <div class="input-field">
-              <input
-                type="text"
-                placeholder="提示"
-                @input="$emit('input', $event.target.value)"
-                v-model="tips"
-                name="tips"
-              />
+              <input type="text" placeholder="提示" disabled="disabled" v-model="tips" name="tips" />
             </div>
           </div>
           <div class="bp-form-control">
@@ -63,9 +64,9 @@
         </v-form>
       </v-col>
       <v-col cols="6" class="px-2 py-2">
-        <v-btn @click="saveHandle" dense block rounded outlined small style="border: solid 1px rgba(0, 0, 0, 0.06);">{{
-          '保存'
-        }}</v-btn>
+        <v-btn @click="saveHandle" dense block rounded outlined small style="border: solid 1px rgba(0, 0, 0, 0.06);">
+          {{ $t('btn.add') }}
+        </v-btn>
       </v-col>
     </v-row>
   </v-card>
@@ -91,6 +92,7 @@ export default {
   },
   data() {
     return {
+      favIconUrl: '',
       origin: '',
       hostname: '',
       tips: '',
@@ -115,6 +117,7 @@ export default {
         username: this.username,
         password: this.password,
         hostname: this.hostname,
+        favIconUrl: this.favIconUrl,
       };
 
       try {
@@ -147,12 +150,26 @@ export default {
       const that = this;
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
-        const tabUrl = tabs[0].url;
-        console.log('>>>>getFormDataFromInjet>>>>>>>>>>>', tabs, tabUrl, tabs[0].favIconUrl);
-        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_GET_PBITEM, item: {}, tabId, tabUrl }, function (response) {
+        const url = new URL(tabs[0].url);
+        const tabHostname = url.hostname;
+        const tab = {
+          tabId: tabs[0].id,
+          tabUrl: tabs[0].url,
+          favIconUrl: tabs[0].favIconUrl,
+          tabHostname,
+        };
+
+        console.log('>>>>getFormDataFromInjet>>>>>>>>>>>', tabs, tabHostname, tabs[0].favIconUrl);
+        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_GET_PBITEM, item: {}, tab }, function (response) {
           console.log(`${LOG_PREFFIX} message back >>>>`, response);
           if (chrome.runtime.lastError) {
-            console.log('>>>>>>>chrome.runtime.lastError>>>>', chrome.runtime.lastError);
+            const fillItemData = {
+              origin: tab.tabUrl,
+              favIconUrl: tab.favIconUrl,
+              hostname: tabHostname,
+            };
+            console.log('>>>>>>>chrome.runtime.lastError>>>>', chrome.runtime.lastError, fillItemData);
+            that.fillData(fillItemData);
           } else {
             if (response && response.data) {
               that.fillData(response.data);
@@ -172,10 +189,41 @@ export default {
         this.password = data.password || '';
         this.tips = data.hostname || '';
         this.hostname = data.hostname || '';
+        this.favIconUrl = data.favIconUrl || '';
       }
     },
   },
-  watch: {},
+  watch: {
+    hostname: function (val) {
+      const parts = [];
+      if (val !== undefined && (val + '').trim().length > 0) {
+        parts.push((val + '').trim());
+      }
+
+      const uname = this.username;
+      if (uname !== undefined && (uname + '').trim().length > 0) {
+        parts.push((uname + '').trim());
+      }
+
+      if (parts.length) {
+        this.tips = parts.join(';');
+      }
+    },
+    username: function (val) {
+      const parts = [];
+      const hostname = this.hostname;
+      if (hostname !== undefined && (hostname + '').trim().length > 0) {
+        parts.push((hostname + '').trim());
+      }
+      if (val !== undefined && (val + '').trim().length > 0) {
+        parts.push((val + '').trim());
+      }
+
+      if (parts.length) {
+        this.tips = parts.join(';');
+      }
+    },
+  },
   mounted() {
     this.getFormDataFromInjet();
   },
@@ -198,7 +246,7 @@ div.bp-form-control {
 
 .bp-form-control > div.label {
   text-align: right;
-  margin-right: 0.75rem;
+  margin-right: 0.5rem;
   flex: 1;
 }
 
@@ -216,5 +264,12 @@ div.bp-form-control {
   text-align: center;
   width: 100%;
   font-size: 0.65rem;
+}
+
+.origin-url-wrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 </style>

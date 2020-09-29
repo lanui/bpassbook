@@ -38,3 +38,7 @@
   }
 }
 ```
+
+title: www.baidu.com;username
+
+{"version":1,"mainAddress":"0x47faf3bad06e2cbe786adae696b29c2a1d5945d2","crypto":{"cipher":"aes-128-ctr","ciphertext":"e6ee19957f18b1a4d72628c4459e90b2b30b0d765af7b09820ab1da8350c2fec","cipherparams":{"iv":"223e63fafbeee9f795b67cd36ef8d42e"},"mac":"c4ae69833f297b830ad8ba375806d18bd82b9fd93b340922b058e117fbad517d","kdf":"scrypt","kdfparams":{"dklen":32,"n":262144,"r":8,"p":1,"salt":"78abfa08095f050bd4245fa96f03954b54c43f62dfbb414646be1709410237cc"}},"subAddress":"BPHgpacsvSsdQv3vUqhE454qxoxLSg2vsDsGh44YhUW1R2","subCipher":"ZTtxSsVwzMXYUXYQKSmHSxRgDB6YujRYcA1gr4yfBy66wnmt4Sv22bUWbvZWD1nKxV71vByq5t9h7oSht2fCjs5Ef3Drg3985seVy2gY1V891"}

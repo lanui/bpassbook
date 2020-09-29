@@ -22,6 +22,7 @@ import {
 import {
   APITYPE_INIT_STATE,
   APITYPE_CREATE_ENV3,
+  APITYPE_CREATE_BPWALLET,
   APITYPE_SELECTED_PBITEM,
   APITYPE_CONTENTSCRIPTS_TRANSFER,
   APITYPE_INPUTOR_ADDITEM,
@@ -31,6 +32,8 @@ import {
   APITYPE_UPDATE_PBITEM,
   APITYPE_DELETE_PBITEM,
 } from '@/lib/cnst/api-cnst';
+
+import { GenerateWalletAndOpen } from '@/bglib/account-creator';
 
 const LOG_PREFFIX = 'background';
 
@@ -65,9 +68,18 @@ const extensionInternalProcessHash = {
 initialize().catch(log.error);
 
 async function initialize() {
+  // genTest();
   const initState = await loadStateFromPersistence();
   console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);
   setupController(initState || {});
+}
+
+/** Test Wallet */
+function genTest() {
+  const password = '12345678';
+
+  var fullWallet = GenerateWalletAndOpen(password);
+  console.log('>>>>>keyObject>>>>>>>>>>>>>>', JSON.stringify(fullWallet));
 }
 
 async function setupController(initState) {
@@ -193,16 +205,7 @@ async function setupController(initState) {
     const isFn = typeof sendResponse === 'function';
     switch (apiType) {
       // case APITYPE_CREATE_ENV3:
-      //   controller
-      //     .createWalletData(message.data)
-      //     .then(async (resp) => {
-      //       console.log('APITYPE_CREATE_ENV3', resp);
-      //       sendResponse(resp);
-      //     })
-      //     .catch((err) => {
-      //       sendResponse({ error: err.message });
-      //     });
-      //   if (isFn) return true
+
       //   break;
       case APITYPE_UPDATE_UNLOCKED:
         controller
@@ -290,6 +293,11 @@ function portMessageListener(controller, remotePort) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
       console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
+        case APITYPE_CREATE_BPWALLET:
+          const createResp = await controller.createBPWallet(msg);
+          console.log('>>>>>>>>APITYPE_CREATE_BPWALLET>>', msg.data, createResp);
+          sender.postMessage(createResp);
+          break;
         case APITYPE_CREATE_ENV3:
           const saveWalletResp = await controller.saveNewWalletForLived(msg);
           sender.postMessage(saveWalletResp);

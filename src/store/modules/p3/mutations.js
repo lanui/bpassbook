@@ -1,13 +1,19 @@
-import types from './mutation-types'
+import * as types from './mutation-types';
 
 export default {
-  [types.LOAD_ACTIVITY](state,activities) {
-    state.activities = activities ||[]
+  [types.LOAD_ACTIVITY](state, activities) {
+    state.activities = activities || [];
   },
   [types.UPDATE_DRAWER](state, drawer) {
-    state.drawer = Boolean(drawer)
+    state.drawer = Boolean(drawer);
   },
-  [types.UPDATE_LOCKED](state,locked) {
-    state.locked = Boolean(locked)
-  }
-}
+  [types.UPDATE_LOCKED](state, locked) {
+    state.locked = Boolean(locked);
+  },
+  [types.UPDATE_CREATING_STATE](state, creating) {
+    state.creating = creating;
+  },
+  [types.UPDATE_CREAT_ERROR](state, error) {
+    state.creatError = error || '';
+  },
+};

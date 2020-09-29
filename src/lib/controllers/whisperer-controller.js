@@ -1,6 +1,6 @@
 import extension from '../extensionizer';
 
-import { APITYPE_CREATE_ENV3 } from '../cnst/api-cnst';
+import { APITYPE_CREATE_ENV3, APITYPE_LOGOUT, APITYPE_LOGIN } from '../cnst/api-cnst';
 
 class WhispererController {
   constructor(opts = {}) {
@@ -63,6 +63,57 @@ class WhispererController {
       } catch (e) {
         reject(e);
       }
+    });
+  }
+
+  /**
+   * P3 login
+   * @param {*} password
+   */
+  // async login(password) {
+  //   return new Promise((resolve,reject) => {
+  //     this.runtime.sendMessage(
+  //       {
+  //         apiType: APITYPE_UPDATE_UNLOCKED,
+  //         password,
+  //       },
+  //       {
+  //         includeTlsChannelId: true,
+  //       },
+  //       (initState) =>{
+  //         if (!initState){
+  //           reject({ code: 100002, message: 'Error: Incorrect password' })
+  //         }
+  //         if (initState.error){
+  //           reject(initState.error)
+  //         }else {
+  //           resolve(initState)
+  //         }
+  //       }
+  //     )
+  //   });
+  // }
+
+  /**
+   *
+   */
+  async logout() {
+    return new Promise((resolve, reject) => {
+      this.runtime.sendMessage(
+        {
+          apiType: APITYPE_LOGOUT,
+        },
+        {
+          includeTlsChannelId: true,
+        },
+        (initState) => {
+          if (initState.error) {
+            reject(initState.error);
+          } else {
+            resolve(initState);
+          }
+        }
+      );
     });
   }
 }

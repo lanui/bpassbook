@@ -28,7 +28,7 @@ global.web3Cli = web3Cli;
 
 // const connection = new ConnectionManager({ portName: BACKEND_CONN_POPUP, web3Cli });
 
-const connManager = new ConnManager({ portName: BACKEND_CONN_POPUP, store });
+const connManager = new ConnManager({ portName: BACKEND_CONN_POPUP, store, router });
 global.$connManager = connManager;
 
 Vue.prototype.$browser = global.browser;

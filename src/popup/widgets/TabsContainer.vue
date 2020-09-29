@@ -2,15 +2,15 @@
   <v-container class="px-0 py-0">
     <v-tabs v-model="activeTab" dense centered icons-and-text ripple fixed-tabs>
       <v-tab class="primary--text">
-        {{ $t('l.passbook') }}
+        {{ $t('l.website') }}
         <v-icon>
-          mdi-shield-key-outline
+          mdi-desktop-mac
         </v-icon>
       </v-tab>
       <v-tab class="primary--text">
-        {{ $t('l.activity') }}
+        {{ $t('l.mobileapp') }}
         <v-icon>
-          mdi-bank-transfer
+          mdi-cellphone-key
         </v-icon>
       </v-tab>
     </v-tabs>

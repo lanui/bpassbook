@@ -5,7 +5,7 @@ import extension from '@/lib/extensionizer';
 import store from '@/store';
 
 import { BACKEND_CONN_POPUP } from '@/lib/cnst/connection-cnst';
-import { APITYPE_LOGIN, APITYPE_INIT_STATE } from '@/lib/cnst/api-cnst';
+import { APITYPE_LOGIN, APITYPE_INIT_STATE, APITYPE_CREATE_BPWALLET } from '@/lib/cnst/api-cnst';
 
 const LOG_PREFFIX = 'ConnManager';
 
@@ -15,6 +15,7 @@ class ConnManager extends EventEmitter {
     this.portName = opts.portName || BACKEND_CONN_POPUP;
 
     this.$store = opts.store;
+    this.$router = opts.router || null;
 
     //create connection
     this.remotePort = extension.runtime.connect({
@@ -25,6 +26,10 @@ class ConnManager extends EventEmitter {
     this.remotePort.onMessage.addListener(async (message) => {
       await this.liveMessageHandler(message);
     });
+  }
+
+  setRouter(router) {
+    this.$router = router;
   }
 
   async liveMessageHandler(message) {
@@ -48,6 +53,13 @@ class ConnManager extends EventEmitter {
             await this.$store.dispatch('setLoginError', message.error.message);
           }
           break;
+        case APITYPE_CREATE_BPWALLET:
+          if (message.error) {
+            await this.$store.dispatch('p3/setCreatingState', { error: message.error.message });
+          } else {
+            await this.$store.dispatch('updateInitState', message.data);
+          }
+          break;
         default:
           break;
       }
@@ -63,6 +75,18 @@ class ConnManager extends EventEmitter {
         redirect: '/index',
       },
     });
+  }
+
+  async createNewWallet(password) {
+    if (!this.remotePort) throw 'remote connection disconnect.';
+    this.remotePort.postMessage({
+      apiType: APITYPE_CREATE_BPWALLET,
+      data: {
+        password,
+        redirect: '/index',
+      },
+    });
+    return true;
   }
 }
 

@@ -16,8 +16,10 @@ import NetworkController from './networks/network-controller';
 import GitbookController from '@/lib/controllers/gitbook-controller';
 
 import { INCORRECT_PWD, errorMessage, responseMessage, responseInitState } from '@/lib/message-utils';
+import { GenerateWalletAndOpen, OpenWallet } from '@/bglib/account-creator';
 
 const FIRST_TIME_INFO = 'firstTimeInfo';
+const LOG_PREFFIX = 'context-controller';
 
 class ContextController extends EventEmitter {
   constructor(opts) {
@@ -96,15 +98,17 @@ class ContextController extends EventEmitter {
     const isUnlocked = this.appStateController.isUnlocked;
     const AppStateController = (await this.appStateController.store.getState()) || {};
     const GitbookController = (await this.gitbookController.memStore.getState()) || {};
-    const v3 = this.appStateController.v3 || null;
+    // const v3 = this.appStateController.v3 || null;
+    // const env3 = (await this.store.getState().env3) || null;
     const env3 = (await this.store.getState().env3) || null;
+    const dev3 = this.appStateController.dev3 || null;
 
     return {
       isUnlocked,
       AppStateController,
       GitbookController,
       env3,
-      v3,
+      v3: dev3,
     };
   }
 
@@ -162,24 +166,28 @@ class ContextController extends EventEmitter {
 
     //unlock
     try {
-      const text = JSON.stringify(env3);
-      const v3 = await passworder.decrypt(password, text);
+      const dev3 = OpenWallet(env3, password);
+      await this.appStateController.updateKeyPairs(dev3);
 
-      const wallet = await fromV3(v3, password);
-      if (!wallet) return errorMessage('env3 error.', { originApi: message.apiType });
+      // const text = JSON.stringify(env3);
 
-      const selectedAddress = wallet.getChecksumAddressString();
-      const privateKey = wallet.getPrivateKeyString();
-      const publicKey = wallet.getPublicKeyString();
+      // const v3 = await passworder.decrypt(password, text);
 
-      await this.appStateController.loginUpdateState({
-        v3,
-        isUnlocked: true,
-        wallet,
-        selectedAddress,
-        privateKey,
-        publicKey,
-      });
+      // const wallet = await fromV3(v3, password);
+      // if (!wallet) return errorMessage('env3 error.', { originApi: message.apiType });
+
+      // const selectedAddress = wallet.getChecksumAddressString();
+      // const privateKey = wallet.getPrivateKeyString();
+      // const publicKey = wallet.getPublicKeyString();
+
+      // await this.appStateController.loginUpdateState({
+      //   v3,
+      //   isUnlocked: true,
+      //   wallet,
+      //   selectedAddress,
+      //   privateKey,
+      //   publicKey,
+      // });
 
       const sendInitState = await this.getInitState();
       //
@@ -207,6 +215,35 @@ class ContextController extends EventEmitter {
     } catch (err) {
       console.warn(err);
       throw err;
+    }
+  }
+
+  /**
+   *
+   * @param {Object} data
+   * @property string password
+   * @property JSON epv3 (optional)
+   * @return Object initState
+   */
+  async createBPWallet(message) {
+    try {
+      const { apiType, data } = message;
+      const { password, redirect } = data;
+
+      const fullWallet = await GenerateWalletAndOpen(password);
+      const { env3, dev3 } = fullWallet;
+      const { mainAddress } = env3;
+      const initState = Object.assign(this.store.getState(), { env3 });
+      await this.store.putState(initState);
+      await this.appStateController.updateSelectedAddress(mainAddress);
+      await this.appStateController.updateKeyPairs(dev3);
+
+      const sendInitState = await this.getInitState();
+      console.warn(`${LOG_PREFFIX}>>>`, 'create BPassword Wallet >>>', sendInitState);
+      return responseMessage(apiType, Object.assign({}, sendInitState, { redirect }));
+    } catch (err) {
+      console.warn('create BPassword Wallet error.', err);
+      return errorMessage(err, { originApi: apiType });
     }
   }
 
@@ -248,6 +285,10 @@ class ContextController extends EventEmitter {
     } catch (error) {
       return errorMessage(err.message, { code: INCORRECT_PWD, originApi: message.apiType });
     }
+  }
+
+  async _reset() {
+    chrome.runtime.reload();
   }
 }
 

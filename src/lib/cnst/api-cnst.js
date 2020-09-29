@@ -19,3 +19,4 @@ export const APITYPE_LOGIN = 'login';
 export const APITYPE_UPDATE_PBITEM = 'updatePassbookItemProps';
 export const APITYPE_DELETE_PBITEM = 'deletePassbookItemProps';
 export const APITYPE_CREATE_ENV3 = 'createEnv3Wallet';
+export const APITYPE_CREATE_BPWALLET = 'createNewBPwallet';

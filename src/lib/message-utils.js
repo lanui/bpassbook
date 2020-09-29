@@ -9,11 +9,17 @@ export const UNKNOWN_MESSAGE = 'Error: unknown exception.';
  * @param {*} param1
  */
 export const errorMessage = (errorMsg, { code = UNKNOW_ERR, originApi = '' }) => {
+  let message = UNKNOWN_MESSAGE;
+  if (typeof errorMsg === 'object' && errorMsg instanceof Error) {
+    message = errorMsg.message;
+  } else if (typeof errorMsg === 'string') {
+    message = errorMsg;
+  }
   return {
     originApi: originApi,
     error: {
       code: code,
-      message: errorMsg || UNKNOWN_MESSAGE,
+      message,
     },
   };
 };

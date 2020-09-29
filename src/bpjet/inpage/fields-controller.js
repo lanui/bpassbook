@@ -5,8 +5,8 @@ import { debounce } from 'lodash';
 const $ = require('jquery');
 
 const LOG_PREFFIX = 'BP-controller';
-const PASSWORD_SELECTOR = 'input[type="password"]';
-const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
+export const PASSWORD_SELECTOR = 'input[type="password"]';
+export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
 const MAIL_SELECTOR = 'input[type="mail"]';
 const FAVICON_SELECTOR = '';
 
@@ -154,14 +154,14 @@ export class FieldsController extends EventEmitter {
     this.removeBPIcon();
   }
 
-  getInputFieldData() {
-    const { hostname, origin } = window.location;
+  getInputFieldData(tab) {
+    const { hostname, origin, href } = window.location;
     const formData = {
       hasLoginForm: this.hasLoginForm,
       username: '',
       password: '',
       hostname: hostname,
-      origin: origin,
+      origin: origin || href,
     };
 
     if (this.targetPassword) {
@@ -178,7 +178,11 @@ export class FieldsController extends EventEmitter {
       formData.username = tmpName ? tmpName.value : '';
     }
 
-    formData.origin = window.location.url;
+    if (tab) {
+      formData.favIconUrl = tab.favIconUrl;
+      formData.origin = formData.origin || tab.tabUrl;
+      formData.hostname = formData.hostname || tab.tabHostname;
+    }
 
     return formData;
   }

@@ -54,9 +54,8 @@ import { mapState } from 'vuex';
 import LogoBig from '@/widgets/ExtLogo';
 import { passwordRules } from '@/ui/constants/valid-rules';
 
-import MessageController from '@/popup/controllers/message-controller';
-
 import { APITYPE_LOGIN } from '@/lib/cnst/api-cnst.js';
+import Whisperer from '@/lib/controllers/whisperer-controller';
 
 export default {
   name: 'PopupSignIn',
@@ -108,7 +107,6 @@ export default {
       }
     },
     isUnlocked: function (val, old) {
-      console.log('watch:', val, old);
       if (val) {
         this.gotoIndex();
       }

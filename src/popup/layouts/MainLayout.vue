@@ -42,6 +42,8 @@ import { mapState, mapGetters } from 'vuex';
 import { LOCKED_MDI, UNLOCKED_MDI } from '@/ui/constants/icon-cnsts';
 import MessageController from '@/popup/controllers/message-controller';
 
+// import Whisperer from '@/lib/controllers/whisperer-controller'
+
 import TopBar from '@popup/widgets/TopBar.vue';
 import MainContainer from '@popup/views/MainContainer.vue';
 import DrawerWalletPannel from '@/popup/widgets/DrawerWalletPannel.vue';
@@ -76,18 +78,16 @@ export default {
   },
   methods: {
     navMenuClick(nav) {
-      console.log(nav);
+      // console.log(nav);
       this.$router.push({ path: nav.path });
       this.rightDrawer = false;
     },
-    drawerClick() {
-      console.log('<<<<>>>>');
-    },
+    drawerClick() {},
     setDrawerValue($event) {
-      console.log('Drawer>>>>>', $event);
+      // console.log('Drawer>>>>>', $event);
     },
     drawerTransitionChanged(val) {
-      console.log('TransitionChanged>>>>>', val);
+      // console.log('TransitionChanged>>>>>', val);
     },
     async lockedHandle() {
       const controller = new MessageController();

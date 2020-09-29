@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 import PostMessageDuplexStream from 'post-message-stream';
 
 import { getElPosition } from './inpage/ui-helper';
-import { FieldsController } from './inpage/fields-controller';
+import { FieldsController, PASSWORD_SELECTOR, USERNAME_SELECTOR } from './inpage/fields-controller';
 
 import { BACKEND_CONN_CONTENTSCRIPT, CLI_CONN_INJET } from '@/lib/cnst/connection-cnst.js';
 import { APITYPE_FILL_PBITEM, APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
@@ -22,8 +22,6 @@ const bpassbookStream = new PostMessageDuplexStream({
 });
 
 injetStartup();
-
-let ctx = null;
 
 function injetStartup() {
   const initState = {
@@ -63,12 +61,13 @@ function injetStartup() {
    * 接收 inputor message and fill it
    */
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    const { item, apiType, tabUrl } = message;
-    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, message, controller);
-    console.log(`${LOG_PREFFIX}-Reciv Once Message>>>`, sender, document.querySelector('input[type="password"]'));
+    const { item, apiType, tab } = message;
+    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, message, tab);
+    // console.log(`${LOG_PREFFIX}-Reciv Once Message>>>`, sender, document.querySelector('input[type="password"]'));
 
-    const data = controller.getInputFieldData();
-    // console.log(`${LOG_PREFFIX}-host>>>`, hostname, origin);
+    const data = controller.getInputFieldData(tab);
+
+    console.log(`${LOG_PREFFIX}-host>>>`, data);
     if (data.hasLoginForm) {
       switch (apiType) {
         case APITYPE_FILL_PBITEM:
@@ -85,6 +84,35 @@ function injetStartup() {
 
     return true;
   });
+
+  function getFieldFormData(controller) {
+    const { hostname, origin, href } = window.location;
+    const formData = {
+      hasLoginForm: controller.hasLoginForm,
+      username: '',
+      password: '',
+      hostname: hostname,
+      origin: origin || href,
+    };
+
+    if (controller.targetPassword) {
+      formData.password = controller.targetPassword.value;
+    } else {
+      const tmpPwd = document.querySelector(PASSWORD_SELECTOR);
+      if (tmpPwd) formData.hasLoginForm = true;
+      formData.password = tmpPwd ? tmpPwd.value : '';
+    }
+    if (controller.targetUserName) {
+      formData.username = controller.targetUserName.value;
+    } else {
+      const tmpName = document.querySelector(USERNAME_SELECTOR);
+      formData.username = tmpName ? tmpName.value : '';
+    }
+
+    // formData.origin = window.location.url;
+
+    return formData;
+  }
 }
 
 function windowResizeObserve(controller) {

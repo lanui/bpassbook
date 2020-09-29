@@ -26,6 +26,29 @@ export default class AppStateController extends EventEmitter {
     this.timer = null;
   }
 
+  /**
+   * dpv3
+   * @param {*} param0
+   */
+  async updateKeyPairs(dev3 = {}) {
+    const { MainPriKey, SubPriKey } = dev3;
+    if (MainPriKey && SubPriKey) {
+      this.dev3 = dev3;
+      this.isUnlocked = true;
+    } else {
+      this.isUnlocked = false;
+    }
+  }
+
+  async updateSelectedAddress(selectedAddress = '') {
+    await this.store.updateState({ selectedAddress });
+  }
+
+  /**
+   * @deprecated see context-controller and this file updateKeyPairs
+   * @param {*} password
+   * @param {*} env3
+   */
   async unlock(password, env3) {
     try {
       console.log('Unlocked By password>>>>', password, env3);
@@ -53,7 +76,7 @@ export default class AppStateController extends EventEmitter {
   }
 
   /**
-   *
+   * @deprecated old v3 keystore
    * @param {*} param0
    */
   async loginUpdateState({ v3, isUnlocked, wallet, selectedAddress, privateKey, publicKey }) {
@@ -64,7 +87,8 @@ export default class AppStateController extends EventEmitter {
   }
 
   async locked() {
-    this.isUnlocked = false;
+    // this.isUnlocked = false;
+    this.updateKeyPairs({});
     // this.v3 = null
     return true;
   }
@@ -81,5 +105,9 @@ export default class AppStateController extends EventEmitter {
       isUnlocked: this.isUnlocked,
       selectAddress: this.selectAddress || '',
     };
+  }
+
+  _reset() {
+    this.updateKeyPairs({});
   }
 }

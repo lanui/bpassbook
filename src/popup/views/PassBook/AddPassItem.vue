@@ -16,8 +16,8 @@
       <v-col cols="10" class="mt-4">
         <v-form ref="passItemForm">
           <v-text-field
-            v-model="data.origin"
-            :label="$t('l.origin')"
+            v-model="data.hostname"
+            :label="$t('l.domain')"
             outlined
             rounded
             :clearable="true"

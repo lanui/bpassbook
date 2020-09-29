@@ -1,6 +1,7 @@
 const page = {
   passbook: {
     addItemTitle: '添加账号信息',
+    editItemTitle: '修改账号信息',
   },
   welcome: {
     title: '欢迎使用密码宝',

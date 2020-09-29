@@ -3,6 +3,7 @@ import MainLayout from '@/popup/layouts/MainLayout';
 import SingleLayout from '@/popup/layouts/SingleLayout';
 import PopupIndex from '@popup/views/Index';
 import SignInIndex from '@popup/views/Login/SignIn';
+import SignUpIndex from '@popup/views/Login/SignUp';
 import WalletIndex from '@popup/views/Wallet/Index';
 import OptionsIndex from '@popup/views/Options/Index';
 import ImportWallet from '@popup/views/Login/ImportWallet';
@@ -25,7 +26,7 @@ export default [
       },
       {
         path: 'options',
-        alias: '/',
+        alias: '/options',
         component: OptionsIndex,
         meta: {
           auth: true,
@@ -102,6 +103,11 @@ export default [
     path: '/',
     component: SingleLayout,
     children: [
+      {
+        path: 'signup',
+        alias: '/signup',
+        component: SignUpIndex,
+      },
       {
         path: 'signin',
         alias: '/signin',

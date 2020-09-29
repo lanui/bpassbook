@@ -2,9 +2,9 @@
   <v-virtual-scroll :items="mergeItems" item-height="58" height="260">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
-        <v-list-item-avatar outlined color="grey lighten-4">
-          <v-img v-if="Boolean(item.logo)" :src="item.logo" />
-          <div class="deep-purple--text text--accent-2" v-if="!Boolean(item.logo)">
+        <v-list-item-avatar outlined color="grey lighten-4 text-center">
+          <v-img v-if="Boolean(item.favIconUrl)" :src="item.favIconUrl" />
+          <div class="deep-purple--text text--accent-2 mx-auto" style="width: 100%;" v-if="!Boolean(item.favIconUrl)">
             {{ item.iconText > 2 ? item.iconText : item.tips.substr(0, 1) }}
           </div>
         </v-list-item-avatar>

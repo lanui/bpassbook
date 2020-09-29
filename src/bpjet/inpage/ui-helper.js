@@ -14,7 +14,7 @@ const ICON_SIZES = {
 };
 
 const FRAME_BOX = {
-  width: 260,
+  width: 280,
   minHeight: 180,
 };
 

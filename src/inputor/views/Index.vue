@@ -75,23 +75,22 @@ export default {
   },
   methods: {
     sendFillMessage(item) {
-      // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      //   const tabId = tabs[0].id;
-      //   const tabUrl = tabs[0].url;
-      //   sendMessage($remotePort, { item, tabId, tabUrl });
-      // });
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         const tabId = tabs[0].id;
         const tabUrl = tabs[0].url;
-        console.log(`Ext Inputor logo tabs:`, tabs[0].host);
-
-        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tabId, tabUrl }, function (response) {
+        const favIconUrl = tabs[0].favIconUrl;
+        const tab = {
+          tabId: tabs[0].id,
+          tabUrl: tabs[0].url,
+          favIconUrl: tabs[0].favIconUrl,
+        };
+        console.log('Tabs >>>>', tab);
+        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tab }, function (response) {
           console.log(response);
         });
       });
     },
     addItemHandle() {
-      console.log(`${LOG_PREFFIX} >Document>>`, window.self);
       this.$router.push({ path: 'addPassbook', query: { username: '', password: '', origin: '' } });
     },
   },

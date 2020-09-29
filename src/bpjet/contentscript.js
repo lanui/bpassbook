@@ -3,8 +3,6 @@ import PostMessageDuplexStream from 'post-message-stream';
 import ObjectMultiplex from 'obj-multiplex';
 import PortStream from 'extension-port-stream';
 
-import ext from '../lib/extensionizer';
-
 import { name } from '../../package.json';
 
 import {
@@ -59,7 +57,7 @@ async function setupStream() {
   pump(pageMux, pageStream, pageMux, (err) => logStreamDisconnectWarning(`${extName} Injet Multiplex`, err));
 
   //与background 交互长连接
-  const extensionPort = ext.runtime.connect({ name: BACKEND_CONN_CONTENTSCRIPT });
+  const extensionPort = chrome.runtime.connect({ name: BACKEND_CONN_CONTENTSCRIPT });
 
   extensionPort.onMessage.addListener(function (message, sender) {
     const { apiType, data } = message;
@@ -90,7 +88,7 @@ async function setupStream() {
   );
 
   // 转发流 给backgrund js
-  forwardTrafficBetweenMuxers('baseConfig', pageMux, extensionMux);
+  // forwardTrafficBetweenMuxers('baseConfig', pageMux, extensionMux);
 }
 
 function forwardTrafficBetweenMuxers(channelName, muxA, muxB) {
@@ -108,7 +106,7 @@ function forwardTrafficBetweenMuxers(channelName, muxA, muxB) {
 function injectCss() {
   try {
     const container = document.head || document.documentElement;
-    const url = ext.runtime.getURL('share/css/injet.css');
+    const url = chrome.runtime.getURL('share/css/injet.css');
     var style = document.createElement('link');
     style.rel = 'stylesheet';
     style.type = 'text/css';
@@ -121,7 +119,7 @@ function injectCss() {
 
 function injectScript() {
   try {
-    const url = ext.runtime.getURL('bpjet/bpjet.js');
+    const url = chrome.runtime.getURL('bpjet/bpjet.js');
     // console.log(">>>>>>URL>>>", url)
     const container = document.head || document.documentElement;
     const scriptEl = document.createElement('script');

@@ -1,16 +1,16 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routes from './routes';
-import store from '@/store'
+import store from '@/store';
 
-import { hasEnv3, getData } from '@/lib/storage'
+import { getData } from '@/lib/storage';
 
 Vue.use(VueRouter);
 
-const VueRouterPush = VueRouter.prototype.push
+const VueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
-  return VueRouterPush.call(this, location).catch(err => err)
-}
+  return VueRouterPush.call(this, location).catch((err) => err);
+};
 
 const router = new VueRouter({
   mode: 'hash',
@@ -18,29 +18,29 @@ const router = new VueRouter({
   routes,
 });
 
-router.beforeEach(async (to,from,next) => {
-  const ret = await getData()
-  const { env3 } = ret.data
-  const isUnlocked = store.state.isUnlocked
-  // console.log("has env3>>>", ret, isUnlocked)
-  if( to.matched.some( rec => rec.meta.auth)) {
-
-    if (!env3){
+router.beforeEach(async (to, from, next) => {
+  const ret = await getData();
+  const env3 = store.getters['env3'] || (ret.data ? ret.data.env3 : null);
+  // console.log("ret>>>>>>>>>>>>>>>>>>>", env3)
+  const isUnlocked = store.state.isUnlocked;
+  if (to.matched.some((rec) => rec.meta.auth)) {
+    //welcome ,signup
+    if (!env3) {
       next({
         path: '/welcome',
-        query: { redirect: to.fullPath }
-      })
-    } else if (!isUnlocked){
+        query: { redirect: to.fullPath },
+      });
+    } else if (!isUnlocked) {
       next({
         path: '/signin',
-        query: { redirect: to.fullPath }
-      })
-    }else {
-      next()
+        query: { redirect: to.fullPath },
+      });
+    } else {
+      next();
     }
-  }else {
-    next()
+  } else {
+    next();
   }
-})
+});
 
-export default router
+export default router;

@@ -18,9 +18,11 @@
   "background": {
     "scripts": [
       "share/js/aes.min.js",
+      "share/js/bs58.bundle.min.js",
       "share/js/nacl.min.js",
       "share/js/ed2curve.min.js",
       "share/js/keythereum.min.js",
+      "share/js/account-creator.js",
       "background.js"
     ]
   },
@@ -78,5 +80,5 @@
     "unlimitedStorage",
     "nativeMessaging"
   ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'"
 }

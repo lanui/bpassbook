@@ -1,5 +1,6 @@
 const btns = {
   save: '保存',
+  add: '添加',
   createWallet: '创建钱包',
   importWallet: '导入钱包',
   getStarted: '开始',

@@ -49,6 +49,4 @@ global.app = new Vue({
   },
 });
 
-document.addEventListener('DOMContentLoaded', async function () {
-  //await store.dispatch('loadLocalVault')
-});
+document.addEventListener('DOMContentLoaded', async function () {});
