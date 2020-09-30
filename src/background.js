@@ -31,6 +31,8 @@ import {
   APITYPE_LOGOUT,
   APITYPE_UPDATE_PBITEM,
   APITYPE_DELETE_PBITEM,
+  APITYPE_IMPORT_BPWALLET,
+  APITYPE_CREAT_IMPORT_BPWALLET,
 } from '@/lib/cnst/api-cnst';
 
 import { GenerateWalletAndOpen } from '@/bglib/account-creator';
@@ -203,6 +205,8 @@ async function setupController(initState) {
     console.log(`${LOG_PREFFIX}-runtime.message>listener>>`, message, sender);
     const { apiType } = message;
     const isFn = typeof sendResponse === 'function';
+
+    let respInitState;
     switch (apiType) {
       // case APITYPE_CREATE_ENV3:
 
@@ -276,6 +280,13 @@ async function setupController(initState) {
             }
           });
         break;
+      case APITYPE_IMPORT_BPWALLET:
+        const resp = await controller.importBPWallet(message);
+        if (isFn) {
+          sendResponse(resp);
+        } else {
+          return false;
+        }
       default:
         break;
     }
@@ -289,14 +300,16 @@ function portMessageListener(controller, remotePort) {
   // console.log(`${LOG_PREFFIX}-runtime Msg`, remotePort);
   remotePort.onMessage.addListener(async (msg, sender) => {
     let sendInitState = await controller.getInitState();
+    let respInitState;
     if (msg && msg.apiType) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
       console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
         case APITYPE_CREATE_BPWALLET:
-          const createResp = await controller.createBPWallet(msg);
-          console.log('>>>>>>>>APITYPE_CREATE_BPWALLET>>', msg.data, createResp);
-          sender.postMessage(createResp);
+        case APITYPE_CREAT_IMPORT_BPWALLET:
+          respInitState = await controller.createOrImportBPWallet(msg);
+          console.log('>>>>>>>>APITYPE_IMPORT_NEWBPWALLET>>', msg.data, respInitState);
+          sender.postMessage(respInitState);
           break;
         case APITYPE_CREATE_ENV3:
           const saveWalletResp = await controller.saveNewWalletForLived(msg);

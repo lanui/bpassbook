@@ -46,7 +46,7 @@ export default {
   [types.SET_WALLET_OPEN](state, { privateKey = null, publicKey = null, selectedAddress = '', chainId = 3 }) {
     state.privateKey = privateKey;
     state.publicKey = publicKey;
-    state.selectedAddress = selectedAddress;
+    if (selectedAddress) state.selectedAddress = selectedAddress;
     state.chainId = chainId;
   },
   [types.SET_LIVE_LOADING](state, loading = fasle) {

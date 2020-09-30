@@ -1,5 +1,1 @@
-export default {
-  getActivity (state) {
-    return state.activies
-  },
-}
+export const getActivity = (state) => state.actives;

@@ -50,7 +50,9 @@ export default {
     goSignUp() {
       this.$router.push({ path: '/signup' });
     },
-    importWallet() {},
+    importWallet() {
+      this.$router.push({ path: '/importornew' });
+    },
     goIndex() {
       this.$router.push({ path: '/index' });
     },

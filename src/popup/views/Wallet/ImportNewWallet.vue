@@ -6,13 +6,6 @@
       </v-col>
       <v-col cols="10">
         <v-form ref="importForm">
-          <!-- <v-container fluid>
-            <v-radio-group v-model="importType" row>
-              <v-radio dense :label="$t('l.jsonKeystore')" value="json"></v-radio>
-              <v-radio dense :label="$t('l.mnemonics')" value="v3"></v-radio>
-            </v-radio-group>
-          </v-container> -->
-
           <v-textarea
             v-if="importType !== 'json'"
             dense
@@ -62,10 +55,6 @@
             :error-messages="error"
             name="password"
           ></v-text-field>
-
-          <div v-if="Boolean(env3)" class="mt-4 text-center amber--text text--darken-1">
-            导入将会覆盖现有钱包,建议先备份现有钱包.
-          </div>
         </v-form>
       </v-col>
     </v-row>
@@ -80,7 +69,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import { passwordRules } from '@/ui/constants/valid-rules';
 import { APITYPE_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
 import { OpenWallet } from '@/bglib/account-creator';
@@ -89,6 +78,7 @@ export default {
   name: 'PopupImportWallet',
   computed: {
     ...mapGetters(['env3']),
+    ...mapState(['isUnlocked']),
   },
   data() {
     return {
@@ -107,11 +97,11 @@ export default {
     };
   },
   methods: {
-    goback() {
+    gotoIndex() {
       this.loading = false;
       this.password = '';
       this.v3json = '';
-      this.$router.go(-1);
+      this.$router.push({ path: '/index' });
     },
     async importHandle() {
       if (this.$refs.importForm.validate()) {
@@ -119,12 +109,9 @@ export default {
           this.loading = true;
           const keystore = this.v3json;
           const password = this.password;
-          await this.$store.dispatch('importWalletFormKeyStore', { keystore, password });
-          this.loading = false;
-          this.goback();
+          await this.$store.dispatch('importNewWalletFormKeyStore', { keystore, password });
         } catch (err) {
           this.loading = false;
-          console.log(err);
           if (err.type === 'password') {
             this.error = err.message;
           } else {
@@ -140,6 +127,11 @@ export default {
     },
     password: function (val) {
       this.error = '';
+    },
+    isUnlocked: function (val, old) {
+      if (val === true) {
+        this.gotoIndex();
+      }
     },
   },
 };

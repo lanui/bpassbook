@@ -7,6 +7,7 @@ import SignUpIndex from '@popup/views/Login/SignUp';
 import WalletIndex from '@popup/views/Wallet/Index';
 import OptionsIndex from '@popup/views/Options/Index';
 import ImportWallet from '@popup/views/Wallet/ImportWallet';
+import ImportNewWallet from '@popup/views/Wallet/ImportNewWallet';
 import ExportWallet from '@/popup/views/Wallet/ExportWallet';
 import AddPassBookItem from '@popup/views/PassBook/AddPassItem';
 import EditPassBookItem from '@popup/views/PassBook/EditPassItem';
@@ -119,6 +120,11 @@ export default [
         path: 'welcome',
         alias: '/welcome',
         component: Welcome,
+      },
+      {
+        path: 'importornew',
+        alias: '/importornew',
+        component: ImportNewWallet,
       },
     ],
   },

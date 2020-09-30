@@ -1,5 +1,8 @@
 // import { fromV3 } from 'ethereumjs-wallet';
 import { OpenWallet } from '@/bglib/account-creator';
+import { APITYPE_IMPORT_BPWALLET, APITYPE_IMPORT_NEWBPWALLET } from '@/lib/cnst/api-cnst';
+import WhispererController from '@/lib/controllers/whisperer-controller';
+
 import * as types from './mutation-types';
 
 /**
@@ -78,19 +81,6 @@ export const decryptFromEnv3 = async ({ state }, password) => {
   console.log('decryptFromEnv3', env3, password);
   if (!env3) throw new Error('no found env3');
   try {
-    // const evn3Json = JSON.stringify(env3);
-
-    // const v3 = await passworder.decrypt(password, evn3Json);
-
-    // const wallet = await fromV3(v3, password);
-    // const priKey = wallet.getPrivateKeyString();
-    // const pubKey = wallet.getPublicKeyString()
-
-    // return {
-    //   json: JSON.stringify(v3),
-    //   privateKey: priKey,
-    // };
-
     const dev3 = OpenWallet(env3, password);
 
     return {
@@ -120,5 +110,76 @@ export const updateInitState = async ({ commit, dispatch }, initState) => {
   if (GitbookController) {
     const passbook = GitbookController.passbook;
     await dispatch('passbook/updateItems', passbook);
+  }
+};
+
+/**
+ * import v3
+ * @param {*} param0
+ * @param {*} param1
+ */
+export const importWalletFormKeyStore = async ({ commit }, { keystore, password }) => {
+  try {
+    if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
+
+    const env3 = JSON.parse(keystore);
+    const dev3 = OpenWallet(env3, password);
+    const data = {
+      env3,
+      dev3,
+      password,
+    };
+
+    const controller = new WhispererController({ name: 'Importor-Whisperer' });
+    controller
+      .sendSimpleMsg(APITYPE_IMPORT_BPWALLET, data)
+      .then((resp) => {
+        //TODO data sync
+        commit(types.SET_V3, dev3);
+        commit(types.SET_ENV3, env3);
+        commit(types.UPDATE_SELECTEDADDRESS, env3.mainAddress);
+        return true;
+      })
+      .catch((error) => {
+        throw { type: 'keystore', message: 'parse keystore fail,please retry.' };
+      });
+  } catch (ex) {
+    console.log('ex', ex);
+    if (ex instanceof SyntaxError) {
+      throw { type: 'keystore', message: 'Incorrect keystore format.' };
+    } else if (ex instanceof Error && ex.message === 'message authentication code mismatch') {
+      throw { type: 'password', message: 'Keystore and password do not match.' };
+    } else if (typeof ex === 'object' && ex.type) {
+      throw ex;
+    } else {
+      throw { type: 'password', message: 'Keystore and password do not match.' };
+    }
+  }
+};
+
+export const importNewWalletFormKeyStore = async ({ commit }, { keystore, password }) => {
+  try {
+    if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
+
+    const env3 = JSON.parse(keystore);
+    const dev3 = OpenWallet(env3, password);
+    const data = {
+      env3,
+      dev3,
+      password,
+    };
+    await global.$connManager.createOrImportWallet(data);
+    commit(types.UPDATE_ISUNLOCKED, true);
+  } catch (ex) {
+    console.log('ex', ex);
+    if (ex instanceof SyntaxError) {
+      throw { type: 'keystore', message: 'Incorrect keystore format.' };
+    } else if (ex instanceof Error && ex.message === 'message authentication code mismatch') {
+      throw { type: 'password', message: 'Keystore and password do not match.' };
+    } else if (typeof ex === 'object' && ex.type) {
+      throw ex;
+    } else {
+      throw { type: 'password', message: 'Keystore and password do not match.' };
+    }
   }
 };

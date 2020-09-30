@@ -5,7 +5,14 @@ import extension from '@/lib/extensionizer';
 import store from '@/store';
 
 import { BACKEND_CONN_POPUP } from '@/lib/cnst/connection-cnst';
-import { APITYPE_LOGIN, APITYPE_INIT_STATE, APITYPE_CREATE_BPWALLET } from '@/lib/cnst/api-cnst';
+import { GenerateWalletAndOpen } from '@/bglib/account-creator';
+
+import {
+  APITYPE_LOGIN,
+  APITYPE_INIT_STATE,
+  APITYPE_CREAT_IMPORT_BPWALLET,
+  APITYPE_CREATE_BPWALLET,
+} from '@/lib/cnst/api-cnst';
 
 const LOG_PREFFIX = 'ConnManager';
 
@@ -60,6 +67,13 @@ class ConnManager extends EventEmitter {
             await this.$store.dispatch('updateInitState', message.data);
           }
           break;
+        case APITYPE_CREAT_IMPORT_BPWALLET:
+          if (message.error) {
+            await this.$store.dispatch('p3/setCreatingState', { error: message.error.message });
+          } else {
+            await this.$store.dispatch('updateInitState', message.data);
+          }
+          break;
         default:
           break;
       }
@@ -79,9 +93,29 @@ class ConnManager extends EventEmitter {
 
   async createNewWallet(password) {
     if (!this.remotePort) throw 'remote connection disconnect.';
+
+    const fullWallet = await GenerateWalletAndOpen(password);
+    const { env3, dev3 } = fullWallet;
+
     this.remotePort.postMessage({
       apiType: APITYPE_CREATE_BPWALLET,
       data: {
+        env3,
+        dev3,
+        password,
+        redirect: '/index',
+      },
+    });
+    return true;
+  }
+
+  async createOrImportWallet({ env3, dev3, password }) {
+    if (!this.remotePort) throw 'remote connection disconnect.';
+    this.remotePort.postMessage({
+      apiType: APITYPE_CREAT_IMPORT_BPWALLET,
+      data: {
+        env3,
+        dev3,
         password,
         redirect: '/index',
       },

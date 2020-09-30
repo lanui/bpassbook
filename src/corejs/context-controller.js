@@ -221,17 +221,14 @@ class ContextController extends EventEmitter {
   /**
    *
    * @param {Object} data
-   * @property string password
-   * @property JSON epv3 (optional)
+   * @property string password (optional)
+   * @property JSON env3 ,dev3 (required)
    * @return Object initState
    */
-  async createBPWallet(message) {
+  async createOrImportBPWallet(message) {
     try {
       const { apiType, data } = message;
-      const { password, redirect } = data;
-
-      const fullWallet = await GenerateWalletAndOpen(password);
-      const { env3, dev3 } = fullWallet;
+      const { password, env3, dev3, redirect } = data;
       const { mainAddress } = env3;
       const initState = Object.assign(this.store.getState(), { env3 });
       await this.store.putState(initState);
@@ -245,6 +242,18 @@ class ContextController extends EventEmitter {
       console.warn('create BPassword Wallet error.', err);
       return errorMessage(err, { originApi: apiType });
     }
+  }
+
+  async importBPWallet(message) {
+    const { apiType, data } = message;
+    const { env3, dev3, password } = data;
+
+    await this.store.updateState({ env3 });
+    await this.appStateController.updateSelectedAddress(env3.mainAddress);
+    await this.appStateController.updateKeyPairs(dev3);
+
+    const sendInitState = await this.getInitState();
+    return responseMessage(apiType, sendInitState);
   }
 
   /**

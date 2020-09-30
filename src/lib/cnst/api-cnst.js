@@ -21,3 +21,4 @@ export const APITYPE_DELETE_PBITEM = 'deletePassbookItemProps';
 export const APITYPE_CREATE_ENV3 = 'createEnv3Wallet';
 export const APITYPE_CREATE_BPWALLET = 'createNewBPwallet';
 export const APITYPE_IMPORT_BPWALLET = 'importBPWallet';
+export const APITYPE_CREAT_IMPORT_BPWALLET = 'importNewBPWallet';
