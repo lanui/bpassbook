@@ -1,6 +1,6 @@
 <template>
   <v-container class="px-0 py-0">
-    <v-tabs v-model="activeTab" dense centered icons-and-text ripple fixed-tabs>
+    <v-tabs @change="changedHandle" v-model="activeTab" dense centered icons-and-text ripple fixed-tabs>
       <v-tab class="primary--text">
         {{ $t('l.website') }}
         <v-icon>
@@ -15,19 +15,14 @@
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="activeTab">
-      <!-- <v-tab-item value="passbook" key="1">
-        <password-list />
-      </v-tab-item>
-      <v-tab-item value="activity" key="2">
-        <activity-list />
-      </v-tab-item> -->
       <v-tab-item v-for="(t, idx) in tabs" :key="idx">
         <password-list v-if="t.name == 'passbook'" />
 
-        <activity-list v-if="t.name == 'activity'" />
+        <activity-list v-if="t.name == 'mobbook'" />
+        <!-- <activity-list v-if="t.name == 'activity'" /> -->
         <!-- mdi-shield-sync-outline,mdi-chevron-double-down -->
 
-        <v-speed-dial
+        <!-- <v-speed-dial
           v-model="opened"
           v-if="!drawer"
           absolute
@@ -51,9 +46,43 @@
           <v-btn @click.stop="syncItemHandle" dark color="indigo accent-1" x-small fab>
             <v-icon>mdi-link-plus</v-icon>
           </v-btn>
-        </v-speed-dial>
+        </v-speed-dial> -->
       </v-tab-item>
+      <v-fab-transition>
+        <v-btn
+          v-if="!drawer"
+          @click="addItemHandle"
+          absolute
+          key="mdi-plus"
+          color="indigo"
+          fab
+          x-small
+          dark
+          top
+          center
+          class="float-btn-add"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </v-fab-transition>
     </v-tabs-items>
+    <v-row justify="center" class="px-0 py-0 my-0">
+      <v-col cols="10" class="px-0 py-0">
+        <v-chip
+          v-if="Boolean(diff)"
+          @click="syncDataHandle"
+          class="ma-2"
+          color="indigo accent-1"
+          pill
+          text-color="white"
+        >
+          <span class="mx-10">{{ $t('l.syncdata') }}</span>
+          <v-avatar right class="indigo lighten-1">
+            {{ diff }}
+          </v-avatar>
+        </v-chip>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -72,7 +101,11 @@ export default {
   },
   computed: {
     ...mapGetters('p3', ['drawer']),
-    // ...mapState(['p3',['drawer']])
+    ...mapGetters('passbook', ['webdiff', 'mobdiff']),
+    diff() {
+      const activeTab = this.activeTab;
+      return Boolean(this.activeTab) ? this.mobdiff : this.webdiff;
+    },
   },
   data() {
     return {
@@ -82,14 +115,24 @@ export default {
       tabs: [
         { name: 'passbook', text: 'PassBook', icon: 'mdi-shield-key-outline', path: '' },
         { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
+        // { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
       ],
     };
   },
   methods: {
     addItemHandle() {
-      this.$router.push({ path: '/passbook/add' });
+      const tabIdx = this.activeTab || 0;
+      if (tabIdx == 1) {
+        this.$router.push({ name: 'addMobItem' });
+      } else {
+        this.$router.push({ path: '/passbook/add' });
+      }
     },
     async syncItemHandle() {},
+    async syncDataHandle() {},
+    changedHandle(val) {
+      console.log('>>>>>>>>>>>>>>>>>', val, this.activeTab);
+    },
   },
 };
 </script>
@@ -100,5 +143,21 @@ export default {
 
 #operators .v-btn--floating {
   position: relative;
+}
+
+.float-btn-add {
+  transform: translateX(-48%);
+}
+.sync-btn--wrapper {
+  display: flex;
+  flex: 1 2 auto;
+}
+.tips-circle--wrapper {
+  position: relative !important;
+  float: right;
+  right: 0.25rem;
+}
+.tips-number {
+  font-size: 0.75rem;
 }
 </style>

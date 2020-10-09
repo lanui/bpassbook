@@ -64,12 +64,6 @@ export default {
         });
     },
   },
-  mounted() {
-    //this.$store.dispatch('passbook/reloadItemsFromLocal')
-  },
-  async beforeMount() {
-    // await this.$store.dispatch('passbook/reloadItemsFromLocal');
-  },
 };
 </script>
 <style></style>

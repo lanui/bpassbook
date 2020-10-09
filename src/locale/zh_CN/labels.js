@@ -14,6 +14,7 @@ const lables = {
   domain: '网站域名',
   tips: '提示',
   username: '账号名称',
+  syncdata: '同步数据',
 };
 
 export default lables;

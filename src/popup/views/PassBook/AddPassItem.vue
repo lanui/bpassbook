@@ -16,17 +16,6 @@
       <v-col cols="10" class="mt-4">
         <v-form ref="passItemForm">
           <v-text-field
-            v-model="data.hostname"
-            :label="$t('l.domain')"
-            outlined
-            rounded
-            :clearable="true"
-            :loading="ctrl.loading"
-            :rules="rules.required"
-            :error-messages="error"
-            dense
-          />
-          <v-text-field
             v-model="data.tips"
             :label="$t('l.tips')"
             outlined
@@ -35,6 +24,17 @@
             :clearable="true"
             :loading="ctrl.loading"
             :rules="rules.required"
+            dense
+          />
+          <v-text-field
+            v-model="data.hostname"
+            :label="$t('l.domain')"
+            outlined
+            rounded
+            :clearable="true"
+            :loading="ctrl.loading"
+            :rules="rules.required"
+            :error-messages="error"
             dense
           />
 

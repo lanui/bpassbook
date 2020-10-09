@@ -1,3 +1,6 @@
+/**
+ * this Utils lib only used in extension envirement
+ */
 import extension from './extensionizer';
 
 /**
@@ -23,4 +26,8 @@ export function validBookItem(item) {
     if (!item.hasOwnProperty(keysRequired[i]) || item[keysRequired[i]] == '') return false;
   }
   return true;
+}
+
+export function openTab(url) {
+  if (!url) return;
 }

@@ -77,10 +77,10 @@
           </div>
         </v-card-title>
         <v-card-text>
-          0xFd30d2c32E6A22c2f026225f1cEeA72bFD9De865
+          {{ finnacialHash }}
         </v-card-text>
         <v-card-actions>
-          <v-btn rounded color="primary" small>
+          <v-btn @click="openBlockexplorerTab" rounded color="primary" small>
             在区块链上显示
           </v-btn>
         </v-card-actions>
@@ -95,6 +95,7 @@
 import { mapGetters } from 'vuex';
 
 import GobackBtn from '@/widgets/GobackButton.vue';
+import { FinnacialHash, blockexplorerUrl } from '@/ui/comm-cnst';
 
 export default {
   name: 'PopupConfigIndex',
@@ -118,7 +119,17 @@ export default {
           path: '',
         },
       ],
+      finnacialHash: FinnacialHash,
     };
+  },
+  methods: {
+    openBlockexplorerTab() {
+      const hash = this.finnacialHash;
+      chrome.tabs.create({
+        url: blockexplorerUrl(hash),
+        active: true,
+      });
+    },
   },
 };
 </script>

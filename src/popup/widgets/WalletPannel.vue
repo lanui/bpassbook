@@ -1,11 +1,11 @@
 <template>
   <div class="white--text wallet--wrapper">
     <v-row class="flex-column fill-height">
-      <v-col class="px-0 py-1">
+      <!-- <v-col class="px-0 py-1">
         <div class="inner inner-nickname">
           {{ defToken ? 'BTs Balance' : 'ETH Balance' }}
         </div>
-      </v-col>
+      </v-col> -->
       <v-col class="px-0 py-0">
         <div class="inner inner-wallet">
           {{ shortAddress }}
@@ -96,7 +96,7 @@ export default {
 <style lang="css" scoped>
 .wallet--wrapper {
   width: 100%;
-  min-height: 180px;
+  min-height: 150px;
   background: linear-gradient(-30deg, #4f38a4, #a244bc 45%, #4f38a4 45%) #4f38a4;
   display: inline-block;
   vertical-align: middle;

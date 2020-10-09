@@ -1,5 +1,5 @@
 <template>
-  <v-virtual-scroll :items="datas" item-height="58" height="260">
+  <v-virtual-scroll :items="datas" item-height="58" height="276">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
         <v-list-item-content dense class="text-left">
@@ -38,58 +38,7 @@ export default {
   name: 'ActivityList',
   data() {
     return {
-      datas: [
-        // {
-        //   logo:"https://www.baschain.cn/static/favicon.ico",
-        //   tx:"0x685f6ad5a8e5de4d6a06e10574621f8b5c0ecd5965074702cdc8a197330cf9c0",
-        //   from:"0xc0E6a6F90D4Cd02F13447565171Fea4bf91D73A8",
-        //   iconClass:"",
-        //   syncIcon:"",
-        //   edit:true,
-        //   text:'',
-        //   status:'pending',
-        // },
-        // {
-        //   logo:"",
-        //   tx:"0xb843d77add8c51b41534de2a385f5207ff971a536ed3772dcd0fbf9d8b239a45",
-        //   from:"0xc0E6a6F90D4Cd02F13447565171Fea4bf91D73A8",
-        //   iconClass:"",
-        //   syncIcon:"",
-        //   edit:true,
-        //   text:'',
-        //   status:'success',
-        // },
-        // {
-        //   logo:"",
-        //   tx:"0xf3696d8f5f735374a04a66f6aa3a8699a25be68776501ded6abd501c34fbf47d",
-        //   from:"0xc3892fe74b7466869e87e077a41e651ec8175d3e",
-        //   iconClass:"",
-        //   syncIcon:"",
-        //   edit:true,
-        //   text:'',
-        //   status:'success',
-        // },
-        // {
-        //   logo:"",
-        //   tx:"0x685f6ad5a8e5de4d6a06e10574621f8b5c0ecd5965074702cdc8a197330cf9c0",
-        //   from:"0xc0E6a6F90D4Cd02F13447565171Fea4bf91D73A8",
-        //   iconClass:"",
-        //   syncIcon:"",
-        //   edit:true,
-        //   text:'',
-        //   status:'success',
-        // },
-        // {
-        //   logo:"",
-        //   tx:"0x3eee56ed12d7370399623375586bd17d95f3dd4cff619c4b50e6bf2a2dca29ce",
-        //   from:"0xc0E6a6F90D4Cd02F13447565171Fea4bf91D73A8",
-        //   iconClass:"",
-        //   syncIcon:"",
-        //   edit:true,
-        //   text:'',
-        //   status:'fail',
-        // }
-      ],
+      datas: [],
     };
   },
   methods: {

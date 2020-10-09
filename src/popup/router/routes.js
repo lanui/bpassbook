@@ -11,6 +11,8 @@ import ImportNewWallet from '@popup/views/Wallet/ImportNewWallet';
 import ExportWallet from '@/popup/views/Wallet/ExportWallet';
 import AddPassBookItem from '@popup/views/PassBook/AddPassItem';
 import EditPassBookItem from '@popup/views/PassBook/EditPassItem';
+import AddMobBookItem from '@popup/views/MobileBook/AddItem';
+import EditMobBookItem from '@popup/views/MobileBook/EditItem';
 
 export default [
   {
@@ -75,6 +77,22 @@ export default [
         name: 'editPassbook',
         path: 'edit',
         component: EditPassBookItem,
+        meta: {
+          auth: true,
+        },
+      },
+      {
+        name: 'addMobItem',
+        path: 'add_item',
+        component: AddMobBookItem,
+        meta: {
+          auth: true,
+        },
+      },
+      {
+        name: 'editMobItem',
+        path: 'edit_item',
+        component: AddPassBookItem,
         meta: {
           auth: true,
         },
