@@ -19,6 +19,28 @@ export const validItem = (item) => {
   if (!item.tips || item.tips.trim().length == 0) throw 'please entry tips.';
 };
 
+export const validMobItem = (item) => {
+  if (!item) throw 'format illegal.';
+
+  if (!item.tips) throw 'tips required.';
+  if (!item.username && item.username.trim().length <= 0) throw 'username required.';
+  if (!item.password && item.password.trim().length <= 0) throw 'password required.';
+};
+
+export const trimProps = (item) => {
+  if (typeof item !== 'object') return item;
+  const keys = Object.keys(item);
+  for (let i = 0; i < keys.length; i++) {
+    const v = item[keys[i]];
+    if (typeof v === 'string') {
+      item[keys[i]] = v.trim();
+    } else if (typeof v === 'number' || typeof v === 'boolean') {
+      item[keys[i]] = v.toString();
+    }
+  }
+  return item;
+};
+
 export function validUrl(url) {
   const strRegex =
     '^((https|http)?://)' +

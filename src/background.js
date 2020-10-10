@@ -33,9 +33,11 @@ import {
   APITYPE_DELETE_PBITEM,
   APITYPE_IMPORT_BPWALLET,
   APITYPE_CREAT_IMPORT_BPWALLET,
+  APITYPE_WEBSITE_UPDATE_GITDATA,
 } from '@/lib/cnst/api-cnst';
 
 import { GenerateWalletAndOpen } from '@/bglib/account-creator';
+import axios from 'axios';
 
 const LOG_PREFFIX = 'background';
 
@@ -70,6 +72,14 @@ const extensionInternalProcessHash = {
 initialize().catch(log.error);
 
 async function initialize() {
+  const response = await axios.get('https://etherchain.org/api/gasPriceOracle', { timeout: 12000 });
+
+  console.log('Test Axios>>data>', response.data);
+  console.log('Test Axios>>status>', response.status, typeof response.status, typeof response.data);
+  console.log('Test Axios>>>', response.statusText);
+  console.log('Test Axios>>>', response.headers);
+  console.log('Test Axios>>>', response.config);
+
   // genTest();
   const initState = await loadStateFromPersistence();
   console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);
@@ -177,7 +187,7 @@ async function setupController(initState) {
         if (tabId && processName === BACKEND_CONN_CONTENTSCRIPT) {
           contentScriptsPorts[tabId] = remotePort;
           remotePort.onDisconnect.addListener(function (e) {
-            console.log('sc disconnect>>>', e);
+            // console.log('sc disconnect>>>', e);
             contentScriptsPorts[tabId] = false;
           });
           const isUnlocked = Boolean(controller.appStateController.isUnlocked);
@@ -287,6 +297,8 @@ async function setupController(initState) {
         } else {
           return false;
         }
+      case APITYPE_WEBSITE_UPDATE_GITDATA:
+        break;
       default:
         break;
     }

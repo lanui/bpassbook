@@ -46,6 +46,9 @@
             :counter="true"
             dense
           />
+          <div v-if="Boolean(error)" class="red--text text-center font-xsmall">
+            {{ error }}
+          </div>
         </v-form>
       </v-col>
       <v-col cols="10">
@@ -69,7 +72,7 @@
 <script>
 import WhispererController from '@/lib/controllers/whisperer-controller';
 import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
-import { validItem } from '@/ui/constants/valid-rules';
+import { validMobItem, trimProps } from '@/ui/constants/valid-rules';
 
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
 export default {
@@ -90,7 +93,7 @@ export default {
       },
       error: '',
       rules: {
-        required: [(v) => !!v || 'required'],
+        required: [(v) => (!!v && v.trim().length > 0) || 'required'],
       },
     };
   },
@@ -99,7 +102,20 @@ export default {
       this.$refs.passItemForm.reset();
       this.$router.go(-1);
     },
-    saveHandle() {},
+    saveHandle() {
+      if (this.$refs.passItemForm.validate()) {
+        let item = this.item;
+        try {
+          item = trimProps(item);
+          validMobItem(item);
+          this.ctrl.loading = true;
+        } catch (error) {
+          setTimeout(() => {
+            this.error = error;
+          }, 5000);
+        }
+      }
+    },
     resetForm() {
       this.item = Object.assign({
         tips: '',

@@ -3,6 +3,8 @@ import { OpenWallet } from '@/bglib/account-creator';
 import { APITYPE_IMPORT_BPWALLET, APITYPE_IMPORT_NEWBPWALLET } from '@/lib/cnst/api-cnst';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 
+import { getCurrentGas } from '@/lib/gas-helper';
+
 import * as types from './mutation-types';
 
 /**
@@ -182,4 +184,19 @@ export const importNewWalletFormKeyStore = async ({ commit }, { keystore, passwo
       throw { type: 'password', message: 'Keystore and password do not match.' };
     }
   }
+};
+
+/**
+ *
+ * @param {*} param0
+ */
+export const fetchGasParams = async ({ commit }, payload) => {
+  getCurrentGas(payload)
+    .then((params) => {
+      console.log('>>>>>>>>>>>>>>fetchGasParams>>', params);
+      commit(types.UPDATE_GAS_PARAMS, params);
+    })
+    .catch((error) => {
+      console.log('>>>>>>>>>>>>>>fetchGasParams>Error>', error);
+    });
 };

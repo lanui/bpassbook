@@ -106,6 +106,7 @@ dist
 # extension template
 /dist-zip
 **/secret.env.js
+docs/demo-*.json
 
 # project
 yarn.lock

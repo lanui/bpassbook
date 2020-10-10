@@ -55,8 +55,17 @@ export default new Vuex.Store({
         color: 'rgba(3, 135, 137, 0.7)',
       },
     ],
+    gasParams: {
+      standard: 20.0,
+      exact: false,
+      safeLow: 0,
+      fast: 0,
+      fastest: 0,
+    },
+    gasParamsLoading: false,
   },
   getters: {
+    gasParamsLoading: (state) => state.gasParamsLoading,
     locale: (state) => state.locale,
     dense: (state) => state.dense,
     chainId: (state) => state.chainId,

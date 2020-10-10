@@ -36,3 +36,29 @@ export const currentNickname = (state) => {
   }
   return state.nickname || '';
 };
+
+/**
+ *
+ * @param {*} state
+ */
+export const latestGasParams = (state) => {
+  let params = state.gasParams || {};
+  const { exact, standardWait, safeLowWait, fastWait, fastestWait } = params;
+
+  params.standardWaitDesc = standardWait && exact ? translateTime(standardWait) : '≈ 5 minutes';
+  params.safeLowWaitDesc = safeLowWait && exact ? translateTime(safeLowWait) : '≈ 30 minutes';
+  params.fastWaitDesc = fastWait && exact ? translateTime(fastWait) : '≈ 2 minutes';
+  params.fastestWaitDesc = fastestWait && exact ? translateTime(fastestWait) : '≈ 30 seconds';
+
+  return params;
+};
+
+function translateTime(num) {
+  if (num < 1.0) {
+    return `≈ ${num * 60} seconds`;
+  } else if (num > 60) {
+    return `≈ ${num / 60} hours`;
+  } else {
+    return `≈ ${num} minutes`;
+  }
+}

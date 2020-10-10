@@ -22,3 +22,6 @@ export const APITYPE_CREATE_ENV3 = 'createEnv3Wallet';
 export const APITYPE_CREATE_BPWALLET = 'createNewBPwallet';
 export const APITYPE_IMPORT_BPWALLET = 'importBPWallet';
 export const APITYPE_CREAT_IMPORT_BPWALLET = 'importNewBPWallet';
+export const APITYPE_MOBILE_ADDITEM = 'mobileAddItem';
+export const APITYPE_MOBILE_UPDATE_GITDATA = 'mobileUpdateGitdata';
+export const APITYPE_WEBSITE_UPDATE_GITDATA = 'websiteUpdateGitdata';

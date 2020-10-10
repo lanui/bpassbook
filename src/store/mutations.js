@@ -55,4 +55,11 @@ export default {
   [types.SET_LIVE_ERROR](state, error = '') {
     state.liveError = error;
   },
+  [types.UPDATE_GAS_PARAMS](state, payload = {}) {
+    const old = state.gasParams;
+    state.gasParams = Object.assign(old, payload);
+  },
+  [types.UPDATE_GAS_PARAMS_LOADING](state, loading = false) {
+    state.gasParamsLoading = Boolean(loading);
+  },
 };
