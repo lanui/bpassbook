@@ -10,13 +10,16 @@ const passworder = require('browser-passworder');
 import { version } from '../manifest.json';
 
 import MergeableObservableStore from '@/lib/storage/mergeable-observable-store';
-import AppStateController from './app-state';
-import NetworkController from './networks/network-controller';
+import AppStateController from '../corejs/app-state';
+import NetworkController from '../corejs/networks/network-controller';
 
+/**@deprecated will */
 import GitbookController from '@/lib/controllers/gitbook-controller';
 
+import MobileController from '@/bglib/mobile-controller';
+
 import { INCORRECT_PWD, errorMessage, responseMessage, responseInitState } from '@/lib/message-utils';
-import { GenerateWalletAndOpen, OpenWallet } from '@/bglib/account-creator';
+import { OpenWallet } from '@/bglib/account-creator';
 
 const FIRST_TIME_INFO = 'firstTimeInfo';
 const LOG_PREFFIX = 'context-controller';
@@ -46,6 +49,10 @@ class ContextController extends EventEmitter {
       encryptor: opts.encryptor || undefined,
     });
 
+    this.mobileController = new MobileController({
+      initState: initState.MobileController,
+    });
+
     this.gitbookController = new GitbookController({
       initState: initState.GitbookController,
     });
@@ -56,11 +63,13 @@ class ContextController extends EventEmitter {
     this.store.updateStructure({
       AppStateController: this.appStateController.store,
       GitbookController: this.gitbookController.store,
+      MobileController: this.mobileController.store,
     });
 
     this.memStore = new MergeableObservableStore(null, {
       AppStateController: this.appStateController.store,
       GitbookController: this.gitbookController.memStore,
+      MobileController: this.mobileController.memStore,
     });
 
     this.memStore.subscribe(this.sendUpdate.bind(this));

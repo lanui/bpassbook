@@ -17,10 +17,12 @@
   },
   "background": {
     "scripts": [
+      "share/js/buffer.min.js",
       "share/js/aes.min.js",
       "share/js/nacl.min.js",
       "share/js/ed2curve.min.js",
       "share/js/keythereum.min.js",
+      "share/js/data_storage.js",
       "background.js"
     ]
   },

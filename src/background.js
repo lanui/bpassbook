@@ -9,7 +9,7 @@ import pump from 'pump';
 
 import extension from '@/lib/extensionizer';
 import LocalStore from '@/lib/storage/local-store';
-import ContextController from '@/corejs/context-controller';
+import ContextController from '@/bglib/context-controller';
 import createStreamSink from '@/lib/storage/createStreamSink';
 
 import {
@@ -37,7 +37,6 @@ import {
 } from '@/lib/cnst/api-cnst';
 
 import { GenerateWalletAndOpen } from '@/bglib/account-creator';
-import axios from 'axios';
 
 const LOG_PREFFIX = 'background';
 
@@ -72,14 +71,6 @@ const extensionInternalProcessHash = {
 initialize().catch(log.error);
 
 async function initialize() {
-  const response = await axios.get('https://etherchain.org/api/gasPriceOracle', { timeout: 12000 });
-
-  console.log('Test Axios>>data>', response.data);
-  console.log('Test Axios>>status>', response.status, typeof response.status, typeof response.data);
-  console.log('Test Axios>>>', response.statusText);
-  console.log('Test Axios>>>', response.headers);
-  console.log('Test Axios>>>', response.config);
-
   // genTest();
   const initState = await loadStateFromPersistence();
   console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);

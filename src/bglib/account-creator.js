@@ -1,5 +1,4 @@
 const bs58 = require('bs58');
-import { bufferToHex } from 'ethereumjs-util';
 
 /**
  *
