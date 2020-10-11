@@ -76,7 +76,7 @@ class ContextController extends EventEmitter {
   }
 
   getState() {
-    console.log('getState emit>>>');
+    console.log('context-controller getState emit>>>');
     const isInitialized = false;
 
     return {
@@ -177,6 +177,10 @@ class ContextController extends EventEmitter {
     try {
       const dev3 = OpenWallet(env3, password);
       await this.appStateController.updateKeyPairs(dev3);
+
+      const { MainPriKey, SubPriKey } = dev3;
+
+      await this.mobileController.unlocked(SubPriKey);
 
       // const text = JSON.stringify(env3);
 
