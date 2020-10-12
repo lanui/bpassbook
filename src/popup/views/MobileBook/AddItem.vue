@@ -22,7 +22,7 @@
             rounded
             :clearable="true"
             :loading="ctrl.loading"
-            :rules="rules.required"
+            :rules="rules.tips"
             dense
           />
           <v-text-field
@@ -71,8 +71,8 @@
 
 <script>
 import WhispererController from '@/lib/controllers/whisperer-controller';
-import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
-import { validMobItem, trimProps } from '@/ui/constants/valid-rules';
+import { APITYPE_ADD_MOBILE_ITEM } from '@/lib/cnst/api-cnst.js';
+import { validMobItem, mobileTipsRules, trimProps } from '@/ui/constants/valid-rules';
 
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
 export default {
@@ -84,7 +84,7 @@ export default {
         keystone: LOCKED_LINK_MDI,
       },
       item: {
-        title: '',
+        tips: '',
         username: '',
         password: '',
       },
@@ -94,12 +94,13 @@ export default {
       error: '',
       rules: {
         required: [(v) => (!!v && v.trim().length > 0) || 'required'],
+        tips: mobileTipsRules,
       },
     };
   },
   methods: {
     gobackHandle() {
-      this.$refs.passItemForm.reset();
+      this.resetState();
       this.$router.go(-1);
     },
     saveHandle() {
@@ -108,20 +109,39 @@ export default {
         try {
           item = trimProps(item);
           validMobItem(item);
+
+          const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: false });
+
           this.ctrl.loading = true;
+          const that = this;
+          whisperer
+            .sendSimpleMsg(APITYPE_ADD_MOBILE_ITEM, item)
+            .then(async (initState) => {
+              this.ctrl.loading = false;
+              console.log(`${whisperer.name}>>>>>>>>>>>>>>`, initState);
+              await this.$store.dispatch('updateInitState', initState);
+              this.gobackHandle();
+            })
+            .catch(async (error) => {
+              console.log('Ex>>>>>>>>>>>>', error);
+              this.error = typeof error === 'object' && error.message ? error.message : error.toString();
+              this.ctrl.loading = false;
+              setTimeout(() => {
+                this.error = '';
+              }, 6000);
+            });
         } catch (error) {
+          console.log('Ex>>>>>>>>>>>>', error);
+          this.ctrl.loading = false;
           setTimeout(() => {
             this.error = error;
           }, 5000);
         }
       }
     },
-    resetForm() {
-      this.item = Object.assign({
-        tips: '',
-        username: '',
-        password: '',
-      });
+    resetState() {
+      this.$refs.passItemForm.reset();
+      this.ctrl.loading = false;
     },
   },
   mounted() {},

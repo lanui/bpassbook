@@ -32,12 +32,20 @@ export default class AppStateController extends EventEmitter {
    */
   async updateKeyPairs(dev3 = {}) {
     const { MainPriKey, SubPriKey } = dev3;
+    this.dev3 = dev3;
     if (MainPriKey && SubPriKey) {
-      this.dev3 = dev3;
       this.isUnlocked = true;
     } else {
       this.isUnlocked = false;
     }
+  }
+
+  /**
+   * SubPriKey handle null.
+   */
+  getSubPrivateKey() {
+    const dev3 = this.dev3;
+    return dev3 ? dev3.SubPriKey : null;
   }
 
   async updateSelectedAddress(selectedAddress = '') {

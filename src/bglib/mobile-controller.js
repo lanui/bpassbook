@@ -2,8 +2,18 @@ const { EventEmitter } = require('events');
 const log = require('loglevel');
 const ObservableStore = require('obs-store');
 
-import { SECRET_KEY_ILLEGAL } from '@/lib/cnst/error-codes';
-import { transferTerm, getDiff } from './item-transfer';
+import {
+  SECRET_KEY_ILLEGAL,
+  SUB_SECRET_KEY_ILLEGAL,
+  INTERNAL_ERROR,
+  VEX_ITEM_EXIST,
+  VEX_ITEM_DELETE,
+  VEX_ITEM_EDIT,
+} from '@/lib/cnst/error-codes';
+import { VEX_ITEM_PROP_MISS } from '../lib/cnst/error-codes';
+import { transferTerms } from './item-transfer';
+
+const LOG_PREFFIX = 'MobileController';
 /**
  * MobileController
  * store:BlockNumber,Hash,Cypher64,
@@ -22,24 +32,109 @@ class MobileController extends EventEmitter {
 
     this.store = new ObservableStore(initState);
 
-    /** @type {ObservableStore} [items,diff,Plain] */
+    /** @type {ObservableStore} [items,diff(will remove),Plain] */
     this.memStore = new ObservableStore({ items: [], diff: '' });
   }
 
-  async reloadMemStore(key, cipher64) {
-    if (!key || !cipher64) {
+  async reloadMemStore(Plain, Cypher64) {
+    if (!Plain || !Cypher64) {
       return;
     }
 
     try {
+      const view = Plain && Plain.View ? Plain.unwrap().View : [];
+      const items = transferTerms(Plain);
+      // console.log(`${LOG_PREFFIX} >>reloadMemStore>`,items)
+      await this.memStore.updateState({ Plain, items });
     } catch (err) {
       log.error('MobileController>>reloadMemStore', err);
     }
   }
 
-  async addItemOrUpdate(item) {}
+  /**
+   * @param {bytes} key buffer
+   * @param {object} message
+   * @property {string}  apiType
+   * @property {object} data [tips,username,password]
+   */
+  async addItem(key, { apiType, data }) {
+    if (!key) {
+      throw { code: SUB_SECRET_KEY_ILLEGAL, message: 'secret key is null.' };
+    }
 
-  async deleteItem(item) {}
+    const { tips, username, password } = data;
+
+    const cipher64 = await this.getCypher64();
+    if (!cipher64) {
+      throw { code: INTERNAL_ERROR, message: 'lost data cipherText.' };
+    }
+
+    try {
+      const file = UpdateCmdAdd(key, cipher64, new Term(tips, username, password));
+      // console.log(`${LOG_PREFFIX} >>>`,file)
+
+      const { Plain, Cypher64 } = file;
+
+      await this.store.updateState({ Cypher64 });
+      await this.reloadMemStore(Plain, Cypher64);
+
+      return true;
+    } catch (error) {
+      throw { code: VEX_ITEM_EXIST, message: `tips ${tips} has been exist.` };
+    }
+  }
+
+  async updateItem(key, { data }) {
+    if (!key || !data || !data.tips) {
+      throw { code: VEX_ITEM_PROP_MISS, message: 'arguments miss.' };
+    }
+    try {
+      const { tips, username, password } = data;
+      const cipher64 = await this.getCypher64();
+      const f = UpdateCmdChange(key, cipher64, new Term(tips, username, password));
+
+      const { Plain, Cypher64 } = f;
+      await this.store.updateState({ Cypher64 });
+      await this.reloadMemStore(Plain, Cypher64);
+      return true;
+    } catch (error) {
+      log.warn(`update ${item} error.`, error);
+      throw { code: VEX_ITEM_DELETE, message: `tips unfound.` };
+    }
+  }
+
+  /**
+   *
+   * @param {*} key
+   * @param {object} message
+   */
+  async deleteItem(key, { data }) {
+    if (!key || !data || !data.tips) {
+      throw { code: VEX_ITEM_PROP_MISS, message: 'arguments miss.' };
+    }
+
+    try {
+      const cipher64 = await this.getCypher64();
+      const f = UpdateCmdDelete(key, cipher64, new Term(data.tips, null, null));
+
+      const { Plain, Cypher64 } = f;
+      await this.store.updateState({ Cypher64 });
+      await this.reloadMemStore(Plain, Cypher64);
+      //const {}
+      return true;
+    } catch (error) {
+      log.warn(`delete ${item} error.`, error);
+      throw { code: VEX_ITEM_DELETE, message: `tips unfound.` };
+    }
+  }
+
+  /**
+   *
+   */
+  async getCypher64() {
+    const storeState = await this.store.getState();
+    return storeState.Cypher64 || '';
+  }
 
   /**
    *
@@ -55,7 +150,7 @@ class MobileController extends EventEmitter {
 
     if (Cypher64) {
       const Plain = decryptToPlainTxt(key, Cypher64);
-      const items = transferTerm(Plain.View);
+      const items = transferTerms(Plain);
       this.memStore.updateState({ Plain, items });
     } else {
       //init
@@ -66,20 +161,6 @@ class MobileController extends EventEmitter {
       this.store.updateState({ Cypher64, BlockNumber, Hash });
     }
   }
-
-  /**
-   * return for UI
-   */
-  // async getSendState() {
-  //   const state = await this.memStore.getState()
-  //   const { items, Plain } = state
-  //   let diff = getDiff(Plain)
-
-  //   return {
-  //     items: items||[],
-  //     diff,
-  //   }
-  // }
 }
 
 export default MobileController;

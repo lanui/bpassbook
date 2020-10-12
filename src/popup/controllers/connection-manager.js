@@ -5,7 +5,7 @@ import extension from '@/lib/extensionizer';
 import store from '@/store';
 
 import { BACKEND_CONN_POPUP } from '@/lib/cnst/connection-cnst';
-import { GenerateWalletAndOpen } from '@/bglib/account-creator';
+import { GenerateWallet } from '@/bglib/account-creator';
 
 import {
   APITYPE_LOGIN,
@@ -94,14 +94,12 @@ class ConnManager extends EventEmitter {
   async createNewWallet(password) {
     if (!this.remotePort) throw 'remote connection disconnect.';
 
-    const fullWallet = await GenerateWalletAndOpen(password);
-    const { env3, dev3 } = fullWallet;
+    const env3 = await GenerateWallet(password);
 
     this.remotePort.postMessage({
       apiType: APITYPE_CREATE_BPWALLET,
       data: {
         env3,
-        dev3,
         password,
         redirect: '/index',
       },

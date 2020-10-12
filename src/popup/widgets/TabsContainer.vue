@@ -18,7 +18,7 @@
       <v-tab-item v-for="(t, idx) in tabs" :key="idx">
         <password-list v-if="t.name == 'passbook'" />
 
-        <activity-list v-if="t.name == 'mobbook'" />
+        <mobile-list v-if="t.name == 'mobbook'" />
         <!-- <activity-list v-if="t.name == 'activity'" /> -->
         <!-- mdi-shield-sync-outline,mdi-chevron-double-down -->
 
@@ -167,12 +167,13 @@ import { mapState, mapGetters } from 'vuex';
 //mdi-bank-transfer
 
 import PasswordList from '@/popup/views/Home/PasswordList.vue';
-import ActivityList from '@/popup/views/Home/ActivityList.vue';
+// import ActivityList from '@/popup/views/Home/ActivityList.vue';
+import MobileList from '@/popup/views/Home/MobileList.vue';
 export default {
   name: 'TabsContainer',
   components: {
     PasswordList,
-    ActivityList,
+    MobileList,
   },
   computed: {
     ...mapGetters('p3', ['drawer']),
@@ -185,12 +186,12 @@ export default {
   },
   data() {
     return {
-      activeTab: null,
+      activeTab: 1,
       opened: false,
       transition: 'bottom',
       tabs: [
         { name: 'passbook', text: 'PassBook', icon: 'mdi-shield-key-outline', path: '' },
-        { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
+        { name: 'mobbook', text: 'MobileBook', icon: 'mdi-bank-transfer', path: '' },
         // { name: 'activity', text: 'Activity', icon: 'mdi-bank-transfer', path: '' },
       ],
       showGasParams: false,

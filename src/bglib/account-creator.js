@@ -51,7 +51,7 @@ export async function GenerateWalletAndOpen(password) {
     if (typeof password !== 'string') reject('password incorrect.');
     const env3 = GenerateWallet(password);
     const dev3 = OpenWallet(env3, password);
-
+    console.log('>>>GenerateWalletAndOpen>>>>>>>>>', env3, dev3);
     resolve({
       env3,
       dev3,

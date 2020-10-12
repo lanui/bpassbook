@@ -34,9 +34,14 @@ import {
   APITYPE_IMPORT_BPWALLET,
   APITYPE_CREAT_IMPORT_BPWALLET,
   APITYPE_WEBSITE_UPDATE_GITDATA,
+  APITYPE_ADD_MOBILE_ITEM,
+  APITYPE_EDIT_MOBILE_ITEM,
+  APITYPE_DELETE_MOBILE_ITEM,
 } from '@/lib/cnst/api-cnst';
 
 import { GenerateWalletAndOpen } from '@/bglib/account-creator';
+
+import { responseError, responseInitState, responseMessage } from '@/lib/message-utils';
 
 const LOG_PREFFIX = 'background';
 
@@ -71,18 +76,9 @@ const extensionInternalProcessHash = {
 initialize().catch(log.error);
 
 async function initialize() {
-  // genTest();
   const initState = await loadStateFromPersistence();
   console.log(`${LOG_PREFFIX}-Back initState>>>`, initState);
   setupController(initState || {});
-}
-
-/** Test Wallet */
-function genTest() {
-  const password = '12345678';
-
-  var fullWallet = GenerateWalletAndOpen(password);
-  console.log('>>>>>keyObject>>>>>>>>>>>>>>', JSON.stringify(fullWallet));
 }
 
 async function setupController(initState) {
@@ -203,7 +199,7 @@ async function setupController(initState) {
    * @param {*} sendResponse
    */
   async function handleMessage(message, sender, sendResponse) {
-    console.log(`${LOG_PREFFIX}-runtime.message>listener>>`, message, sender);
+    console.log(`${LOG_PREFFIX}-runtime.once.message>listener>>`, message, sender);
     const { apiType } = message;
     const isFn = typeof sendResponse === 'function';
 
@@ -212,6 +208,9 @@ async function setupController(initState) {
       // case APITYPE_CREATE_ENV3:
 
       //   break;
+      /**
+       * will remove,see login
+       */
       case APITYPE_UPDATE_UNLOCKED:
         controller
           .unlocked(message.password)
@@ -235,6 +234,50 @@ async function setupController(initState) {
           }
         });
         break;
+
+      // add or update mobile item
+      case APITYPE_ADD_MOBILE_ITEM:
+        controller.mobileController
+          .addItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_ADD_MOBILE_ITEM, error));
+            }
+          });
+        break;
+      case APITYPE_DELETE_MOBILE_ITEM:
+        controller.mobileController
+          .deleteItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_ADD_MOBILE_ITEM, error));
+            }
+          });
+        break;
+      case APITYPE_EDIT_MOBILE_ITEM:
+        controller.mobileController
+          .updateItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_ADD_MOBILE_ITEM, error));
+            }
+          });
+        break;
       case APITYPE_INPUTOR_ADDITEM:
         controller.gitbookController
           .addBookToStore(message.data, controller.getSelectedAddress())
@@ -250,6 +293,7 @@ async function setupController(initState) {
           });
 
         break;
+
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
           .addBookToStore(message.data, controller.getSelectedAddress())
@@ -295,7 +339,9 @@ async function setupController(initState) {
     }
 
     // this handle no match message add continues constentscript message
-    return true;
+    if (isFn) {
+      return true;
+    }
   }
 }
 

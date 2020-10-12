@@ -92,7 +92,7 @@ export default [
       {
         name: 'editMobItem',
         path: 'edit_item',
-        component: AddPassBookItem,
+        component: EditMobBookItem,
         meta: {
           auth: true,
         },

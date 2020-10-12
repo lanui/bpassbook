@@ -116,7 +116,7 @@ export const updateInitState = async ({ commit, dispatch }, initState) => {
   if (GitbookController) {
     // will replace by WebsiteController
     const passbook = GitbookController.passbook;
-    await dispatch('passbook/updateItems', passbook);
+    await dispatch('passbook/reloadWebsiteControllerState', { items: passbook, diff: '+2' });
   }
 
   //load mobile items

@@ -1,7 +1,13 @@
+import { TITLE_DELIMITER } from '@/bglib/item-transfer';
 export const passwordRules = [
   (value) => !!value || 'Password Required.',
   (v) => (v && v.length >= 4) || 'Min 4 characters',
   (v) => (v && v.length <= 30) || 'Max 50 characters',
+];
+
+export const mobileTipsRules = [
+  (v) => (!!v && v.trim().length > 0) || 'Tips is required.',
+  (v) => !new RegExp(TITLE_DELIMITER, 'g').test(v) || `Tips are not allowed to contain \'${TITLE_DELIMITER}\'.`,
 ];
 
 export const validItem = (item) => {
@@ -17,6 +23,7 @@ export const validItem = (item) => {
   if (!item.username || item.username.trim().length == 0) throw 'please entry username.';
   if (!item.password || item.password.trim().length == 0) throw 'please entry username.';
   if (!item.tips || item.tips.trim().length == 0) throw 'please entry tips.';
+  if (item.username.includes(TITLE_DELIMITER)) throw `Username cannot contain '${TITLE_DELIMITER}'.`;
 };
 
 export const validMobItem = (item) => {
@@ -25,6 +32,8 @@ export const validMobItem = (item) => {
   if (!item.tips) throw 'tips required.';
   if (!item.username && item.username.trim().length <= 0) throw 'username required.';
   if (!item.password && item.password.trim().length <= 0) throw 'password required.';
+
+  if (item.tips.includes(TITLE_DELIMITER)) throw `tips cannot contains ${TITLE_DELIMITER}.`;
 };
 
 export const trimProps = (item) => {

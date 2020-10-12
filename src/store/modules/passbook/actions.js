@@ -27,11 +27,20 @@ export const updateItems = async ({ commit }, items) => {
 /**
  *
  * @param {object} context vuex
+ * @param {object} WebsiteController [items,diff,Plain]
+ */
+export const reloadWebsiteControllerState = async ({ commit }, { items = [], Plain }) => {
+  commit(types.UPDATE_WEBSITE_ITEMS, items);
+  //Plain
+  commit(types.UPDATE_WEBPLAIN, Plain);
+};
+
+/**
+ *
+ * @param {object} context vuex
  * @param {object} MobileController [items,diff,Plain]
  */
-export const reloadMobileControllerState = async ({ commit }, { items, diff }) => {
+export const reloadMobileControllerState = async ({ commit }, { items, Plain }) => {
   commit(types.UPDATE_MOBILE_ITEMS, items);
-  commit(types.UPDATE_MOBDIFF, diff);
-
-  //Plain
+  commit(types.UPDATE_MOBPLAIN, Plain);
 };

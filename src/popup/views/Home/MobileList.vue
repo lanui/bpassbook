@@ -1,5 +1,5 @@
 <template>
-  <v-virtual-scroll :items="mergeItems" item-height="58" height="276">
+  <v-virtual-scroll :items="mobItemsState" item-height="58" height="276">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
         <v-list-item-avatar outlined color="grey lighten-4 text-center">
@@ -31,11 +31,13 @@
 import { mapGetters } from 'vuex';
 
 import MessageController from '@/popup/controllers/message-controller';
+import WhispererController from '@/lib/controllers/whisperer-controller';
+import { APITYPE_DELETE_MOBILE_ITEM } from '@/lib/cnst/api-cnst';
 
 export default {
   name: 'BPassword',
   computed: {
-    ...mapGetters('passbook', ['mergeItems']),
+    ...mapGetters('passbook', ['mobItemsState']),
   },
   data() {
     return {
@@ -47,21 +49,24 @@ export default {
     selectItem(it) {},
     async goEditItem(item) {
       await this.$store.dispatch('p3/updateTransferPassbook', item);
-      await this.$router.push({ name: 'editPassbook', query: item });
+      await this.$router.push({ name: 'editMobItem', params: item });
     },
     deletItem(item) {
-      const controller = new MessageController();
-      this.processing = true;
-      controller
-        .deletePassbookItem(item)
-        .then(async (initState) => {
-          await this.$store.dispatch('updateInitState', initState);
-          this.processing = false;
-        })
-        .catch(async (initState) => {
-          await this.$store.dispatch('updateInitState', initState);
-          this.processing = false;
-        });
+      try {
+        if (!item || !item.tips) return;
+        this.processing = true;
+        const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: false });
+        whisperer
+          .sendSimpleMsg(APITYPE_DELETE_MOBILE_ITEM, item)
+          .then(async (initState) => {
+            await this.$store.dispatch('updateInitState', initState);
+          })
+          .catch(async (error) => {
+            this.error = typeof error === 'object' && error.message ? error.message : error.toString();
+          });
+      } catch (error) {
+        this.processing = false;
+      }
     },
   },
 };

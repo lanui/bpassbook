@@ -24,6 +24,31 @@ export const errorMessage = (errorMsg, { code = UNKNOW_ERR, originApi = '' }) =>
   };
 };
 
+export const responseError = (apiType, error) => {
+  if (typeof error === 'object') {
+  } else if (typeof error === 'string') {
+    error = {
+      code: UNKNOW_ERR,
+      message: error,
+    };
+  } else if (typeof error === 'number') {
+    error = {
+      code: error,
+      message: `${apiType} message handle fail.`,
+    };
+  } else {
+    error = {
+      code: UNKNOW_ERR,
+      message: 'unknown error.',
+    };
+  }
+
+  return {
+    originApi: apiType || '',
+    error,
+  };
+};
+
 /**
  * 正常返回
  * @param {string} originApi the requestAPIType

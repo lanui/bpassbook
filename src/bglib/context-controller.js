@@ -10,7 +10,7 @@ const passworder = require('browser-passworder');
 import { version } from '../manifest.json';
 
 import MergeableObservableStore from '@/lib/storage/mergeable-observable-store';
-import AppStateController from '../corejs/app-state';
+import AppStateController from './app-state';
 import NetworkController from '../corejs/networks/network-controller';
 
 /**@deprecated will */
@@ -108,6 +108,10 @@ class ContextController extends EventEmitter {
     const AppStateController = (await this.appStateController.store.getState()) || {};
     const GitbookController = (await this.gitbookController.memStore.getState()) || {};
     const MobileController = (await this.mobileController.memStore.getState()) || {};
+
+    if (MobileController.Plain && MobileController.Plain.unwrap) {
+      MobileController.Plain = MobileController.Plain.unwrap();
+    }
     // const v3 = this.appStateController.v3 || null;
     // const env3 = (await this.store.getState().env3) || null;
     const env3 = (await this.store.getState().env3) || null;
@@ -180,8 +184,7 @@ class ContextController extends EventEmitter {
       const dev3 = OpenWallet(env3, password);
       await this.appStateController.updateKeyPairs(dev3);
 
-      const { MainPriKey, SubPriKey } = dev3;
-
+      const { SubPriKey } = dev3;
       await this.mobileController.unlocked(SubPriKey);
 
       // const text = JSON.stringify(env3);
@@ -241,14 +244,21 @@ class ContextController extends EventEmitter {
    * @return Object initState
    */
   async createOrImportBPWallet(message) {
+    const { apiType, data } = message;
     try {
-      const { apiType, data } = message;
-      const { password, env3, dev3, redirect } = data;
+      const { env3, redirect, password } = data;
       const { mainAddress } = env3;
+      const dev3 = OpenWallet(env3, password);
+
       const initState = Object.assign(this.store.getState(), { env3 });
       await this.store.putState(initState);
       await this.appStateController.updateSelectedAddress(mainAddress);
       await this.appStateController.updateKeyPairs(dev3);
+
+      // website mobile
+      const { SubPriKey } = dev3;
+      console.warn('create BPassword Wallet error.', dev3, SubPriKey);
+      await this.mobileController.unlocked(SubPriKey);
 
       const sendInitState = await this.getInitState();
       console.warn(`${LOG_PREFFIX}>>>`, 'create BPassword Wallet >>>', sendInitState);
@@ -259,6 +269,10 @@ class ContextController extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param {*} message
+   */
   async importBPWallet(message) {
     const { apiType, data } = message;
     const { env3, dev3, password } = data;
@@ -266,6 +280,9 @@ class ContextController extends EventEmitter {
     await this.store.updateState({ env3 });
     await this.appStateController.updateSelectedAddress(env3.mainAddress);
     await this.appStateController.updateKeyPairs(dev3);
+
+    //mobileController
+    await this.mobileController.unlocked(dev3.SubPriKey);
 
     const sendInitState = await this.getInitState();
     return responseMessage(apiType, sendInitState);
