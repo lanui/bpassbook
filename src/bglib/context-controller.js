@@ -107,6 +107,7 @@ class ContextController extends EventEmitter {
     const isUnlocked = this.appStateController.isUnlocked;
     const AppStateController = (await this.appStateController.store.getState()) || {};
     const GitbookController = (await this.gitbookController.memStore.getState()) || {};
+    const MobileController = (await this.mobileController.memStore.getState()) || {};
     // const v3 = this.appStateController.v3 || null;
     // const env3 = (await this.store.getState().env3) || null;
     const env3 = (await this.store.getState().env3) || null;
@@ -116,6 +117,7 @@ class ContextController extends EventEmitter {
       isUnlocked,
       AppStateController,
       GitbookController,
+      MobileController,
       env3,
       v3: dev3,
     };

@@ -3,7 +3,7 @@ const log = require('loglevel');
 const ObservableStore = require('obs-store');
 
 import { SECRET_KEY_ILLEGAL } from '@/lib/cnst/error-codes';
-
+import { transferTerm, getDiff } from './item-transfer';
 /**
  * MobileController
  * store:BlockNumber,Hash,Cypher64,
@@ -22,8 +22,8 @@ class MobileController extends EventEmitter {
 
     this.store = new ObservableStore(initState);
 
-    //TODO
-    this.memStore = new ObservableStore({});
+    /** @type {ObservableStore} [items,diff,Plain] */
+    this.memStore = new ObservableStore({ items: [], diff: '' });
   }
 
   async reloadMemStore(key, cipher64) {
@@ -55,7 +55,8 @@ class MobileController extends EventEmitter {
 
     if (Cypher64) {
       const Plain = decryptToPlainTxt(key, Cypher64);
-      this.memStore.updateState({ Plain });
+      const items = transferTerm(Plain.View);
+      this.memStore.updateState({ Plain, items });
     } else {
       //init
       const file = InitFile(key);
@@ -65,6 +66,20 @@ class MobileController extends EventEmitter {
       this.store.updateState({ Cypher64, BlockNumber, Hash });
     }
   }
+
+  /**
+   * return for UI
+   */
+  // async getSendState() {
+  //   const state = await this.memStore.getState()
+  //   const { items, Plain } = state
+  //   let diff = getDiff(Plain)
+
+  //   return {
+  //     items: items||[],
+  //     diff,
+  //   }
+  // }
 }
 
 export default MobileController;

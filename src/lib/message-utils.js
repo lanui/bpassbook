@@ -26,8 +26,9 @@ export const errorMessage = (errorMsg, { code = UNKNOW_ERR, originApi = '' }) =>
 
 /**
  * 正常返回
- * @param {*} originApi
- * @param {*} data
+ * @param {string} originApi the requestAPIType
+ * @param {object|string|number,boolean} data response data
+ * @return {object} [apiType=initState,originApi,data]
  */
 export const responseMessage = (originApi = '', data = {}) => {
   return {

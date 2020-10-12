@@ -17,9 +17,21 @@ export const addItem = async ({ commit }, item) => {
 
 export const reloadItemsFromLocal = async ({ commit }) => {
   const items = (await idb.getAllPassbook()) || [];
-  commit(types.UPDATE_ITEMS, items);
+  commit(types.UPDATE_WEBSITE_ITEMS, items);
 };
 
 export const updateItems = async ({ commit }, items) => {
-  commit(types.UPDATE_ITEMS, items || []);
+  commit(types.UPDATE_WEBSITE_ITEMS, items || []);
+};
+
+/**
+ *
+ * @param {object} context vuex
+ * @param {object} MobileController [items,diff,Plain]
+ */
+export const reloadMobileControllerState = async ({ commit }, { items, diff }) => {
+  commit(types.UPDATE_MOBILE_ITEMS, items);
+  commit(types.UPDATE_MOBDIFF, diff);
+
+  //Plain
 };

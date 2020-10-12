@@ -94,8 +94,12 @@ export const decryptFromEnv3 = async ({ state }, password) => {
   }
 };
 
+/**
+ * @param {*} param0
+ * @param {*} initState
+ */
 export const updateInitState = async ({ commit, dispatch }, initState) => {
-  const { isUnlocked, GitbookController, AppStateController, env3, v3 } = initState;
+  const { isUnlocked, GitbookController, MobileController, AppStateController, env3, v3 } = initState;
 
   commit(types.UPDATE_ISUNLOCKED, isUnlocked);
   if (isUnlocked) {
@@ -110,8 +114,14 @@ export const updateInitState = async ({ commit, dispatch }, initState) => {
     commit(types.UPDATE_NICKNAME, nickname);
   }
   if (GitbookController) {
+    // will replace by WebsiteController
     const passbook = GitbookController.passbook;
     await dispatch('passbook/updateItems', passbook);
+  }
+
+  //load mobile items
+  if (MobileController && isUnlocked) {
+    await dispatch('passbook/reloadMobileControllerState', MobileController);
   }
 };
 
