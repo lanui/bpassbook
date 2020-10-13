@@ -1,7 +1,7 @@
 {
   "name": "BPassword",
   "description": "BPassword extension for chrome",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",

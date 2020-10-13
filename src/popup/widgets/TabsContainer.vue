@@ -71,7 +71,6 @@
         <v-dialog persistent max-width="350px" v-model="showGasParams">
           <template v-slot:activator="{ on, attrs }">
             <v-chip
-              v-if="Boolean(diff)"
               @click="syncDataHandle"
               class="ma-2"
               color="indigo accent-1"
@@ -81,7 +80,7 @@
               v-on="on"
             >
               <span class="mx-10">{{ $t('l.syncdata') }}</span>
-              <v-avatar right class="indigo lighten-1">
+              <v-avatar right class="indigo lighten-1" v-if="Boolean(diff)">
                 {{ diff }}
               </v-avatar>
             </v-chip>
@@ -149,7 +148,11 @@
             </div>
             <v-divider></v-divider>
             <v-card-actions>
+              <span class="body-2 red--text">暂未实现区块链同步</span>
               <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="showGasParams = false">
+                取消
+              </v-btn>
               <v-btn color="primary" text @click="showGasParams = false">
                 确认
               </v-btn>

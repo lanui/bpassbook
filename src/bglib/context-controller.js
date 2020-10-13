@@ -112,7 +112,7 @@ class ContextController extends EventEmitter {
    * login ,change state
    * return client
    */
-  async getInitState() {
+  async getInitState(SenderState = {}) {
     const isUnlocked = this.appStateController.isUnlocked;
     const AppStateController = (await this.appStateController.store.getState()) || {};
     const GitbookController = (await this.gitbookController.memStore.getState()) || {};
@@ -122,6 +122,10 @@ class ContextController extends EventEmitter {
     if (MobileController.Plain && MobileController.Plain.unwrap) {
       MobileController.Plain = MobileController.Plain.unwrap();
     }
+
+    if (WebsiteController.Plain && WebsiteController.Plain.unwrap) {
+      WebsiteController.Plain = WebsiteController.Plain.unwrap();
+    }
     // const v3 = this.appStateController.v3 || null;
     // const env3 = (await this.store.getState().env3) || null;
     const env3 = (await this.store.getState().env3) || null;
@@ -129,6 +133,7 @@ class ContextController extends EventEmitter {
 
     return {
       isUnlocked,
+      SenderState,
       AppStateController,
       GitbookController,
       WebsiteController,

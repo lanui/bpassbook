@@ -14,20 +14,22 @@
       </v-col>
 
       <v-col cols="10" v-if="isUnlocked" class="px-0 py-0 pt-1">
-        <v-virtual-scroll v-if="hasItems" :items="items" :item-height="28" height="56">
+        <v-virtual-scroll v-if="hasItems" :items="items" :item-height="itemHeight" :height="height">
           <template v-slot="{ item }">
             <v-btn block text small @click="sendFillMessage(item)">
               <span style="text-transform: none;">
                 {{ item.username }}
               </span>
-              <span style="font-size: 0.75rem; text-transform: uppercase;">
-                {{
+              <span style="font-size: 0.75rem; text-transform: lowercase;">
+                <!-- {{
                   item.hostname && item.hostname.split('.').length > 2
                     ? '-' + item.hostname.split('.')[1]
                     : item.hostname && item.hostname.split('.').length == 2
                     ? '-' + item.hostname.split('.')[0]
                     : ''
-                }}
+                }} -->
+
+                {{ item.tips.split(';').length > 0 ? '-' + item.tips.split(';')[0] : item.tips }}
               </span>
             </v-btn>
           </template>
@@ -38,7 +40,7 @@
       </v-col>
       <v-col cols="10" class="px-2" v-if="isUnlocked">
         <v-btn @click="addItemHandle" outlined rounded block small style="border: solid 1px rgba(0, 0, 0, 0.06);">
-          添加到BPassword 保存?
+          添加到BPassword 保存? {{ filter }}
         </v-btn>
       </v-col>
     </v-row>
@@ -65,12 +67,19 @@ export default {
     hasItems() {
       return Boolean(this.items && this.items.length > 0);
     },
+    height() {
+      return this.items.length > 1 ? 56 : 36;
+    },
+    itemHeight() {
+      return this.items.length > 1 ? 28 : 36;
+    },
   },
   data() {
     return {
       // isUnlocked: true,
       icon: icon,
       tItems: [],
+      filter: '',
     };
   },
   methods: {
@@ -94,8 +103,8 @@ export default {
       this.$router.push({ path: 'addPassbook', query: { username: '', password: '', origin: '' } });
     },
   },
-  beforeCreate() {},
   mounted() {},
+  beforeCreate() {},
 };
 </script>
 <style>

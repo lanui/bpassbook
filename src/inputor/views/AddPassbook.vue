@@ -6,13 +6,10 @@
     <v-row justify="center">
       <v-col cols="10" class="py-0 px-0">
         <v-form class="inputor-item-form">
-          <div
-            class="text-center my-1 origin-url-wrapper"
-            v-if="Boolean(hostname)"
-            style="line-height: 20px; display: inline-flex;"
-          >
-            <img :src="favIconUrl" v-if="false" style="width: 18px; height: 18px;" />
-            <span class="ml-1">{{ hostname }}</span>
+          <div class="text-center my-1 origin-url-wrapper" style="line-height: 20px; display: inline-flex;">
+            <span class="ml-1 mr-1">{{ $t('l.title') }}</span>
+            <span class="ml-1 mr-2">{{ tips }}</span>
+            <img :src="favicon" v-if="Boolean(favicon)" style="width: 18px; height: 18px;" />
           </div>
           <div class="bp-form-control my-1" v-if="!Boolean(hostname)">
             <div class="label">{{ $t('l.domain') }}</div>
@@ -29,19 +26,19 @@
           <div class="bp-form-control">
             <div class="label">提示</div>
             <div class="input-field">
-              <input type="text" placeholder="提示" disabled="disabled" v-model="tips" name="tips" />
+              <input
+                type="text"
+                @input="$emit('input', $event.target.value)"
+                placeholder="提示"
+                v-model="suffix"
+                name="suffix"
+              />
             </div>
           </div>
           <div class="bp-form-control">
             <div class="label">用户名</div>
             <div class="input-field">
-              <input
-                type="text"
-                @input="$emit('input', $event.target.value)"
-                placeholder="用户名"
-                v-model="username"
-                name="username"
-              />
+              <input type="text" placeholder="用户名" v-model="username" name="username" />
             </div>
           </div>
           <div class="bp-form-control">
@@ -73,15 +70,15 @@
 </template>
 
 <script>
-import { APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
-
+import { mapGetters } from 'vuex';
 import HeadIcon from './widgets/HeadIcon.vue';
 
 import { encryptor, decryptor } from '@/lib/powershit';
 
 import WhispererController from '@/lib/controllers/whisperer-controller';
-import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
-import { validItem } from '@/ui/constants/valid-rules';
+import { APITYPE_INPUTOR_ADDITEM, APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
+import { validItem, trimProps } from '@/ui/constants/valid-rules';
+import { TITLE_DELIMITER } from '@/bglib/item-transfer';
 
 const LOG_PREFFIX = 'BP-inputor:addItem';
 
@@ -90,12 +87,16 @@ export default {
   components: {
     HeadIcon,
   },
+  computed: {
+    ...mapGetters(['delimiter', 'favicon']),
+  },
   data() {
     return {
       favIconUrl: '',
       origin: '',
       hostname: '',
       tips: '',
+      suffix: '',
       username: '',
       password: '',
       error: '',
@@ -111,14 +112,14 @@ export default {
     saveHandle() {
       //this.getFormDataFromInjet();
 
-      const item = {
+      const item = trimProps({
         tips: this.tips,
         origin: this.origin,
         username: this.username,
         password: this.password,
         hostname: this.hostname,
         favIconUrl: this.favIconUrl,
-      };
+      });
 
       try {
         validItem(item);
@@ -131,15 +132,14 @@ export default {
       }
 
       const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
-
       whisperer
         .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)
-        .then(async (initstate) => {
-          await this.$store.dispatch('updateInitState', initstate);
+        .then(async (initState) => {
+          await this.$store.dispatch('updateInitState', initState);
           this.$router.go(-1);
         })
         .catch((err) => {
-          this.error = err;
+          this.error = typeof err === 'object' && err.message ? err.message : err.toString();
           setTimeout(() => {
             this.error = '';
           }, 6000);
@@ -197,31 +197,31 @@ export default {
   watch: {
     hostname: function (val) {
       const parts = [];
-      if (val !== undefined && (val + '').trim().length > 0) {
+      if (val !== undefined && val !== null && val.trim().length > 0) {
         parts.push((val + '').trim());
       }
 
-      const uname = this.username;
-      if (uname !== undefined && (uname + '').trim().length > 0) {
-        parts.push((uname + '').trim());
+      const suffix = this.suffix;
+      if (suffix !== undefined && suffix !== null && suffix.trim().length > 0) {
+        parts.push(suffix.trim());
       }
 
       if (parts.length) {
-        this.tips = parts.join(';');
+        this.tips = parts.join(TITLE_DELIMITER);
       }
     },
-    username: function (val) {
+    suffix: function (val) {
       const parts = [];
       const hostname = this.hostname;
-      if (hostname !== undefined && (hostname + '').trim().length > 0) {
-        parts.push((hostname + '').trim());
+      if (hostname !== undefined && hostname !== null && hostname.trim().length > 0) {
+        parts.push(hostname.trim().toLowerCase());
       }
-      if (val !== undefined && (val + '').trim().length > 0) {
-        parts.push((val + '').trim());
+      if (val !== undefined && val !== null && val.trim().length > 0) {
+        parts.push(val.trim());
       }
 
       if (parts.length) {
-        this.tips = parts.join(';');
+        this.tips = parts.join(TITLE_DELIMITER);
       }
     },
   },

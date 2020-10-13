@@ -2,8 +2,6 @@ import PostMessageDuplexStream from 'post-message-stream';
 
 import extension from '@/lib/extensionizer';
 
-import InputorController from './context-controller';
-
 import { CLI_CONN_INPUTOR } from '@/lib/cnst/connection-cnst.js';
 
 import { APITYPE_INIT_STATE, APITYPE_SELECTED_PBITEM, APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst';
@@ -19,7 +17,7 @@ function initConnection() {
 
   const extensionPort = extension.runtime.connect({ name: CLI_CONN_INPUTOR });
 
-  extensionPort.onMessage.addListener(handleExtensionMessage);
+  extensionPort.onMessage.addListener(handleLivedMessage);
 
   const ctx = {
     remotePort: extensionPort,
@@ -60,22 +58,13 @@ export function sendAddItemOnce(port, opts = {}) {
  * @param {*} sender
  * @param {*} sendResp
  */
-async function handleExtensionMessage(req, sender, sendResp) {
-  console.log('Inputor >>>', req, sender, sendResp);
+async function handleLivedMessage(req, sender, sendResp) {
+  console.log(`${LOG_PREFFIX}>>>`, req, sender, sendResp);
   const { apiType, data } = req;
-  if (!data) return;
-
-  const { isUnlocked, GitbookController, AppStateController } = data;
-  const selectedAddress = AppStateController?.selectedAddress || '';
-  const passbook = GitbookController?.passbook || [];
   switch (apiType) {
     case APITYPE_INIT_STATE:
       // console.log('UPDATE store recvie>>>>', data);
-      await store.dispatch('updateState', {
-        isUnlocked,
-        selectedAddress,
-        items: passbook,
-      });
+      await store.dispatch('updateInitState', data);
       break;
     default:
       break;

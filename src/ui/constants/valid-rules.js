@@ -1,8 +1,8 @@
 import { TITLE_DELIMITER } from '@/bglib/item-transfer';
 export const passwordRules = [
   (value) => !!value || 'Password Required.',
-  (v) => (v && v.length >= 4) || 'Min 4 characters',
-  (v) => (v && v.length <= 30) || 'Max 50 characters',
+  (v) => (v && v.length >= 3) || 'Min 3 characters',
+  (v) => (v && v.length <= 30) || 'Max 30 characters',
 ];
 
 export const mobileTipsRules = [

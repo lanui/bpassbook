@@ -162,7 +162,8 @@ async function setupController(initState) {
       }
 
       // console.log('send data connect>>', sendData);
-      let sendState = await controller.getInitState();
+      let senderState = handleSender(remotePort.sender);
+      let sendState = await controller.getInitState(senderState);
 
       remotePort.postMessage({ apiType: 'initState', data: sendState });
     } else {
@@ -206,6 +207,9 @@ async function setupController(initState) {
     const isFn = typeof sendResponse === 'function';
 
     let respInitState;
+    let frameId = '',
+      url = '';
+
     switch (apiType) {
       /**
        * will remove,see login
@@ -234,6 +238,20 @@ async function setupController(initState) {
         });
         break;
       /** website items begin */
+      case APITYPE_INPUTOR_ADDITEM:
+        controller.websiteController
+          .addItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState(handleSender(sender)));
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_ADD_WEBSITE_ITEM, error));
+            }
+          });
+        break;
       case APITYPE_ADD_WEBSITE_ITEM:
         controller.websiteController
           .addItem(controller.appStateController.getSubPrivateKey(), message)
@@ -319,21 +337,6 @@ async function setupController(initState) {
             }
           });
         break;
-      case APITYPE_INPUTOR_ADDITEM:
-        controller.gitbookController
-          .addBookToStore(message.data, controller.getSelectedAddress())
-          .then(async (resp) => {
-            if (isFn && resp) {
-              sendResponse(await controller.getInitState());
-            }
-          })
-          .catch(async (err) => {
-            if (isFn && err) {
-              sendResponse(await controller.getInitState());
-            }
-          });
-
-        break;
 
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
@@ -387,6 +390,7 @@ async function setupController(initState) {
 
 function portMessageListener(controller, remotePort) {
   // console.log(`${LOG_PREFFIX}-runtime Msg`, remotePort);
+
   remotePort.onMessage.addListener(async (msg, sender) => {
     let sendInitState = await controller.getInitState();
     let respInitState;
@@ -438,4 +442,26 @@ function portMessageListener(controller, remotePort) {
 async function loadStateFromPersistence() {
   versionedData = (await $local.get()) || { meta: { version: 1 } };
   return versionedData.data;
+}
+
+function handleSender(sender) {
+  if (!sender || !sender.tab || !sender.tab.url) {
+    return {
+      tabId: '',
+      frameId: '',
+      filterHost: '',
+      favIconUrl: '',
+    };
+  }
+
+  const { frameId, tab } = sender;
+
+  const url = new URL(tab.url);
+
+  return {
+    tabId: tab.id,
+    frameId: frameId || '',
+    filterHost: url.hostname,
+    favIconUrl: tab.favIconUrl || '',
+  };
 }
