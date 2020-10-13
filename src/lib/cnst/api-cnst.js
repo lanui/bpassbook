@@ -25,5 +25,7 @@ export const APITYPE_CREAT_IMPORT_BPWALLET = 'importNewBPWallet';
 export const APITYPE_ADD_MOBILE_ITEM = 'addMobileItem';
 export const APITYPE_EDIT_MOBILE_ITEM = 'editMobileItem';
 export const APITYPE_DELETE_MOBILE_ITEM = 'deleteMobileItem';
-export const APITYPE_MOBILE_UPDATE_GITDATA = 'mobileUpdateGitdata';
-export const APITYPE_WEBSITE_UPDATE_GITDATA = 'websiteUpdateGitdata';
+
+export const APITYPE_ADD_WEBSITE_ITEM = 'addWebsiteItem';
+export const APITYPE_EDIT_WEBSITE_ITEM = 'editWebsiteItem';
+export const APITYPE_DELETE_WEBSITE_ITEM = 'deleteWebsiteItem';

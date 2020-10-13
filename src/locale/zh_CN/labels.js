@@ -15,6 +15,7 @@ const lables = {
   tips: '提示',
   username: '账号名称',
   syncdata: '同步数据',
+  title: '标题',
 };
 
 export default lables;

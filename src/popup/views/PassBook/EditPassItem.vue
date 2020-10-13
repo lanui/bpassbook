@@ -1,7 +1,7 @@
 <template>
-  <v-container class="px-0 py-0">
+  <v-container class="px-0 py-0" v-if="renderState">
     <v-system-bar dark color="primary" :height="40" :lights-out="false" :window="true">
-      <v-icon @click.stop="$router.go(-1)" larage>
+      <v-icon @click.stop="gobackHandle" larage>
         {{ icons.left }}
       </v-icon>
       <span>{{ $t('p.passbook.editItemTitle') }}</span>
@@ -26,7 +26,7 @@
           />
           <v-text-field
             v-model="passbook.tips"
-            :label="$t('l.tips')"
+            :label="$t('l.title')"
             disabled
             outlined
             rounded
@@ -83,7 +83,10 @@
 <script>
 import { mapGetters } from 'vuex';
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
-import MessageController from '@/popup/controllers/message-controller';
+import WhispererController from '@/lib/controllers/whisperer-controller';
+import { trimProps } from '@/ui/constants/valid-rules';
+import { APITYPE_EDIT_WEBSITE_ITEM } from '@/lib/cnst/api-cnst.js';
+
 export default {
   name: 'EditPassbookItem',
   computed: {
@@ -91,6 +94,7 @@ export default {
   },
   data() {
     return {
+      renderState: true,
       icons: {
         left: ARROW_LEFT_MDI,
         keystone: LOCKED_LINK_MDI,
@@ -119,27 +123,49 @@ export default {
       if (!this.$refs.passItemForm.validate()) {
         return;
       }
-      const item = this.passbook;
-      const controller = new MessageController();
-      this.ctrl.loading = true;
-      controller
-        .updatePassbookItem(item)
-        .then(async (initState) => {
-          await this.$store.dispatch('updateInitState', initState);
-          await this.$store.dispatch('p3/updateTransferPassbook', {});
-          this.ctrl.loading = false;
-          this.$router.go(-1);
-        })
-        .catch(async (initState) => {
-          await this.$store.dispatch('updateInitState', initState);
-          this.ctrl.loading = false;
-        });
+      try {
+        const item = trimProps(this.passbook);
+
+        const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: false });
+        whisperer
+          .sendSimpleMsg(APITYPE_EDIT_WEBSITE_ITEM, item)
+          .then(async (initState) => {
+            this.ctrl.loading = false;
+            // console.log(`${whisperer.name}>>>>>>>>>>>>>>`,initState)
+            await this.$store.dispatch('updateInitState', initState);
+            this.gobackHandle();
+          })
+          .catch(async (error) => {
+            this.error = typeof error === 'object' && error.message ? error.message : error.toString();
+            this.ctrl.loading = false;
+            setTimeout(() => {
+              this.error = '';
+            }, 6000);
+          });
+      } catch (error) {
+        this.ctrl.loading = false;
+        this.error = typeof error === 'object' && error.message ? error.message : error.toString();
+        setTimeout(() => {
+          this.error = '';
+        }, 6000);
+      }
+    },
+    forceRerender() {
+      this.renderState = false;
+      this.$nextTick(() => {
+        this.renderState = true;
+      });
+    },
+    gobackHandle() {
+      this.ctrl.loading = false;
+      // this.forceRerender()
+      this.$router.go(-1);
     },
   },
   mounted() {
-    const params = this.$store.getters['passbook'];
-    console.log('>>>>>>>addPassbook>>>>>>>', params);
-    this.item = Object.assign({}, this.item, params);
+    // const params = this.$store.getters['passbook'];
+    // console.log('>>>>>>>addPassbook>>>>>>>', params);
+    // this.item = Object.assign({}, this.item, params);
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-container class="px-0 py-0">
     <v-system-bar dark color="primary" :height="40" :lights-out="false" :window="true">
-      <v-icon @click.stop="$router.go(-1)" larage>
+      <v-icon @click.stop="gobackHandle" larage>
         {{ icons.left }}
       </v-icon>
       <span>
@@ -14,10 +14,13 @@
 
     <v-row justify="center">
       <v-col cols="10" class="mt-4">
-        <v-form ref="passItemForm">
-          <v-text-field
+        <div class="title-show text-center my-2">
+          <span class="mr-2">{{ $t('l.title') }}:</span>{{ data.tips }}
+        </div>
+        <v-form ref="addSiteItemForm">
+          <!-- <v-text-field
             v-model="data.tips"
-            :label="$t('l.tips')"
+            :label="$t('l.title')"
             outlined
             rounded
             :disabled="true"
@@ -25,7 +28,8 @@
             :loading="ctrl.loading"
             :rules="rules.required"
             dense
-          />
+          /> -->
+
           <v-text-field
             v-model="data.hostname"
             :label="$t('l.domain')"
@@ -33,11 +37,21 @@
             rounded
             :clearable="true"
             :loading="ctrl.loading"
-            :rules="rules.required"
+            :rules="rules.hostname"
             :error-messages="error"
             dense
           />
-
+          <v-text-field
+            v-model="data.suffix"
+            :label="$t('l.tips')"
+            outlined
+            rounded
+            :clearable="true"
+            :loading="ctrl.loading"
+            :rules="rules.suffix"
+            :error-messages="error"
+            dense
+          />
           <v-text-field
             v-model="data.username"
             :label="$t('l.username')"
@@ -81,10 +95,11 @@
 
 <script>
 import WhispererController from '@/lib/controllers/whisperer-controller';
-import { APITYPE_INPUTOR_ADDITEM } from '@/lib/cnst/api-cnst.js';
-import { validItem } from '@/ui/constants/valid-rules';
+import { APITYPE_ADD_WEBSITE_ITEM } from '@/lib/cnst/api-cnst.js';
+import { validItem, titleSuffixRules, hostnameRules, trimProps } from '@/ui/constants/valid-rules';
 
 import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
+
 export default {
   name: 'AddPassbookItem',
   data() {
@@ -95,10 +110,10 @@ export default {
       },
       data: {
         hostname: '',
-        origin: '',
         tips: '',
         username: '',
         password: '',
+        suffix: '',
       },
       ctrl: {
         loading: false,
@@ -106,60 +121,42 @@ export default {
       error: '',
       rules: {
         required: [(v) => (!!v && v.trim().length > 0) || 'required'],
+        suffix: titleSuffixRules,
+        hostname: hostnameRules,
       },
     };
   },
   methods: {
+    resetForm() {
+      this.data.tips = '';
+      this.ctrl.loading = false;
+      this.$refs.addSiteItemForm.reset();
+    },
+    gobackHandle() {
+      this.resetForm();
+      this.$router.go(-1);
+    },
     saveHandle() {
-      if (this.$refs.passItemForm.validate()) {
-        const item = Object.assign(
-          {
-            hostname: '',
-          },
-          this.data
-        );
-        // console.log('data>>>>', item);
+      if (this.$refs.addSiteItemForm.validate()) {
+        const item = trimProps(this.data);
 
-        try {
-          validItem(item);
-        } catch (e) {
-          console.log('>>>>>>>>>>>>>', e);
-          this.error = e;
-          setTimeout(() => {
-            this.error = '';
-          }, 6000);
-          return;
-        }
+        const whisperer = new WhispererController({ name: 'Website-whisperer', includeTlsChannelId: false });
+
         this.ctrl.loading = true;
-        const whisperer = new WhispererController({ name: 'Inputor-whisperer', includeTlsChannelId: true });
-
         whisperer
-          .sendSimpleMsg(APITYPE_INPUTOR_ADDITEM, item)
-          .then(async (initstate) => {
-            await this.$store.dispatch('updateInitState', initstate);
+          .sendSimpleMsg(APITYPE_ADD_WEBSITE_ITEM, item)
+          .then(async (initState) => {
+            await this.$store.dispatch('updateInitState', initState);
             this.ctrl.loading = false;
-            this.$router.go(-1);
+            this.gobackHandle();
           })
           .catch((err) => {
             this.ctrl.loading = false;
-            this.error = err;
+            this.error = typeof err === 'object' && err.message ? err.message : err.toString();
             setTimeout(() => {
               this.error = '';
             }, 6000);
           });
-        // this.$store
-        //   .dispatch('passbook/addItem', item)
-        //   .then((ret) => {
-        //     console.log('save success', ret);
-        //     setTimeout(() => {
-        //       this.ctrl.loading = false;
-        //       this.$refs.passItemForm.reset();
-        //       //this.$store.dispatch('passbook/reloadItemsFromLocal');
-        //     }, 1000);
-        //   })
-        //   .catch((err) => {
-        //     this.ctrl.loading = false;
-        //   });
       }
     },
   },
@@ -169,26 +166,26 @@ export default {
   watch: {
     'data.hostname': function (val) {
       const parts = [];
-      if (val !== undefined && (val + '').trim().length > 0) {
+      if (val !== undefined && val !== null && (val + '').trim().length > 0) {
         parts.push((val + '').trim());
       }
 
-      const uname = this.data.username;
-      if (uname !== undefined && (uname + '').trim().length > 0) {
-        parts.push((uname + '').trim());
+      const suffix = this.data.suffix;
+      if (suffix !== undefined && (suffix + '').trim().length > 0) {
+        parts.push((suffix + '').trim());
       }
 
       if (parts.length) {
         this.data.tips = parts.join(';');
       }
     },
-    'data.username': function (val) {
+    'data.suffix': function (val) {
       const parts = [];
       const hostname = this.data.hostname;
       if (hostname !== undefined && (hostname + '').trim().length > 0) {
         parts.push((hostname + '').trim());
       }
-      if (val !== undefined && (val + '').trim().length > 0) {
+      if (val !== undefined && val !== null && (val + '').trim().length > 0) {
         parts.push((val + '').trim());
       }
 

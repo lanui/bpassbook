@@ -16,7 +16,7 @@
           <v-text-field
             :value="passbook.tips"
             v-model="passbook.tips"
-            :label="$t('l.tips')"
+            :label="$t('l.title')"
             disabled
             outlined
             rounded
@@ -139,8 +139,7 @@ export default {
           });
       } catch (error) {
         this.ctrl.loading = false;
-        console.log(error);
-        this.error = error;
+        this.error = typeof error === 'object' && error.message ? error.message : error.toString();
         setTimeout(() => {
           this.error = '';
         }, 6000);

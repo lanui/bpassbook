@@ -9,6 +9,19 @@ export const mobileTipsRules = [
   (v) => (!!v && v.trim().length > 0) || 'Tips is required.',
   (v) => !new RegExp(TITLE_DELIMITER, 'g').test(v) || `Tips are not allowed to contain \'${TITLE_DELIMITER}\'.`,
 ];
+/**
+ *
+ */
+export const titleSuffixRules = [
+  (v) => !new RegExp(TITLE_DELIMITER, 'g').test(v) || `Tips are not allowed to contain \'${TITLE_DELIMITER}\'.`,
+];
+
+export const hostnameRules = [
+  (v) => (!!v && v.trim().length > 0) || 'Domain is required. like www.baidu.com',
+  (v) =>
+    /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/.test(v) ||
+    'Website Domain incorrect.',
+];
 
 export const validItem = (item) => {
   if (!item) throw 'username and password is null.';

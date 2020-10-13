@@ -17,7 +17,7 @@
         <v-form ref="passItemForm">
           <v-text-field
             v-model="item.tips"
-            :label="$t('l.tips')"
+            :label="$t('l.title')"
             outlined
             rounded
             :clearable="true"

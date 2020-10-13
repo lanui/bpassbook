@@ -3,6 +3,7 @@ const log = require('loglevel');
 const ObservableStore = require('obs-store');
 
 import {
+  VEX_ITEM_PROP_MISS,
   SECRET_KEY_ILLEGAL,
   SUB_SECRET_KEY_ILLEGAL,
   INTERNAL_ERROR,
@@ -10,7 +11,6 @@ import {
   VEX_ITEM_DELETE,
   VEX_ITEM_EDIT,
 } from '@/lib/cnst/error-codes';
-import { VEX_ITEM_PROP_MISS } from '../lib/cnst/error-codes';
 import { transferTerms } from './item-transfer';
 
 const LOG_PREFFIX = 'MobileController';
@@ -99,7 +99,7 @@ class MobileController extends EventEmitter {
       return true;
     } catch (error) {
       log.warn(`update ${item} error.`, error);
-      throw { code: VEX_ITEM_DELETE, message: `tips unfound.` };
+      throw { code: VEX_ITEM_EDIT, message: `tips unfound.` };
     }
   }
 

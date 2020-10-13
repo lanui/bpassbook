@@ -57,7 +57,7 @@ export const transferTerms = (Plain, isPassbook = false) => {
     };
 
     const rets = SplitTitle(title);
-    if (isPassbook && rets.length === 2) {
+    if (isPassbook && rets.length) {
       i.hostname = rets[0];
     }
     return i;
@@ -101,7 +101,7 @@ export const transferTermToItem = (term) => {
     username: term.name,
     password: term.password,
     tips: title,
-    hostname: rets.length == 2 ? rets[0] : '',
+    hostname: !!rets.length ? rets[0] : '',
   };
 };
 
@@ -109,7 +109,7 @@ function SplitTitle(title) {
   if (typeof title !== 'string') {
     return [];
   }
-  const rets = title.match(new RegExp(TITLE_DELIMITER_REGEX)).filter((r) => r !== '' && r !== TITLE_DELIMITER);
+  const rets = title.split(new RegExp(TITLE_DELIMITER, 'g'));
   return rets;
 }
 

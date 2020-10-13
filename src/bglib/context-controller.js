@@ -16,6 +16,7 @@ import NetworkController from '../corejs/networks/network-controller';
 /**@deprecated will */
 import GitbookController from '@/lib/controllers/gitbook-controller';
 
+import WebsiteController from '@/bglib/website-controller';
 import MobileController from '@/bglib/mobile-controller';
 
 import { INCORRECT_PWD, errorMessage, responseMessage, responseInitState } from '@/lib/message-utils';
@@ -53,10 +54,16 @@ class ContextController extends EventEmitter {
       initState: initState.MobileController,
     });
 
+    this.websiteController = new WebsiteController({
+      initState: initState.WebsiteController,
+    });
+
+    //will remove
     this.gitbookController = new GitbookController({
       initState: initState.GitbookController,
     });
 
+    //will remove
     this.keyringController.memStore.subscribe((s) => this._onKeyringControllerUpdate(s));
 
     // Update
@@ -64,12 +71,14 @@ class ContextController extends EventEmitter {
       AppStateController: this.appStateController.store,
       GitbookController: this.gitbookController.store,
       MobileController: this.mobileController.store,
+      WebsiteController: this.websiteController.store,
     });
 
     this.memStore = new MergeableObservableStore(null, {
       AppStateController: this.appStateController.store,
       GitbookController: this.gitbookController.memStore,
       MobileController: this.mobileController.memStore,
+      WebsiteController: this.websiteController.memStore,
     });
 
     this.memStore.subscribe(this.sendUpdate.bind(this));
@@ -108,6 +117,7 @@ class ContextController extends EventEmitter {
     const AppStateController = (await this.appStateController.store.getState()) || {};
     const GitbookController = (await this.gitbookController.memStore.getState()) || {};
     const MobileController = (await this.mobileController.memStore.getState()) || {};
+    const WebsiteController = (await this.websiteController.memStore.getState()) || {};
 
     if (MobileController.Plain && MobileController.Plain.unwrap) {
       MobileController.Plain = MobileController.Plain.unwrap();
@@ -121,6 +131,7 @@ class ContextController extends EventEmitter {
       isUnlocked,
       AppStateController,
       GitbookController,
+      WebsiteController,
       MobileController,
       env3,
       v3: dev3,
@@ -186,6 +197,7 @@ class ContextController extends EventEmitter {
 
       const { SubPriKey } = dev3;
       await this.mobileController.unlocked(SubPriKey);
+      await this.websiteController.unlocked(SubPriKey);
 
       // const text = JSON.stringify(env3);
 
@@ -216,6 +228,7 @@ class ContextController extends EventEmitter {
     }
   }
 
+  // will remove
   async createWalletData(data) {
     const { env3, password, v3 } = data;
 
@@ -259,6 +272,7 @@ class ContextController extends EventEmitter {
       const { SubPriKey } = dev3;
       console.warn('create BPassword Wallet error.', dev3, SubPriKey);
       await this.mobileController.unlocked(SubPriKey);
+      await this.websiteController.unlocked(SubPriKey);
 
       const sendInitState = await this.getInitState();
       console.warn(`${LOG_PREFFIX}>>>`, 'create BPassword Wallet >>>', sendInitState);

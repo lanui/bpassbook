@@ -33,7 +33,9 @@ import {
   APITYPE_DELETE_PBITEM,
   APITYPE_IMPORT_BPWALLET,
   APITYPE_CREAT_IMPORT_BPWALLET,
-  APITYPE_WEBSITE_UPDATE_GITDATA,
+  APITYPE_ADD_WEBSITE_ITEM,
+  APITYPE_EDIT_WEBSITE_ITEM,
+  APITYPE_DELETE_WEBSITE_ITEM,
   APITYPE_ADD_MOBILE_ITEM,
   APITYPE_EDIT_MOBILE_ITEM,
   APITYPE_DELETE_MOBILE_ITEM,
@@ -205,9 +207,6 @@ async function setupController(initState) {
 
     let respInitState;
     switch (apiType) {
-      // case APITYPE_CREATE_ENV3:
-
-      //   break;
       /**
        * will remove,see login
        */
@@ -234,7 +233,49 @@ async function setupController(initState) {
           }
         });
         break;
-
+      /** website items begin */
+      case APITYPE_ADD_WEBSITE_ITEM:
+        controller.websiteController
+          .addItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_ADD_WEBSITE_ITEM, error));
+            }
+          });
+        break;
+      case APITYPE_EDIT_WEBSITE_ITEM:
+        controller.websiteController
+          .updateItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_EDIT_WEBSITE_ITEM, error));
+            }
+          });
+        break;
+      case APITYPE_DELETE_WEBSITE_ITEM:
+        controller.websiteController
+          .deleteItem(controller.appStateController.getSubPrivateKey(), message)
+          .then(async (resp) => {
+            if (isFn) {
+              sendResponse(await controller.getInitState());
+            }
+          })
+          .catch(async (error) => {
+            if (isFn) {
+              sendResponse(responseError(APITYPE_DELETE_WEBSITE_ITEM, error));
+            }
+          });
+        break;
       // add or update mobile item
       case APITYPE_ADD_MOBILE_ITEM:
         controller.mobileController
@@ -332,8 +373,7 @@ async function setupController(initState) {
         } else {
           return false;
         }
-      case APITYPE_WEBSITE_UPDATE_GITDATA:
-        break;
+
       default:
         break;
     }

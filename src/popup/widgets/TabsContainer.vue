@@ -186,7 +186,7 @@ export default {
   },
   data() {
     return {
-      activeTab: 1,
+      activeTab: 0,
       opened: false,
       transition: 'bottom',
       tabs: [
@@ -220,7 +220,7 @@ export default {
       // }, 10000);
     },
     changedHandle(val) {
-      console.log('>>>>>>>>>>>>>>>>>', val, this.activeTab);
+      // console.log('>>>>>>>>>>>>>>>>>', val, this.activeTab);
     },
   },
 };
