@@ -16,5 +16,3 @@ UI:add => whisperer:send => sdk:add[json] => backend:update => callback:updateIn
 ## 3rd API
 
 ### GasParams
-
-> https://data.defipulse.com/login

@@ -4,7 +4,9 @@ import { debounce } from 'lodash';
 
 const $ = require('jquery');
 
-const LOG_PREFFIX = 'BP-controller';
+import { APITYPE_FETCH_MATCH_ITEMS } from '@/lib/cnst/api-cnst';
+
+const LOG_PREFFIX = 'BP-field-controller';
 export const PASSWORD_SELECTOR = 'input[type="password"]';
 export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
 const MAIL_SELECTOR = 'input[type="mail"]';
@@ -36,15 +38,20 @@ export class FieldsController extends EventEmitter {
   constructor(opts = {}) {
     super();
     const { initState } = opts;
+    this.extid = initState.extid;
     this.url = initState.inputorURL;
 
-    console.log('>>>>>>>>>>>initState.inputorURL>>>>>>>>>>>>', this.url);
+    // console.log('>>>>>>>>>>>initState.inputorURL>>>>>>>>>>>>', this.url);
     this.store = new ObservableStore(initState);
     this.hasLoginForm = false;
 
     this.on('elChanged', this.listenerMutationObs);
   }
 
+  /**
+   * binding dom resize update positions
+   * @param {object} document
+   */
   bindMutationObserver(document) {
     document = document || window.document;
     this.body = document.querySelector('body');
@@ -100,6 +107,10 @@ export class FieldsController extends EventEmitter {
     }
   }
 
+  /**
+   * 检查login form
+   * @param {object} document
+   */
   checkedLoginForm(document) {
     const loginFormData = checkFormFields();
     if (loginFormData.hasLoginForm) {
@@ -120,8 +131,12 @@ export class FieldsController extends EventEmitter {
       this.targetPassword = targetPassword;
       this.currentTarget = currentTarget;
       if (hasLoginForm) {
-        //console.log("Find LoginForm>> window.location>>>>",window)
-        this.hostname = window.location.host;
+        this.hostname = window.location.hostname;
+        console.log(
+          'Find LoginForm>> window.location>>>>',
+          this.hostname,
+          window.document.querySelector('input[type="password"]')
+        );
       }
 
       this.store.updateState({ position, usernameSelector, passwordSelector });
@@ -134,6 +149,8 @@ export class FieldsController extends EventEmitter {
     } else {
     }
   }
+
+  async fetchInitData() {}
 
   getState() {
     return this.store.getState();
@@ -158,6 +175,10 @@ export class FieldsController extends EventEmitter {
     this.removeBPIcon();
   }
 
+  /**
+   *
+   * @param {*} tab
+   */
   getInputFieldData(tab) {
     const { hostname, origin, href } = window.location;
     const formData = {
@@ -191,6 +212,19 @@ export class FieldsController extends EventEmitter {
     return formData;
   }
 
+  setItems(items) {
+    this.items = items;
+  }
+
+  /**
+   * used for control pop inputor
+   * @param {string} username
+   * @param {string} password
+   */
+  isFieldValueMatch(username, password) {
+    const _items = this.items;
+  }
+
   removeBPIcon() {
     removeIcon();
   }
@@ -211,11 +245,25 @@ export class FieldsController extends EventEmitter {
     const _ctx = this;
     const inputorURL = this.url;
 
+    console.log(`${LOG_PREFFIX}-message document>>>`, targetUserName);
     if (targetPassword) {
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
-        // console.log('BPinjet>>> focusin', e, e.target);
-        createBPIcon(this, inputorURL);
+        console.log('BPinjet>>> focusin>>>>', e, e.target, $(e.target).val(), _ctx.extid);
+        const _curNameVal = targetUserName ? targetUserName.value : '';
+        chrome.runtime.sendMessage(
+          _ctx.extid,
+          { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
+          { includeTlsChannelId: true },
+          async (resp) => {
+            // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..", resp)
+            if (controlPopInputor(resp, _curNameVal)) {
+              createBPIcon(this, inputorURL);
+            }
+          }
+        );
+        // createBPIcon(this, inputorURL);
+
         _ctx.currentTarget = e.target;
         $(e.target).on('click', function (e) {
           e.stopPropagation();
@@ -228,8 +276,20 @@ export class FieldsController extends EventEmitter {
       if (targetUserName) {
         $(targetUserName).on('focusin', function (e) {
           e.stopPropagation();
-          // console.log('BPinjet>>> focusin', e, e.target);
-          createBPIcon(this, inputorURL);
+          const _curNameVal = targetUserName.value;
+          console.log('BPinjet>>> focusin>>', e.target, targetUserName.value);
+
+          chrome.runtime.sendMessage(
+            _ctx.extid,
+            { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
+            { includeTlsChannelId: true },
+            async (resp) => {
+              if (controlPopInputor(resp, _curNameVal)) {
+                createBPIcon(this, inputorURL);
+              }
+            }
+          );
+
           _ctx.currentTarget = e.target;
           $(e.target).on('click', function (e) {
             e.stopPropagation();
@@ -259,6 +319,33 @@ export class FieldsController extends EventEmitter {
   //   windowResizeObserve(controller)
   //   windowScrollObserve(controller)
   // }
+}
+
+function controlPopInputor(resp, nameVal) {
+  let exactMatched = false; //精确匹配当前填写账号,不弹出添加
+  let subMatchs = [];
+  let _items = [];
+  if (resp && resp.data) {
+    _items = resp.data.items || [];
+  }
+
+  if (!!nameVal) {
+    exactMatched = Boolean(_items.find((it) => it.username === nameVal));
+    subMatchs = _items.filter((it) => it.username.endsWith(nameVal));
+  }
+
+  if (!!nameVal && exactMatched) {
+    //username 不显示
+    return false;
+  } else if (!nameVal && _items.length == 0) {
+    return false;
+  } else if (!!nameVal && subMatchs.length > 0) {
+    return true;
+    //显示
+  } else {
+    //显示
+    return true;
+  }
 }
 
 /**
@@ -352,6 +439,7 @@ export function checkFormFields() {
   if (hasLoginForm) {
     currentTarget = targetUserName || targetPassword;
     position = getElPosition(currentTarget) || {};
+    console.log(`${LOG_PREFFIX} >>chrome tabs>>`, chrome.runtime);
   }
 
   return {

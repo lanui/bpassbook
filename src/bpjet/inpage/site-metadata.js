@@ -1,3 +1,4 @@
+/** this file will remove */
 import { NOOP } from './utils';
 
 async function sendSiteMetadata(engine, log) {

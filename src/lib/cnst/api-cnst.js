@@ -29,3 +29,5 @@ export const APITYPE_DELETE_MOBILE_ITEM = 'deleteMobileItem';
 export const APITYPE_ADD_WEBSITE_ITEM = 'addWebsiteItem';
 export const APITYPE_EDIT_WEBSITE_ITEM = 'editWebsiteItem';
 export const APITYPE_DELETE_WEBSITE_ITEM = 'deleteWebsiteItem';
+
+export const APITYPE_FETCH_MATCH_ITEMS = 'fetchMatchItemsForFieldController';

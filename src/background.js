@@ -39,13 +39,17 @@ import {
   APITYPE_ADD_MOBILE_ITEM,
   APITYPE_EDIT_MOBILE_ITEM,
   APITYPE_DELETE_MOBILE_ITEM,
+  APITYPE_FETCH_MATCH_ITEMS,
 } from '@/lib/cnst/api-cnst';
-
-import { GenerateWalletAndOpen } from '@/bglib/account-creator';
 
 import { responseError, responseInitState, responseMessage } from '@/lib/message-utils';
 
 const LOG_PREFFIX = 'background';
+
+const LOG_HEADS = {
+  msgExtension: 'extension-internal',
+  contentScript: 'webpage-contentscrit',
+};
 
 global.browser = require('webextension-polyfill');
 
@@ -129,7 +133,7 @@ async function setupController(initState) {
   extension.runtime.onMessage.addListener(handleMessage);
 
   /**
-   *
+   * first connect
    * @param {*} remotePort
    */
   async function connectRemote(remotePort) {
@@ -167,12 +171,13 @@ async function setupController(initState) {
 
       remotePort.postMessage({ apiType: 'initState', data: sendState });
     } else {
+      /** Website Page */
       if (remotePort.sender && remotePort.sender.tab && remotePort.sender.url) {
         const tabId = remotePort.sender.tab.id;
         const url = new URL(remotePort.sender.url);
         const { origin } = url;
-        console.log('External webpage info>>>>', remotePort);
-        console.log('External webpage info>>>>', tabId, url, origin, processName);
+        console.log(`External webpage info : ${processName}>>>>`, remotePort);
+        console.log('External webpage info>>>>', tabId, remotePort.sender.tab);
 
         if (tabId && processName === BACKEND_CONN_CONTENTSCRIPT) {
           contentScriptsPorts[tabId] = remotePort;
@@ -181,7 +186,13 @@ async function setupController(initState) {
             contentScriptsPorts[tabId] = false;
           });
           const isUnlocked = Boolean(controller.appStateController.isUnlocked);
-          remotePort.postMessage({ apiType: 'initState', data: { isUnlocked } });
+
+          const respContentScriptInitState = await controller.getInitStateForContentScript(
+            handleSender(remotePort.sender)
+          );
+
+          console.log(`${LOG_HEADS.contentScript}: hasloginForm>>>`, respContentScriptInitState);
+          remotePort.postMessage({ apiType: 'initState', data: respContentScriptInitState });
         } else {
         }
 
@@ -294,6 +305,12 @@ async function setupController(initState) {
             }
           });
         break;
+      case APITYPE_FETCH_MATCH_ITEMS:
+        if (isFn) {
+          const fieldRespData = await controller.getInitStateForContentScript(handleSender(sender));
+          sendResponse({ apiType: 'initState', data: fieldRespData });
+        }
+        break;
       // add or update mobile item
       case APITYPE_ADD_MOBILE_ITEM:
         controller.mobileController
@@ -386,6 +403,11 @@ async function setupController(initState) {
       return true;
     }
   }
+
+  //auto  load test
+  setTimeout(() => {
+    controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+  }, 2000);
 }
 
 function portMessageListener(controller, remotePort) {

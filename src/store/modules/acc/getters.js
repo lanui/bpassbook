@@ -1,9 +1,11 @@
-export const ethBalText = state => {
-  const bal = state.ethBalance
-  return bal ? parseFloat(bal.toString()).toFixed(4) : '0'
-}
+import { fromWei } from 'web3-utils';
 
-export const btsBalText = state => {
-  const bal = state.btsBalance
-  return bal ? parseFloat(bal.toString()).toFixed(4) : '0'
-}
+export const ethBalText = (state) => {
+  const bal = state.ethBalance || '0';
+  return parseFloat(fromWei(bal.toString(), 'ether')).toFixed(4);
+};
+
+export const btsBalText = (state) => {
+  const bal = state.btsBalance;
+  return bal ? parseFloat(bal.toString()).toFixed(4) : '0';
+};

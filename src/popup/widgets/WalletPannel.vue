@@ -70,7 +70,8 @@ export default {
         //todo notify backend
       });
     },
-    toggleToken() {
+    async toggleToken() {
+      this.$store.dispatch('acc/loadBalances');
       this.defToken = !this.defToken;
     },
     async locking() {
@@ -88,8 +89,8 @@ export default {
     },
   },
   async mounted() {
-    this.$store.dispatch('acc/loadBalances');
-    console.log(await this.$store.state.selectedAddress);
+    await this.$store.dispatch('acc/loadBalances');
+    console.log(await this.$store.getters['acc/ethBalText']);
   },
 };
 </script>

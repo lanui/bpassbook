@@ -20,13 +20,9 @@ import Web3Client from '@/corejs/web3';
 import idbMgr from '@/corejs/indexdb';
 global.$idb = idbMgr;
 
-// import { getInitChainId } from '@/corejs/local-storage-load.js'
-
 global.browser = require('webextension-polyfill');
 const web3Cli = new Web3Client();
 global.web3Cli = web3Cli;
-
-// const connection = new ConnectionManager({ portName: BACKEND_CONN_POPUP, web3Cli });
 
 const connManager = new ConnManager({ portName: BACKEND_CONN_POPUP, store, router });
 global.$connManager = connManager;
@@ -44,10 +40,6 @@ global.p3 = new Vue({
   render: (h) => h(App),
 });
 
-document.addEventListener('DOMContentLoaded', async function () {
-  // const chainId = await getInitChainId()
-  // web3Cli.chainStore.putState(chainId)
-  //p3.$store.dispatch('acc/loadBalances')
-});
+document.addEventListener('DOMContentLoaded', async function () {});
 
 function appStartup(opts = {}) {}

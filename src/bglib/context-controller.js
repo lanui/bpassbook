@@ -143,6 +143,35 @@ class ContextController extends EventEmitter {
     };
   }
 
+  /**
+   *
+   * @param {object} senderState
+   * @property {number} tabId
+   * @property {boolean} hasLoginForm
+   * @property {ho}
+   */
+  async getInitStateForContentScript(senderState = {}) {
+    const isUnlocked = this.appStateController.isUnlocked;
+    const WebsiteController = (await this.websiteController.memStore.getState()) || {};
+
+    const { filterHost } = senderState;
+
+    let items = [];
+    if (isUnlocked && WebsiteController && WebsiteController.items) {
+      items =
+        WebsiteController.items.length && filterHost
+          ? WebsiteController.items.filter((it) => it.hostname.endsWith(filterHost))
+          : [];
+      console.log('&&&&&&&&&&', items);
+    }
+
+    return {
+      senderState,
+      isUnlocked,
+      items,
+    };
+  }
+
   privateSendUpdate() {
     this.emit('update', this.getState());
   }
