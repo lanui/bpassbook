@@ -348,7 +348,7 @@ export class FieldsController extends EventEmitter {
       },
     });
 
-    console.log(`${LOG_PREFFIX}-message document>>>`, targetUserName);
+    /** Target Password Binding events */
     if (targetPassword) {
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
@@ -394,6 +394,7 @@ export class FieldsController extends EventEmitter {
         //TODO remove events input and PasswordInputEvent
       });
 
+      /** Target Username Binding events */
       if (targetUserName) {
         $(targetUserName).on('focusin', function (e) {
           e.stopPropagation();

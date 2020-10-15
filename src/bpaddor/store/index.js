@@ -8,7 +8,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   actions,
-  getters: {},
+  getters: {
+    isUnlocked: (state) => Boolean(state.isUnlocked),
+  },
   mutations,
   state: {
     isUnlocked: false,
