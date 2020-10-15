@@ -13,7 +13,7 @@
 
 ### Sence 1.2 界面输入框(username ) 有内容时
 
-> > focus username 不弹出添加到 BPassword 提示
+> > focus username 弹出添加到 BPassword 提示
 > > focus password 弹出添加到 BPassword 提示
 
 ## Sence 2
@@ -28,6 +28,8 @@
 ### Sence 2.1 界面输入框(username ) 有内容时
 
 匹配过滤 username ==>> ()
+
+> > 精确匹配到账号 不弹出选择
 
 > > focus username 弹出账号选择
 

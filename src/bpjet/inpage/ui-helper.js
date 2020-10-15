@@ -15,7 +15,7 @@ const ICON_SIZES = {
 
 const FRAME_BOX = {
   width: 280,
-  minHeight: 180,
+  minHeight: 132,
 };
 
 export const ICON_CLASS_NAME = 'bp-img--wrapper';
@@ -48,7 +48,9 @@ export function createBPIcon(el, url) {
   // console.log('BPInjetTop>>>>>', window);
   const _win = window;
   const { document } = _win;
-  removeIcon();
+  // if (window.document.querySelector('#'))
+  const exsitsIframe = exsitsSelectorIframe(url);
+  removeIcon(!exsitsIframe);
 
   const wrapper = window.document.createElement(ICON_WRAP_TAG);
 
@@ -58,8 +60,6 @@ export function createBPIcon(el, url) {
   // console.log('createBPIcon>>>>>>>>>>>url>>', url);
 
   const { iconSize } = position;
-  const id = ICON_WRAPPER_ID;
-
   const img = document.createElement('img');
   img.setAttribute('width', iconSize);
   img.setAttribute('height', iconSize);
@@ -96,13 +96,16 @@ export function createIFrame(position, url) {
   const iframe = window.document.createElement('iframe');
   iframe.setAttribute('id', BP_IFRAME_MENU_ID);
   iframe.setAttribute('src', url);
+  iframe.setAttribute('frameorder', 'no');
+  iframe.setAttribute('scrolling', 'no');
   const fTop = calcBoxFloatTop(position);
   const fLeft = calcBoxFloatLeft(position);
   iframe.style.cssText =
     `position:fixed;float:initial;left:${fLeft}px;top:${fTop}px;` +
     `width:${FRAME_BOX.width}px;min-height:${FRAME_BOX.minHeight}px;` +
     'box-shadow:none;' +
-    'border-radius: 0px;border: solid 0px rgba(0,0,0,0);' +
+    'border-radius: 0px;border: 0px solid rgba(0,0,0,0);' +
+    'overflow-y:hidden;' +
     `z-index:${Z_INDEX}`;
   $(iframe).appendTo($(optionsWrap));
 
@@ -110,14 +113,26 @@ export function createIFrame(position, url) {
 }
 
 /**
+ * checked Iframe exists
+ * @param {*} url
+ */
+export const exsitsSelectorIframe = (url) => {
+  let extIframe = window.document.querySelector(OPTIONS_WRAP_TAG);
+  if (!extIframe) return false;
+  if (extIframe) extIframe = extIframe.querySelector('iframe');
+
+  return extIframe && extIframe.src === url;
+};
+
+/**
  *
  */
-export function removeIcon() {
+export function removeIcon(all = true) {
   if (window.document.querySelector(`${ICON_WRAP_TAG}`)) {
     window.document.querySelector(`${ICON_WRAP_TAG}`).remove();
   }
 
-  if (window.document.querySelector(OPTIONS_WRAP_TAG)) {
+  if (window.document.querySelector(OPTIONS_WRAP_TAG) && all) {
     window.document.querySelector(OPTIONS_WRAP_TAG).remove();
   }
 }

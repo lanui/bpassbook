@@ -23,6 +23,7 @@ const config = {
     'bpjet/bpjet': R(src, './bpjet/bpjet.js'),
     'bpjet/contentscript': R(src, './bpjet/contentscript.js'),
     'inputor/inputor': R(src, './inputor/inputor.js'),
+    'bpaddor/bpaddor': R(src, './bpaddor/bpaddor.js'),
   },
   output: {
     path: dist,
@@ -187,6 +188,7 @@ function getCopyPatterns() {
     { from: R(src, 'bpjet/index.html'), to: R(dist, 'bpjet/index.html'), transform: transformHtml },
     { from: R(src, 'bpjet/jquery.min.js'), to: R(dist, 'bpjet/jquery.min.js') },
     { from: R(src, 'inputor/inputor.html'), to: R(dist, 'inputor/inputor.html'), transform: transformHtml },
+    { from: R(src, 'bpaddor/bpaddor.html'), to: R(dist, 'bpaddor/bpaddor.html'), transform: transformHtml },
     { from: R(src, 'share'), to: R(dist, 'share') },
     {
       from: manifest,

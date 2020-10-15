@@ -6,14 +6,6 @@ const $ = require('jquery');
 
 import { APITYPE_FETCH_MATCH_ITEMS } from '@/lib/cnst/api-cnst';
 
-const LOG_PREFFIX = 'BP-field-controller';
-export const PASSWORD_SELECTOR = 'input[type="password"]';
-export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
-const MAIL_SELECTOR = 'input[type="mail"]';
-const FAVICON_SELECTOR = '';
-
-export const POSITION_CHANGED_EVENT = 'abs:position-changed';
-
 import {
   ICON_WRAPPER_ID,
   getElPosition,
@@ -23,7 +15,20 @@ import {
   updateIFramePosition,
   buildPasswordSelector,
   buildUserNameSelector,
+  exsitsSelectorIframe,
 } from './ui-helper';
+
+const LOG_PREFFIX = 'BP-field-controller';
+export const PASSWORD_SELECTOR = 'input[type="password"]';
+export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
+const MAIL_SELECTOR = 'input[type="mail"]';
+const FAVICON_SELECTOR = '';
+
+export const POSITION_CHANGED_EVENT = 'abs:position-changed';
+
+export const FIELD_INPUTOR_EVENTNAME = 'loginel:input';
+
+export const FORM_SUBMIT_EVENTNAME = 'loginform:submit';
 
 const initState = {
   type: 'username',
@@ -40,6 +45,7 @@ export class FieldsController extends EventEmitter {
     const { initState } = opts;
     this.extid = initState.extid;
     this.url = initState.inputorURL;
+    this.addorURL = initState.addorURL;
 
     // console.log('>>>>>>>>>>>initState.inputorURL>>>>>>>>>>>>', this.url);
     this.store = new ObservableStore(initState);
@@ -239,67 +245,197 @@ export class FieldsController extends EventEmitter {
     // })
   }
 
+  /**
+   *
+   */
   _initTargetBindEvents() {
     const targetPassword = this.targetPassword;
     const targetUserName = this.targetUserName;
     const _ctx = this;
     const inputorURL = this.url;
+    const addorURL = this.addorURL;
 
-    console.log(`${LOG_PREFFIX}-message document>>>`, targetUserName);
-    if (targetPassword) {
-      $(targetPassword).on('focusin', function (e) {
-        e.stopPropagation();
-        console.log('BPinjet>>> focusin>>>>', e, e.target, $(e.target).val(), _ctx.extid);
-        const _curNameVal = targetUserName ? targetUserName.value : '';
-        chrome.runtime.sendMessage(
-          _ctx.extid,
-          { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
-          { includeTlsChannelId: true },
-          async (resp) => {
-            // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..", resp)
-            if (controlPopInputor(resp, _curNameVal)) {
-              createBPIcon(this, inputorURL);
-            }
-          }
-        );
-        // createBPIcon(this, inputorURL);
-
-        _ctx.currentTarget = e.target;
-        $(e.target).on('click', function (e) {
-          e.stopPropagation();
-        });
-      });
-      $(targetPassword).on('focusout', function (e) {
-        $(e.target).off('click');
-      });
-
-      if (targetUserName) {
-        $(targetUserName).on('focusin', function (e) {
-          e.stopPropagation();
-          const _curNameVal = targetUserName.value;
-          console.log('BPinjet>>> focusin>>', e.target, targetUserName.value);
+    let UsernameInputEvent = new CustomEvent(FIELD_INPUTOR_EVENTNAME, {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        ctx: this,
+        sendValToInputor: () => {
+          /**
+           * 1. send value to inputor
+           * 2. update this items
+           * 3. check show Icon
+           */
+          const _curNameVal = this.targetUserName.value;
+          const _curPassVal = this.targetPassword.value;
+          const extIframe = exsitsSelectorIframe(inputorURL);
 
           chrome.runtime.sendMessage(
             _ctx.extid,
             { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
             { includeTlsChannelId: true },
             async (resp) => {
-              if (controlPopInputor(resp, _curNameVal)) {
+              // return;
+
+              const showPop = controlNameChanged(resp, _curNameVal, _curPassVal);
+              console.log('BPinjet>>> targetUserName>> changed>>', showPop, _curNameVal, _curPassVal, extIframe);
+              if (showPop === 'addor') {
+                createBPIcon(this.targetUserName, addorURL);
+              } else if (showPop === 'remove') {
+                removeIcon();
+              } else if (showPop === 'selector') {
+                //selector don't remove it,because remove cause connection disconnect and messages lost
+                if (extIframe) {
+                  //TODO send message to extension selector
+                } else {
+                  createBPIcon(this.targetUserName, inputorURL);
+                }
+              } else {
+                removeIcon();
+              }
+            }
+          );
+          return this.targetUserName.value;
+        },
+      },
+    });
+
+    /**
+     * password changed handle
+     */
+    let PasswordInputEvent = new CustomEvent(FIELD_INPUTOR_EVENTNAME, {
+      bubbles: false,
+      cancelable: true,
+      detail: {
+        ctx: this,
+        sendValToInputor: () => {
+          /**
+           * 1. send value to inputor
+           * 2. update this items
+           * 3. check show Icon
+           */
+          const _curNameVal = this.targetUserName.value;
+          const _curPassVal = this.targetPassword.value;
+
+          const extIframe = exsitsSelectorIframe(inputorURL);
+
+          chrome.runtime.sendMessage(
+            _ctx.extid,
+            { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
+            { includeTlsChannelId: true },
+            async (resp) => {
+              // return;
+
+              const showPop = controlPasswordChanged(resp, _curNameVal, _curPassVal);
+              console.log('BPinjet>>> targetPassword>> changed>>', showPop, _curPassVal, _curNameVal, extIframe);
+              if (showPop === 'addor') {
+                createBPIcon(this.targetUserName, addorURL);
+              } else if (showPop === 'remove') {
+                removeIcon();
+              } else if (showPop === 'selector') {
+                //selector don't remove it,because remove cause connection disconnect and messages lost
+                if (!extIframe) {
+                  createBPIcon(this.targetUserName, inputorURL);
+                } else {
+                }
+              } else {
+                removeIcon();
+              }
+            }
+          );
+          return this.targetUserName.value;
+        },
+      },
+    });
+
+    console.log(`${LOG_PREFFIX}-message document>>>`, targetUserName);
+    if (targetPassword) {
+      $(targetPassword).on('focusin', function (e) {
+        e.stopPropagation();
+        _ctx.currentTarget = e.target;
+
+        console.log('BPinjet>>> focusin>>>>', e, e.target, $(e.target).val(), _ctx.extid);
+        const _curNameVal = targetUserName ? targetUserName.value : '';
+        const _curPassVal = targetPassword.value;
+        const extIframe = exsitsSelectorIframe(inputorURL);
+
+        chrome.runtime.sendMessage(
+          _ctx.extid,
+          { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
+          { includeTlsChannelId: true },
+          async (resp) => {
+            const showPop = controlPasswordPopup(resp, _curNameVal, _curPassVal);
+            console.log('BPinjet>>> targetPassword>> focusin>>', showPop, _curPassVal, _curNameVal, extIframe);
+
+            if (showPop === 'addor') {
+              createBPIcon(this, addorURL);
+            } else if (showPop && showPop.startsWith('selector')) {
+              if (!extIframe) {
                 createBPIcon(this, inputorURL);
+              }
+            } else {
+              removeIcon();
+            }
+          }
+        );
+        // createBPIcon(this, inputorURL);
+
+        $(e.target).on('click', function (e) {
+          e.stopPropagation();
+        });
+      });
+
+      /** input changed  */
+      targetPassword.addEventListener(PasswordInputEvent, (e) => console.log(e.detail.sendValToInputor()));
+      targetPassword.addEventListener('input', debounce(hanldePasswordInputEvent, 200));
+
+      $(targetPassword).on('focusout', function (e) {
+        $(e.target).off('click');
+        //TODO remove events input and PasswordInputEvent
+      });
+
+      if (targetUserName) {
+        $(targetUserName).on('focusin', function (e) {
+          e.stopPropagation();
+          _ctx.currentTarget = e.target;
+          const _curNameVal = targetUserName.value;
+          const _curPassVal = targetPassword.value;
+
+          chrome.runtime.sendMessage(
+            _ctx.extid,
+            { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
+            { includeTlsChannelId: true },
+            async (resp) => {
+              const showPop = controlNamePopup(resp, _curNameVal, _curPassVal);
+              console.log('BPinjet>>> targetUserName>> focusin>>', _curNameVal, _curPassVal, showPop);
+              if (showPop === 'addor') {
+                createBPIcon(this, addorURL);
+              } else if (showPop && showPop.startsWith('selector')) {
+                createBPIcon(this, inputorURL);
+              } else if (showPop === 'remove') {
+                //remove
+                removeIcon();
+              } else {
+                //unhandle
               }
             }
           );
 
-          _ctx.currentTarget = e.target;
           $(e.target).on('click', function (e) {
             e.stopPropagation();
           });
         });
 
+        /** input changed  */
+        targetUserName.addEventListener(FIELD_INPUTOR_EVENTNAME, (e) => console.log(e.detail.sendValToInputor()));
+        targetUserName.addEventListener('input', debounce(hanldeNameInputEvent, 200));
+
         $(targetUserName).on('focusout', function (e) {
           $(e.target).off('click');
+          //TODO remove events input and FIELD_INPUTOR_EVENTNAME
         });
       }
+
       // remove icon
       $(window.document).on('click', function (e) {
         e.stopPropagation();
@@ -312,7 +448,15 @@ export class FieldsController extends EventEmitter {
         });
       }
     }
-  }
+
+    function hanldeNameInputEvent(event) {
+      event.target.dispatchEvent(UsernameInputEvent);
+    }
+
+    function hanldePasswordInputEvent(event) {
+      event.target.dispatchEvent(PasswordInputEvent);
+    }
+  } //end _initTargetBindEvents
 
   // _bindingPositionChanged(){
   //   const controller = this
@@ -321,31 +465,184 @@ export class FieldsController extends EventEmitter {
   // }
 }
 
-function controlPopInputor(resp, nameVal) {
+/**
+ *
+ * @param {object} resp backend response initState[data.items]
+ * @param {*} nameValue
+ */
+function controlPasswordPopup(resp, nameValue, passValue) {
   let exactMatched = false; //精确匹配当前填写账号,不弹出添加
-  let subMatchs = [];
+  let subMatchs = []; //部分匹配name
+  let domainMatched = false;
   let _items = [];
   if (resp && resp.data) {
     _items = resp.data.items || [];
+    domainMatched = Boolean(_items.length);
   }
 
-  if (!!nameVal) {
-    exactMatched = Boolean(_items.find((it) => it.username === nameVal));
-    subMatchs = _items.filter((it) => it.username.endsWith(nameVal));
+  if (Boolean(nameValue)) {
+    exactMatched = Boolean(_items.find((it) => it.username === nameValue && it.password === passValue));
+    subMatchs = exactMatched ? false : _items.filter((it) => it.username.startsWith(nameValue));
   }
 
-  if (!!nameVal && exactMatched) {
-    //username 不显示
+  if (exactMatched && !Boolean(passValue)) {
+    // BPassword items matched input name value and password has value
     return false;
-  } else if (!nameVal && _items.length == 0) {
-    return false;
-  } else if (!!nameVal && subMatchs.length > 0) {
-    return true;
-    //显示
-  } else {
-    //显示
-    return true;
   }
+
+  if (subMatchs && subMatchs.length > 0) {
+    // BPassword items matched input name value multi items show selector
+    console.log('BPinjet>>> showPWDPop>>>>', subMatchs);
+    return 'selector-subMatch';
+  }
+
+  if (domainMatched && !Boolean(nameValue)) {
+    // BPassword domain has accounts ,and username no input value show selector
+    return 'selector-domainMatch';
+  }
+
+  if (!domainMatched && Boolean(nameValue) && Boolean(passValue)) {
+    // BPassword domain no accounts and username has input value show addor
+    return 'addor';
+  }
+
+  return false;
+}
+
+/**
+ *
+ * @param {*} resp
+ * @param {*} nameValue
+ * @param {*} passValue
+ */
+function controlPasswordChanged(resp, nameValue, passValue) {
+  /**
+   * exactMatched : remove
+   * subMatchs : selector
+   * domainMatched : selector
+   * no domainMatched && name && value : inputor
+   * other : remove
+   */
+  let exactMatched = false; //精确匹配当前填写账号,不弹出添加
+  let subMatchs = [];
+  let domainMatched = false;
+  let _items = [];
+  if (resp && resp.data) {
+    _items = resp.data.items || [];
+    domainMatched = Boolean(_items.length);
+  }
+
+  if (Boolean(nameValue)) {
+    exactMatched = Boolean(_items.find((it) => it.username === nameValue));
+    subMatchs = exactMatched ? false : _items.filter((it) => it.username.startsWith(nameValue));
+  }
+
+  if (exactMatched) {
+    return 'remove';
+  }
+
+  /**
+   * 不干扰提交
+   */
+  if (subMatchs && !Boolean(passValue)) {
+    return 'selector';
+  }
+
+  /**
+   * 不干扰提交
+   */
+  if (domainMatched && !Boolean(nameValue)) {
+    return 'selector';
+  }
+
+  if (!domainMatched && Boolean(nameValue) && Boolean(passValue)) {
+    return 'addor';
+  }
+
+  return 'remove';
+}
+
+/**
+ *
+ * @param {*} resp
+ * @param {*} nameValue
+ * @param {*} passValue
+ */
+function controlNamePopup(resp, nameValue, passValue) {
+  let exactMatched = false; //精确匹配当前填写账号,不弹出添加
+  let subMatchs = [];
+  let domainMatched = false;
+  let _items = [];
+  if (resp && resp.data) {
+    _items = resp.data.items || [];
+    domainMatched = Boolean(_items.length);
+  }
+  if (Boolean(nameValue)) {
+    exactMatched = Boolean(_items.find((it) => it.username === nameValue && it.password === passValue));
+    subMatchs = exactMatched ? false : _items.filter((it) => it.username.startsWith(nameValue));
+  }
+
+  if (exactMatched) {
+    // BPassword items matched input name value and password has value
+    return 'remove';
+  }
+
+  if (subMatchs && subMatchs.length > 0) {
+    // BPassword items matched input name value and password has no value
+    return 'selector-subMatch';
+  }
+
+  if (domainMatched && !Boolean(nameValue)) {
+    // BPassword domain has accounts ,and username no input value show selector
+    return 'selector-domainMatch';
+  }
+
+  if (!domainMatched && Boolean(nameValue) && Boolean(passValue)) {
+    // BPassword domain no accounts and username has input value show addor
+    return 'addor';
+  }
+
+  return 'remove';
+}
+
+/**
+ *
+ * @param {*} resp
+ * @param {*} nameValue
+ * @param {*} passValue
+ */
+function controlNameChanged(resp, nameValue, passValue) {
+  let exactMatched = false; //精确匹配当前填写账号,不弹出添加
+  let subMatchs = [];
+  let domainMatched = false;
+  let _items = [];
+  if (resp && resp.data) {
+    _items = resp.data.items || [];
+    domainMatched = Boolean(_items.length);
+  }
+
+  if (Boolean(nameValue)) {
+    exactMatched = Boolean(_items.find((it) => it.username === nameValue && it.password === passValue));
+    subMatchs = exactMatched ? false : _items.filter((it) => it.username.startsWith(nameValue));
+  }
+
+  if (exactMatched) {
+    return 'remove';
+  }
+  console.log('BPinjet>>> targetUserName>> subMatchs>>', subMatchs, _items);
+  if (subMatchs && subMatchs.length > 0) {
+    return 'selector';
+  }
+
+  if (domainMatched) {
+    return 'selector';
+  }
+
+  if (!domainMatched && Boolean(nameValue) && Boolean(passValue)) {
+    return 'addor';
+  }
+
+  return 'remove';
 }
 
 /**
@@ -363,7 +660,9 @@ export function checkFormFieldsForChanged(mutations) {
     targetUserName = null,
     origin = null,
     hasLoginForm = false,
+    loginForm = null,
     currentTarget = null,
+    currentWidth = 0,
     position = null,
     usernameSelector = null,
     passwordSelector = null;
@@ -374,19 +673,20 @@ export function checkFormFieldsForChanged(mutations) {
   mutations.forEach((mutationRecord) => {
     const { addedNodes } = mutationRecord;
     if (addedNodes.length > 0) {
-      const $nameFind = $(addedNodes[0]).find(USERNAME_SELECTOR);
-      if ($nameFind[0]) {
-        tmpName = $nameFind[0];
-      }
       const $password = $(addedNodes[0]).find(PASSWORD_SELECTOR);
       if ($password[0]) {
         targetPassword = $password[0];
+      }
+      const $nameFind = $(addedNodes[0]).find(USERNAME_SELECTOR);
+      if ($nameFind[0]) {
+        tmpName = $nameFind[0];
       }
     }
   });
 
   if (targetPassword) {
     passwordSelector = buildPasswordSelector(targetPassword);
+    loginForm = passwordSelector.form || null;
     targetUserName = tmpName;
   }
   if (targetUserName) {
@@ -396,6 +696,7 @@ export function checkFormFieldsForChanged(mutations) {
   hasLoginForm = Boolean(targetPassword);
   if (hasLoginForm) {
     currentTarget = targetUserName || targetPassword;
+    currentWidth = currentTarget.offsetWidth || 0;
     position = getElPosition(currentTarget) || {};
   }
 
@@ -416,28 +717,35 @@ export function checkFormFields() {
     targetUserName = null,
     origin = null,
     hasLoginForm = false,
+    loginForm = null,
     currentTarget = null,
+    currentWidth = 0,
     position = null,
     usernameSelector = null,
     passwordSelector = null;
 
   origin = window.location.origin;
   targetPassword = window.document.querySelector(PASSWORD_SELECTOR);
-  targetUserName = window.document.querySelector(USERNAME_SELECTOR);
 
   if (targetPassword) {
+    loginForm = targetPassword.form || null;
     passwordSelector = buildPasswordSelector(targetPassword);
   }
+
+  targetUserName = Boolean(loginForm)
+    ? loginForm.querySelector(USERNAME_SELECTOR)
+    : window.document.querySelector(USERNAME_SELECTOR);
 
   if (targetUserName) {
     targetUserName.setAttribute('autocomplete', 'off');
     usernameSelector = buildUserNameSelector(targetUserName);
   }
 
-  hasLoginForm = Boolean(targetPassword);
+  hasLoginForm = Boolean(targetPassword) && Boolean(targetUserName);
 
   if (hasLoginForm) {
     currentTarget = targetUserName || targetPassword;
+    currentWidth = currentTarget.offsetWidth || 0;
     position = getElPosition(currentTarget) || {};
     console.log(`${LOG_PREFFIX} >>chrome tabs>>`, chrome.runtime);
   }
@@ -446,7 +754,9 @@ export function checkFormFields() {
     usernameSelector,
     passwordSelector,
     currentTarget,
+    currentWidth,
     hasLoginForm,
+    loginForm,
     origin,
     position,
     targetPassword,
@@ -454,6 +764,10 @@ export function checkFormFields() {
   };
 }
 
+/**
+ * @deprecated
+ * @param {*} controller
+ */
 function windowResizeObserve(controller) {
   let DomSizeObs = new ResizeObserver(debounce(handleWindowResize, 10));
   DomSizeObs.observe(window.document.body);
@@ -470,6 +784,10 @@ function windowResizeObserve(controller) {
   }
 }
 
+/**
+ * @deprecated
+ * @param {} controller
+ */
 function windowScrollObserve(controller) {
   window.addEventListener('scroll', debounce(handleWindowResize, 5));
 

@@ -40,12 +40,6 @@ async function setupStream() {
     target: CLI_CONN_INJET,
   });
 
-  const extid = chrome.runtime.id;
-  // console.log(`${LOG_PREFFIX} >setupStream>>`, ext);
-  // pageStream._write('shift from contentscript.........' + extid, ENCODING_UTF8, function (e) {
-  //   console.log(`${LOG_PREFFIX} >>send callback>>`, e, this);
-  // });
-
   // {active:true,currentWindow:true}
 
   //connect channel muxers

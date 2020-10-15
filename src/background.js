@@ -404,6 +404,8 @@ async function setupController(initState) {
     }
   }
 
+  console.log(`${LOG_PREFFIX} - auto login for develop`, process.env);
+
   //auto  load test
   setTimeout(() => {
     controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });

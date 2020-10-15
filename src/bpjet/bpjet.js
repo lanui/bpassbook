@@ -9,7 +9,7 @@ import { FieldsController, PASSWORD_SELECTOR, USERNAME_SELECTOR } from './inpage
 import { BACKEND_CONN_CONTENTSCRIPT, CLI_CONN_INJET } from '@/lib/cnst/connection-cnst.js';
 import { APITYPE_FILL_PBITEM, APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
 
-import { INPUTOR_PAGER } from '@/ui/comm-cnst.js';
+import { INPUTOR_PAGER, ADDOR_PAGER } from '@/ui/comm-cnst.js';
 
 const $ = require('jquery');
 global.$ = $;
@@ -27,6 +27,7 @@ function injetStartup() {
   const initState = {
     extid: chrome.runtime.id,
     inputorURL: chrome.runtime.getURL(INPUTOR_PAGER),
+    addorURL: chrome.runtime.getURL(ADDOR_PAGER),
   };
   const controller = new FieldsController({ initState });
   controller.setMaxListeners(100);

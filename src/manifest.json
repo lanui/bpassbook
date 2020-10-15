@@ -59,7 +59,10 @@
     "share/*",
     "inputor/inputor.css",
     "inputor/inputor.html",
-    "inputor/inputor.js"
+    "inputor/inputor.js",
+    "bpaddor/bpaddor.css",
+    "bpaddor/bpaddor.html",
+    "bpaddor/bpaddor.js"
   ],
   "options_ui": {
     "page": "options/options.html",
