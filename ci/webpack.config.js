@@ -24,6 +24,7 @@ const config = {
     'bpjet/contentscript': R(src, './bpjet/contentscript.js'),
     'inputor/inputor': R(src, './inputor/inputor.js'),
     'bpaddor/bpaddor': R(src, './bpaddor/bpaddor.js'),
+    'popapp/popapp': R(src, './popapp/popapp.js'),
   },
   output: {
     path: dist,
@@ -35,6 +36,7 @@ const config = {
       '@': src,
       '@app': R(src, 'app'),
       '@popup': R(src, 'popup'),
+      '@p4': R(src, 'popapp'),
     },
   },
   module: {
@@ -190,6 +192,7 @@ function getCopyPatterns() {
     { from: R(src, 'inputor/inputor.html'), to: R(dist, 'inputor/inputor.html'), transform: transformHtml },
     { from: R(src, 'bpaddor/bpaddor.html'), to: R(dist, 'bpaddor/bpaddor.html'), transform: transformHtml },
     { from: R(src, 'share'), to: R(dist, 'share') },
+    { from: R(src, 'popapp/popapp.html'), to: R(dist, 'popapp/popapp.html'), transform: transformHtml },
     {
       from: manifest,
       to: R(dist, 'manifest.json'),
@@ -211,7 +214,7 @@ function getCopyPatterns() {
     },
   ];
 
-  console.log('from ', R(src, 'bpjet/bootstrap/'));
+  // console.log('from ', R(src, 'bpjet/bootstrap/'));
   const devPatterns = [
     ...patterns,
     { context: R(src, 'bpjet/bootstrap/'), from: '**/*', to: R(dist, 'bpjet/bootstrap/') },

@@ -354,7 +354,6 @@ export class FieldsController extends EventEmitter {
         e.stopPropagation();
         _ctx.currentTarget = e.target;
 
-        console.log('BPinjet>>> focusin>>>>', e, e.target, $(e.target).val(), _ctx.extid);
         const _curNameVal = targetUserName ? targetUserName.value : '';
         const _curPassVal = targetPassword.value;
         const extIframe = exsitsSelectorIframe(inputorURL);

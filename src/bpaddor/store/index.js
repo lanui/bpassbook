@@ -13,7 +13,7 @@ export default new Vuex.Store({
   },
   mutations,
   state: {
-    isUnlocked: false,
+    isUnlocked: true,
     favIconUrl: '',
     tabId: '',
     filterHost: '',
