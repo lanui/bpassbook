@@ -10,15 +10,20 @@
         </v-btn>
       </v-col>
       <v-col cols="10" v-if="!isUnlocked">
-        <div>
-          按下
-          <span class="mx-1 xsmall">Ctrl+Shift+K</span>
-          来解锁
+        <div class="locked-tips">
+          BPassword处于锁定状态，请先解锁
         </div>
       </v-col>
     </v-row>
     <v-card-actions class="v-card-top-border">
-      <bpass-icon />
+      <div class="key-commands" v-if="!isUnlocked">
+        <span>快捷键</span>
+        <span>control+shif+K</span>
+        <span>/</span>
+        <span>command+shif+K (mac) </span>
+      </div>
+
+      <bpass-icon v-if="isUnlocked" />
       <v-spacer></v-spacer>
       <v-btn v-if="isUnlocked" text color="bpgray" small>
         管理账号
@@ -77,5 +82,17 @@ export default {
 
 .v-btn.bpgray--text:hover {
   color: rgba(69, 138, 249, 1) !important;
+}
+.locked-tips {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: rgba(25, 25, 29, 1);
+}
+.key-commands {
+  font-size: 12px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 200;
+  color: rgba(140, 144, 146, 1);
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-main class="html-backcolor">
     <transition name="fade-transform" mode="out-in">
       <keep-alive>
         <router-view />
@@ -13,4 +13,8 @@ export default {
   name: 'DefaultLayout',
 };
 </script>
-<style></style>
+<style>
+.html-backcolor {
+  background-color: rgba(247, 248, 251, 1);
+}
+</style>
