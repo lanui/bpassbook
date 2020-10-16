@@ -16,7 +16,14 @@
       <v-col cols="12" v-if="isUnlocked" class="px-0 py-0 pt-3">
         <v-virtual-scroll v-if="hasItems" :items="items" :item-height="itemHeight" :height="height">
           <template v-slot="{ item }">
-            <v-btn dark block text @click="sendFillMessage(item)" color="primary" v-ripple="{ class: 'primary--text' }">
+            <v-btn
+              dark
+              block
+              text
+              @click="sendFillItemMessage(item)"
+              color="primary"
+              v-ripple="{ class: 'primary--text' }"
+            >
               <div class="selector-item">
                 <div class="item-line item-username">
                   {{ item.username }}
@@ -83,23 +90,20 @@ export default {
     };
   },
   methods: {
-    sendFillMessage(item) {
-      return;
+    sendFillItemMessage(item) {
+      const { username, password } = item;
+      if (!item || !username || !password) {
+        console.warn('item lost username or password.');
+        return;
+      }
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        const tabId = tabs[0].id;
-        const tabUrl = tabs[0].url;
-        const favIconUrl = tabs[0].favIconUrl;
-        const tab = {
-          tabId: tabs[0].id,
-          tabUrl: tabs[0].url,
-          favIconUrl: tabs[0].favIconUrl,
-        };
-        console.log('Tabs >>>>', tab);
-        chrome.tabs.sendMessage(tabId, { apiType: APITYPE_FILL_PBITEM, item, tab }, function (response) {
-          console.log(response);
+        const tab = tabs[0];
+        chrome.tabs.sendMessage(tabs[0].id, { apiType: APITYPE_FILL_PBITEM, item, tab }, function (response) {
+          console.log('fill result>', response);
         });
       });
     },
+
     addItemHandle() {
       this.$router.push({ path: 'addPassbook', query: { username: '', password: '', origin: '' } });
     },

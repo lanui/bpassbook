@@ -7,7 +7,7 @@ import { getElPosition } from './inpage/ui-helper';
 import { FieldsController, PASSWORD_SELECTOR, USERNAME_SELECTOR } from './inpage/fields-controller';
 
 import { BACKEND_CONN_CONTENTSCRIPT, CLI_CONN_INJET } from '@/lib/cnst/connection-cnst.js';
-import { APITYPE_FILL_PBITEM, APITYPE_GET_PBITEM } from '@/lib/cnst/api-cnst.js';
+import { APITYPE_SIGNAL_COLSE_BPJET, APITYPE_FILL_PBITEM, APITYPE_FETCH_LOGINFORM_DATA } from '@/lib/cnst/api-cnst.js';
 
 import { INPUTOR_PAGER, ADDOR_PAGER } from '@/ui/comm-cnst.js';
 
@@ -62,22 +62,26 @@ function injetStartup() {
    * 接收 inputor message and fill it
    */
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    const { item, apiType, tab } = message;
-    console.log(`${LOG_PREFFIX}-message listener Recv>>>`, message, tab, sender);
-    console.log(`${LOG_PREFFIX}-Reciv Once Message>>>`, sender, document.querySelector('input[type="password"]'));
+    const { item, apiType, tab, signal } = message;
 
     const data = controller.getInputFieldData(tab);
-
     console.log(`${LOG_PREFFIX}-host>>>`, data);
+
     const isFn = typeof sendResponse === 'function';
     if (data.hasLoginForm) {
       switch (apiType) {
+        case APITYPE_SIGNAL_COLSE_BPJET:
+          if (!!signal) controller.removeBPIcon();
+          return false;
         case APITYPE_FILL_PBITEM:
-          controller.fillInputField(message.item);
+          controller.fillInputField(item);
           sendResponse({ data: data.hostname });
           break;
-        case APITYPE_GET_PBITEM:
+        case APITYPE_FETCH_LOGINFORM_DATA:
           sendResponse({ data });
+          if (message.height) {
+            controller.setIframeHeight(message.height);
+          }
           break;
         default:
           break;

@@ -40,6 +40,7 @@ import {
   APITYPE_EDIT_MOBILE_ITEM,
   APITYPE_DELETE_MOBILE_ITEM,
   APITYPE_FETCH_MATCH_ITEMS,
+  APITYPE_FETCH_INITSTATE,
 } from '@/lib/cnst/api-cnst';
 
 import { responseError, responseInitState, responseMessage } from '@/lib/message-utils';
@@ -354,18 +355,23 @@ async function setupController(initState) {
             }
           });
         break;
-
+      case APITYPE_FETCH_INITSTATE:
+        if (isFn) {
+          const respFirstLoadState = await controller.getInitStateForContentScript(handleSender(sender));
+          sendResponse({ apiType: 'initState', initState: respFirstLoadState });
+        } else {
+          return true;
+        }
+      // will remove
       case APITYPE_UPDATE_PBITEM:
         controller.gitbookController
           .addBookToStore(message.data, controller.getSelectedAddress())
           .then(async (r) => {
-            console.log('>>>>>>>>>>>>>>>');
             if (isFn) {
               sendResponse(await controller.getInitState());
             }
           })
           .catch(async (err) => {
-            console.log(`APITYPE_UPDATE_PBITEM >>> error>>>`, err);
             if (isFn) {
               sendResponse(await controller.getInitState());
             }

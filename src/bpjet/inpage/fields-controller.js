@@ -16,6 +16,7 @@ import {
   buildPasswordSelector,
   buildUserNameSelector,
   exsitsSelectorIframe,
+  updateIFrameHeight,
 } from './ui-helper';
 
 const LOG_PREFFIX = 'BP-field-controller';
@@ -179,6 +180,10 @@ export class FieldsController extends EventEmitter {
     }
 
     this.removeBPIcon();
+  }
+
+  setIframeHeight(height) {
+    updateIFrameHeight(height);
   }
 
   /**

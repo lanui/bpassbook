@@ -87,8 +87,8 @@ export function createBPIcon(el, url) {
  * @param {*} position
  */
 export function createIFrame(position, url) {
-  const extIframe = window.document.querySelectorAll(OPTIONS_WRAP_TAG);
-  if (extIframe && extIframe.length) {
+  const extIframe = window.document.querySelector(OPTIONS_WRAP_TAG);
+  if (extIframe) {
     window.document.querySelector(OPTIONS_WRAP_TAG).remove();
   }
   const optionsWrap = window.document.createElement(OPTIONS_WRAP_TAG);
@@ -111,6 +111,20 @@ export function createIFrame(position, url) {
 
   window.document.body.appendChild(optionsWrap);
 }
+
+export const updateIFrameHeight = (height) => {
+  const extIframe = window.document.querySelector(OPTIONS_WRAP_TAG);
+  const $iframe = extIframe ? extIframe.querySelector('iframe') : null;
+
+  if (!$iframe) return;
+  if (typeof height === 'number') {
+    $iframe.setAttribute('height', height + 'px');
+  } else if (height.trim().endsWith('px')) {
+    $iframe.setAttribute('height', height);
+  } else if (parsetInt(height) > 0) {
+    $iframe.setAttribute('height', parsetInt(height) + 'px');
+  }
+};
 
 /**
  * checked Iframe exists

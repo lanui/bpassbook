@@ -31,3 +31,9 @@ export const APITYPE_EDIT_WEBSITE_ITEM = 'editWebsiteItem';
 export const APITYPE_DELETE_WEBSITE_ITEM = 'deleteWebsiteItem';
 
 export const APITYPE_FETCH_MATCH_ITEMS = 'fetchMatchItemsForFieldController';
+export const APITYPE_FETCH_LOGINFORM_DATA = 'fetchLoginFormData';
+export const APITYPE_FILL_LOGINFORM_ITEM = 'fillLoginFormItem';
+export const APITYPE_SIGNAL_COLSE_BPJET = 'signalColseBpjetContainer';
+
+// used first load addor
+export const APITYPE_FETCH_INITSTATE = 'fetchInitState';

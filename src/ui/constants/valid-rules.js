@@ -84,3 +84,22 @@ export function validUrl(url) {
 export function validDomain(domain) {
   return /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/.test(domain);
 }
+
+/**
+ * 組裝 Title
+ * @param {string,number} hostname
+ * @param {string,number} suffix
+ * @returns {string} tips
+ */
+export const comboTips = (hostname, suffix) => {
+  let parts = [];
+  if (hostname && hostname.toString().trim().length > 0) {
+    parts.push(hostname.toString().trim());
+  }
+
+  if (suffix && suffix.toString().trim().length > 0) {
+    parts.push(suffix.toString().trim());
+  }
+
+  return parts.length > 0 ? parts.join(TITLE_DELIMITER) : '';
+};

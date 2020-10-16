@@ -1,5 +1,8 @@
 <template>
   <v-card elevation="3" outlined class="text-center mx-0 my-0">
+    <v-btn color="bpgray" absolute top right icon small @click.stop="sendColseBPjet" style="top: 0px; right: 0px;">
+      <v-icon dense>mdi-close</v-icon>
+    </v-btn>
     <v-row justify="center">
       <v-col cols="10" v-if="isUnlocked">
         <v-btn dark rounded block color="primary" @click="gotoAddItemHandle">
@@ -20,6 +23,11 @@
       <v-btn v-if="isUnlocked" text color="bpgray" small>
         管理账号
       </v-btn>
+      <!-- <div class="mx-0">
+        <v-icon>
+          mdi-drag-vertical
+        </v-icon>
+      </div> -->
     </v-card-actions>
   </v-card>
 </template>
@@ -27,6 +35,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import BpassIcon from './widgets/BpassIcon.vue';
+import { APITYPE_SIGNAL_COLSE_BPJET } from '@/lib/cnst/api-cnst.js';
 
 export default {
   name: 'AddorIndex',
@@ -42,6 +51,17 @@ export default {
   methods: {
     gotoAddItemHandle() {
       this.$router.push({ name: 'addItem', params: { a: 'adsadfafsd' } });
+    },
+    sendColseBPjet() {
+      const that = this;
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        const tab = tabs[0];
+        const { id, url, favIconUrl } = tab;
+        chrome.tabs.sendMessage(id, {
+          apiType: APITYPE_SIGNAL_COLSE_BPJET,
+          signal: 'colse',
+        });
+      });
     },
   },
 };
