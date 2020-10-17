@@ -87,7 +87,7 @@
     <v-card-actions class="v-card-top-border">
       <bpass-icon />
       <v-spacer></v-spacer>
-      <v-btn v-if="isUnlocked" text color="bpgray" small>
+      <v-btn v-if="isUnlocked" @click="openPopappPage" text color="bpgray" small>
         管理账号
       </v-btn>
     </v-card-actions>
@@ -106,6 +106,8 @@ import {
 import { validItem, titleSuffixRules, hostnameRules, trimProps, comboTips } from '@/ui/constants/valid-rules';
 
 import { TITLE_DELIMITER } from '@/bglib/item-transfer';
+import { getExtensionUrl, openActivedTab } from '@/lib/util';
+import { P4_PAGER } from '@/ui/comm-cnst';
 
 export default {
   name: 'AddorItem',
@@ -138,6 +140,10 @@ export default {
     };
   },
   methods: {
+    async openPopappPage() {
+      const url = getExtensionUrl(P4_PAGER);
+      if (url) openActivedTab(url);
+    },
     setItem({ hostname, username, password, favIconUrl, hasLoginForm }) {
       this.findLoginForm = Boolean(hasLoginForm);
       this.hostname = hostname || '';

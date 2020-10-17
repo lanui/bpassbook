@@ -36,16 +36,11 @@
           </template>
         </v-virtual-scroll>
       </v-col>
-      <!-- <v-col cols="10" class="px-2" v-if="isUnlocked">
-        <v-btn @click="addItemHandle" outlined rounded block small style="border: solid 1px rgba(0, 0, 0, 0.06);">
-          添加到BPassword 保存? {{ filter }}
-        </v-btn>
-      </v-col> -->
     </v-row>
     <v-card-actions class="v-card-top-border">
       <bpass-icon />
       <v-spacer></v-spacer>
-      <v-btn text color="bpgray" small v-ripple="{ class: 'primary--text' }">
+      <v-btn text color="bpgray" @click="openPopappPage" small v-ripple="{ class: 'primary--text' }">
         管理账号
       </v-btn>
     </v-card-actions>
@@ -61,6 +56,8 @@ import { sendMessage } from '../controller';
 import HeadIcon from './widgets/HeadIcon.vue';
 import BpassIcon from './widgets/BpassIcon.vue';
 import { APITYPE_FILL_PBITEM } from '@/lib/cnst/api-cnst.js';
+import { getExtensionUrl, openActivedTab } from '@/lib/util';
+import { P4_PAGER } from '@/ui/comm-cnst';
 
 const LOG_PREFFIX = 'BP-inputor:Index-';
 export default {
@@ -103,9 +100,9 @@ export default {
         });
       });
     },
-
-    addItemHandle() {
-      this.$router.push({ path: 'addPassbook', query: { username: '', password: '', origin: '' } });
+    async openPopappPage() {
+      const url = getExtensionUrl(P4_PAGER);
+      if (url) openActivedTab(url);
     },
   },
   mounted() {},

@@ -44,3 +44,12 @@ export const reloadMobileControllerState = async ({ commit }, { items, Plain }) 
   commit(types.UPDATE_MOBILE_ITEMS, items);
   commit(types.UPDATE_MOBPLAIN, Plain);
 };
+
+/**
+ *
+ * @param {*} param0
+ * @param {*} item
+ */
+export const toggleWebItemShowpwd = async ({ commit }, item) => {
+  commit(types.TOGGLE_PWD_SHOW, item);
+};

@@ -25,7 +25,7 @@
 
       <bpass-icon v-if="isUnlocked" />
       <v-spacer></v-spacer>
-      <v-btn v-if="isUnlocked" text color="bpgray" small>
+      <v-btn v-if="isUnlocked" @click="openPopappPage" text color="bpgray" small>
         管理账号
       </v-btn>
       <!-- <div class="mx-0">
@@ -41,6 +41,8 @@
 import { mapGetters } from 'vuex';
 import BpassIcon from './widgets/BpassIcon.vue';
 import { APITYPE_SIGNAL_COLSE_BPJET } from '@/lib/cnst/api-cnst.js';
+import { getExtensionUrl, openActivedTab } from '@/lib/util';
+import { P4_PAGER } from '@/ui/comm-cnst';
 
 export default {
   name: 'AddorIndex',
@@ -67,6 +69,10 @@ export default {
           signal: 'colse',
         });
       });
+    },
+    async openPopappPage() {
+      const url = getExtensionUrl(P4_PAGER);
+      if (url) openActivedTab(url);
     },
   },
 };

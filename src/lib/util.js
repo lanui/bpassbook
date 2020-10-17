@@ -5,6 +5,15 @@ import extension from './extensionizer';
 
 /**
  *
+ * @param {*} part
+ */
+export const getExtensionUrl = (part) => {
+  if (!part || !extension || !extension.runtime) return '';
+  return extension.runtime.getURL(part);
+};
+
+/**
+ *
  */
 export function checkForError() {
   const lastError = extension.runtime.lastError;
@@ -30,4 +39,19 @@ export function validBookItem(item) {
 
 export function openTab(url) {
   if (!url) return;
+}
+
+export function openActivedTab(url) {
+  const tabs = extension.tabs;
+  if (!tabs || !tabs.query || !url) {
+    return;
+  }
+
+  tabs.query({ url, currentWindow: true }, function (findTabs) {
+    if (!findTabs || findTabs.length === 0) {
+      tabs.create({ url, active: true });
+    } else {
+      tabs.update(findTabs[0].id, { active: true });
+    }
+  });
 }
