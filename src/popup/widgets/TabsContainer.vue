@@ -48,7 +48,7 @@
           </v-btn>
         </v-speed-dial> -->
       </v-tab-item>
-      <v-fab-transition>
+      <!-- <v-fab-transition>
         <v-btn
           v-if="!drawer"
           @click="addItemHandle"
@@ -64,10 +64,23 @@
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
-      </v-fab-transition>
+      </v-fab-transition> -->
     </v-tabs-items>
-    <v-row justify="center" class="px-0 py-0 my-0">
-      <v-col cols="10" class="px-0 py-0">
+    <v-row justify="center" class="fill-height px-0 py-1 my-auto">
+      <v-col cols="5" class="px-0 py-0 mr-1">
+        <v-btn @click="addItemHandle" outlined rounded small block color="primary">
+          添加数据
+        </v-btn>
+      </v-col>
+      <v-col cols="5" class="px-0 py-0 ml-1">
+        <v-btn rounded small block color="primary">
+          <div class="btn-title">同步数据</div>
+          <v-avatar size="18" class="btn-chip" v-if="Boolean(diff)">
+            {{ diff }}
+          </v-avatar>
+        </v-btn>
+      </v-col>
+      <!-- <v-col cols="5" class="px-0 py-0">
         <v-dialog persistent max-width="350px" v-model="showGasParams">
           <template v-slot:activator="{ on, attrs }">
             <v-chip
@@ -159,7 +172,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-      </v-col>
+      </v-col> -->
     </v-row>
   </v-container>
 </template>
@@ -316,5 +329,19 @@ export default {
 
 .gas-params--item .speed-type {
   color: rgba(12, 11, 11, 0.5);
+}
+
+.v-btn__content div.btn-title {
+  display: flex;
+  justify-self: center;
+  justify-content: center;
+  flex: 1 1 auto;
+}
+.v-btn__content div.btn-chip {
+  display: flex;
+  background-color: rgba(58, 123, 248, 1);
+  justify-self: center;
+  flex: 1 1 26px;
+  border-radius: 11px;
 }
 </style>

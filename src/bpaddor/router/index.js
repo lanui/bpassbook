@@ -25,7 +25,6 @@ async function fetchInitState() {
   whisperer
     .sendSimpleMsg(APITYPE_FETCH_INITSTATE)
     .then(async (response) => {
-      console.log('AddorInit&&&&&&&&&&&&&&&&&&&&&&&&&&&&>>>>>>>>>>>>', response, store);
       if (response && response.initState) {
         await store.dispatch('updateInitState', response.initState);
       }

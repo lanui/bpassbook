@@ -1,12 +1,20 @@
 <template>
-  <v-virtual-scroll :items="webItems" item-height="58" height="276">
+  <v-virtual-scroll :items="webItems" item-height="58" height="286">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
-        <v-list-item-avatar outlined color="grey lighten-4 text-center">
-          <v-img v-if="Boolean(item.favIconUrl)" :src="item.favIconUrl" />
+        <!-- <v-list-item-avatar color="#F3F3F3"> -->
+        <!-- <v-img v-if="Boolean(item.favIconUrl)" :src="item.favIconUrl" />
           <div class="deep-purple--text text--accent-2 mx-auto" style="width: 100%;" v-if="!Boolean(item.favIconUrl)">
             {{ item.iconText > 2 ? item.iconText : item.username.substr(0, 1) }}
-          </div>
+          </div> -->
+
+        <!-- <v-icon dark color="#a3c5fb">mdi-clipboard-text-outline</v-icon> -->
+        <!-- </v-list-item-avatar> -->
+
+        <v-list-item-avatar color="#F3F3F3">
+          <v-icon dark color="#a3c5fb">
+            {{ item.isblocker ? 'mdi-clipboard-text-outline' : 'mdi-cloud' }}
+          </v-icon>
         </v-list-item-avatar>
 
         <v-list-item-content class="text-left">
@@ -15,10 +23,10 @@
         </v-list-item-content>
 
         <v-list-item-action style="flex-direction: row;">
-          <v-btn @click="goEditItem(item)" small icon color="deep-purple accent-2 mr-2">
+          <v-btn @click="goEditItem(item)" small icon color="primary mr-2">
             <v-icon>mdi-file-document-edit-outline</v-icon>
           </v-btn>
-          <v-btn @click="deletItem(item)" small icon color="deep-purple accent-2">
+          <v-btn @click="deletItem(item)" small icon color="primary ">
             <v-icon>mdi-delete-forever-outline</v-icon>
           </v-btn>
         </v-list-item-action>
@@ -32,6 +40,7 @@ import { mapGetters } from 'vuex';
 
 import WhispererController from '@/lib/controllers/whisperer-controller';
 import { APITYPE_DELETE_WEBSITE_ITEM } from '@/lib/cnst/api-cnst';
+import IconLocale from '@/assets/icons/icon-locale.png';
 
 export default {
   name: 'BPassword',
@@ -40,6 +49,7 @@ export default {
   },
   data() {
     return {
+      IconLocale,
       datas: [],
       processing: false,
     };
@@ -76,4 +86,15 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.local-icon {
+  height: 18px;
+  width: 14px;
+}
+.item-icon-wrap {
+  display: flex;
+  width: 36px;
+  flex: 0 0 40px;
+  justify-content: center;
+}
+</style>

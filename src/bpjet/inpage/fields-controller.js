@@ -139,11 +139,11 @@ export class FieldsController extends EventEmitter {
       this.currentTarget = currentTarget;
       if (hasLoginForm) {
         this.hostname = window.location.hostname;
-        console.log(
-          'Find LoginForm>> window.location>>>>',
-          this.hostname,
-          window.document.querySelector('input[type="password"]')
-        );
+        // console.log(
+        //   'Find LoginForm>> window.location>>>>',
+        //   this.hostname,
+        //   window.document.querySelector('input[type="password"]')
+        // );
       }
 
       this.store.updateState({ position, usernameSelector, passwordSelector });
@@ -283,7 +283,7 @@ export class FieldsController extends EventEmitter {
               // return;
 
               const showPop = controlNameChanged(resp, _curNameVal, _curPassVal);
-              console.log('BPinjet>>> targetUserName>> changed>>', showPop, _curNameVal, _curPassVal, extIframe);
+              // console.log('BPinjet>>> targetUserName>> changed>>', showPop, _curNameVal, _curPassVal, extIframe);
               if (showPop === 'addor') {
                 createBPIcon(this.targetUserName, addorURL);
               } else if (showPop === 'remove') {
@@ -332,7 +332,7 @@ export class FieldsController extends EventEmitter {
               // return;
 
               const showPop = controlPasswordChanged(resp, _curNameVal, _curPassVal);
-              console.log('BPinjet>>> targetPassword>> changed>>', showPop, _curPassVal, _curNameVal, extIframe);
+              // console.log('BPinjet>>> targetPassword>> changed>>', showPop, _curPassVal, _curNameVal, extIframe);
               if (showPop === 'addor') {
                 createBPIcon(this.targetUserName, addorURL);
               } else if (showPop === 'remove') {
@@ -369,7 +369,7 @@ export class FieldsController extends EventEmitter {
           { includeTlsChannelId: true },
           async (resp) => {
             const showPop = controlPasswordPopup(resp, _curNameVal, _curPassVal);
-            console.log('BPinjet>>> targetPassword>> focusin>>', showPop, _curPassVal, _curNameVal, extIframe);
+            // console.log('BPinjet>>> targetPassword>> focusin>>', showPop, _curPassVal, _curNameVal, extIframe);
 
             if (showPop === 'addor') {
               createBPIcon(this, addorURL);
@@ -390,7 +390,7 @@ export class FieldsController extends EventEmitter {
       });
 
       /** input changed  */
-      targetPassword.addEventListener(PasswordInputEvent, (e) => console.log(e.detail.sendValToInputor()));
+      targetPassword.addEventListener(PasswordInputEvent, (e) => e.detail.sendValToInputor());
       targetPassword.addEventListener('input', debounce(hanldePasswordInputEvent, 200));
 
       $(targetPassword).on('focusout', function (e) {
@@ -412,7 +412,7 @@ export class FieldsController extends EventEmitter {
             { includeTlsChannelId: true },
             async (resp) => {
               const showPop = controlNamePopup(resp, _curNameVal, _curPassVal);
-              console.log('BPinjet>>> targetUserName>> focusin>>', _curNameVal, _curPassVal, showPop);
+              // console.log('BPinjet>>> targetUserName>> focusin>>', _curNameVal, _curPassVal, showPop);
               if (showPop === 'addor') {
                 createBPIcon(this, addorURL);
               } else if (showPop && showPop.startsWith('selector')) {
@@ -432,7 +432,7 @@ export class FieldsController extends EventEmitter {
         });
 
         /** input changed  */
-        targetUserName.addEventListener(FIELD_INPUTOR_EVENTNAME, (e) => console.log(e.detail.sendValToInputor()));
+        targetUserName.addEventListener(FIELD_INPUTOR_EVENTNAME, (e) => e.detail.sendValToInputor());
         targetUserName.addEventListener('input', debounce(hanldeNameInputEvent, 200));
 
         $(targetUserName).on('focusout', function (e) {
@@ -634,7 +634,7 @@ function controlNameChanged(resp, nameValue, passValue) {
   if (exactMatched) {
     return 'remove';
   }
-  console.log('BPinjet>>> targetUserName>> subMatchs>>', subMatchs, _items);
+  // console.log('BPinjet>>> targetUserName>> subMatchs>>', subMatchs, _items);
   if (subMatchs && subMatchs.length > 0) {
     return 'selector';
   }
@@ -752,7 +752,7 @@ export function checkFormFields() {
     currentTarget = targetUserName || targetPassword;
     currentWidth = currentTarget.offsetWidth || 0;
     position = getElPosition(currentTarget) || {};
-    console.log(`${LOG_PREFFIX} >>chrome tabs>>`, chrome.runtime);
+    // console.log(`${LOG_PREFFIX} >>chrome tabs>>`, chrome.runtime);
   }
 
   return {

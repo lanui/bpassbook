@@ -51,7 +51,7 @@
             :label="$t('l.password')"
             outlined
             rounded
-            :clearable="true"
+            :clearable="false"
             :loading="ctrl.loading"
             :rules="rules.required"
             :counter="true"

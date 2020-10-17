@@ -41,10 +41,13 @@ export function sendMessage(port, data) {
   port.postMessage(message);
 }
 
+/**
+ * send Message once
+ * @param {*} port
+ * @param {*} opts
+ */
 export function sendAddItemOnce(port, opts = {}) {
   const { item, cb } = opts;
-  console.log(`${LOG_PREFFIX}>sendAddItemOnce>>>`, item, port);
-
   const message = {
     apiType: APITYPE_INPUTOR_ADDITEM,
     data: { item },
@@ -59,7 +62,7 @@ export function sendAddItemOnce(port, opts = {}) {
  * @param {*} sendResp
  */
 async function handleLivedMessage(req, sender, sendResp) {
-  console.log(`${LOG_PREFFIX}>>>`, req, sender, sendResp);
+  // console.log(`${LOG_PREFFIX}>>>`, req, sender, sendResp);
   const { apiType, data } = req;
   switch (apiType) {
     case APITYPE_INIT_STATE:

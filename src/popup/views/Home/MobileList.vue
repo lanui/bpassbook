@@ -15,10 +15,10 @@
         </v-list-item-content>
 
         <v-list-item-action style="flex-direction: row;">
-          <v-btn @click="goEditItem(item)" small icon color="deep-purple accent-2 mr-2">
+          <v-btn @click="goEditItem(item)" small icon color="primary mr-2">
             <v-icon>mdi-file-document-edit-outline</v-icon>
           </v-btn>
-          <v-btn @click="deletItem(item)" small icon color="deep-purple accent-2">
+          <v-btn @click="deletItem(item)" small icon color="primary">
             <v-icon>mdi-delete-forever-outline</v-icon>
           </v-btn>
         </v-list-item-action>

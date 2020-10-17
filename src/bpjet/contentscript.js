@@ -56,13 +56,12 @@ async function setupStream() {
   extensionPort.onMessage.addListener(function (message, sender) {
     const { apiType, data } = message;
 
-    console.log(`${LOG_PREFFIX}: Recv Backend Message:`, message, sender);
+    // console.log(`${LOG_PREFFIX}: Recv Backend Message:`, message, sender);
     switch (apiType) {
       case APITYPE_CONTENTSCRIPTS_TRANSFER:
-        console.log(`${LOG_PREFFIX}-RECV: ${apiType}>>>`, apiType, data);
-        console.log(`${LOG_PREFFIX} >>`, window);
+        // console.log(`${LOG_PREFFIX}-RECV: ${apiType}>>>`, apiType, data);
         pageStream._write(data, ENCODING_UTF8, (resp) => {
-          console.log(`${LOG_PREFFIX}>>>>` + 'extensionPort.onMessage.addListener success', resp);
+          // console.log(`${LOG_PREFFIX}>>>>` + 'extensionPort.onMessage.addListener success', resp);
         });
         break;
 
@@ -74,7 +73,7 @@ async function setupStream() {
 
   const extensionStream = new PortStream(extensionPort);
 
-  console.log(`${LOG_PREFFIX}: Create ExtensionPort>>>`, extensionPort, extensionStream);
+  // console.log(`${LOG_PREFFIX}: Create ExtensionPort>>>`, extensionPort, extensionStream);
   const extensionMux = new ObjectMultiplex();
   extensionMux.setMaxListeners(25);
   pump(extensionMux, extensionStream, extensionMux, (err) =>
