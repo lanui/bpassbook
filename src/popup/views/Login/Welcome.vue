@@ -13,10 +13,11 @@
     </v-row>
     <v-row justify="center" class="text-center">
       <v-col cols="8">
-        <v-btn block outlined @click="goSignUp" color="indigo" class="mx-4 ma-6">
+        <v-btn block outlined @click="goSignUp" color="indigo" class="mt-6 mb-0">
           {{ $t('btn.createWallet') }}
         </v-btn>
-        <v-btn block outlined @click="importWallet" color="indigo" class="mx-4 ma-6">
+        <div class="or-label my-2">or</div>
+        <v-btn block outlined @click="importWallet" color="indigo" class="mt-0 mb-6">
           {{ $t('btn.importWallet') }}
         </v-btn>
       </v-col>

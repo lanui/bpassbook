@@ -13,27 +13,38 @@
     <v-row align-content="center" justify="center">
       <v-col cols="10">
         <v-form ref="signupForm">
+          <!-- <div class="label py-2">
+            {{$t('l.password')}}
+          </div> -->
           <v-text-field
             name="password"
+            rounded
+            outlined
             :loading="creating"
-            :label="$t('l.password')"
-            :placeholder="$t('l.passwordPlaceHolder')"
+            label=""
+            :placeholder="$t('l.password')"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="pwdShow = !pwdShow"
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
             v-model="password"
+            color="bpgray"
+            dense
           >
           </v-text-field>
           <v-text-field
             name="rePassword"
+            rounded
+            outlined
             :loading="creating"
-            :label="$t('l.confirmPassword')"
-            :placeholder="$t('l.passwordPlaceHolder')"
+            :label="''"
+            :placeholder="$t('l.confirmPassword')"
             :append-icon="pwdShow ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="pwdShow = !pwdShow"
             :type="pwdShow ? 'text' : 'password'"
             v-model="rePassword"
+            color="bpgray"
+            dense
           >
           </v-text-field>
           <div class="error-tips" v-if="!!notMatched">
@@ -41,7 +52,7 @@
               {{ notMatched }}
             </span>
           </div>
-          <v-btn @click="createWallet" block larage color="light-blue darken-1" dark>
+          <v-btn @click="createWallet" rounded block larage color="light-blue darken-1" dark>
             <v-progress-circular
               v-if="creating"
               indeterminate

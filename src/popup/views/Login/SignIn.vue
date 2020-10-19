@@ -10,6 +10,7 @@
         </h1>
       </v-col>
     </v-row>
+    <!-- :label="$t('l.password')" -->
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
         <v-form ref="signInForm">
@@ -19,13 +20,16 @@
             :rules="rules.password"
             :type="pwdShow ? 'text' : 'password'"
             name="Password"
-            :label="$t('l.password')"
             counter
             :hint="pwdHint"
             @click:append="pwdShow = !pwdShow"
             :error-messages="loginError"
             :placeholder="$t('l.passwordPlaceHolder')"
             v-model="password"
+            rounded
+            outlined
+            dense
+            color="bggray"
           >
           </v-text-field>
         </v-form>
@@ -33,7 +37,7 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="10">
-        <v-btn @click="login" block larage color="light-blue darken-1" dark>
+        <v-btn @click="login" rounded block color="light-blue darken-1" dark dense>
           <v-progress-circular
             v-if="loginLoading"
             indeterminate

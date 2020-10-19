@@ -167,7 +167,7 @@ export default {
             tab, //不用
           },
           function (respnose) {
-            console.log('Response Data', respnose);
+            // console.log('Response Data', respnose);
             if (respnose && typeof respnose.data === 'object') {
               that.setItem(respnose.data);
             }
