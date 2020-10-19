@@ -30,9 +30,9 @@ function injetStartup() {
     addorURL: chrome.runtime.getURL(ADDOR_PAGER),
   };
   const controller = new FieldsController({ initState });
-  controller.setMaxListeners(100);
   controller.checkedLoginForm(window.document);
-
+  // controller.bindingEventsAndSubcribeStateChanged();
+  controller.setMaxListeners(100);
   if (controller && !controller.hasLoginForm) {
     controller.bindMutationObserver(window.document);
   }
@@ -65,7 +65,7 @@ function injetStartup() {
     const { item, apiType, tab, signal } = message;
 
     const data = controller.getInputFieldData(tab);
-    console.log(`${LOG_PREFFIX}-host>>>`, data);
+    // console.log(`${LOG_PREFFIX}-host>>>`, data);
 
     const isFn = typeof sendResponse === 'function';
     if (data.hasLoginForm) {

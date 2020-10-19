@@ -20,8 +20,8 @@ import {
 } from './ui-helper';
 
 const LOG_PREFFIX = 'BP-field-controller';
-export const PASSWORD_SELECTOR = 'input[type="password"]';
-export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"]';
+export const PASSWORD_SELECTOR = 'input[type="password"][name],input[type="password"]';
+export const USERNAME_SELECTOR = 'input[type="mail"],input[type="text"][name],input[type="text"]';
 const MAIL_SELECTOR = 'input[type="mail"]';
 const FAVICON_SELECTOR = '';
 
@@ -52,6 +52,7 @@ export class FieldsController extends EventEmitter {
     this.store = new ObservableStore(initState);
     this.hasLoginForm = false;
 
+    //
     this.on('elChanged', this.listenerMutationObs);
   }
 
@@ -139,15 +140,9 @@ export class FieldsController extends EventEmitter {
       this.currentTarget = currentTarget;
       if (hasLoginForm) {
         this.hostname = window.location.hostname;
-        // console.log(
-        //   'Find LoginForm>> window.location>>>>',
-        //   this.hostname,
-        //   window.document.querySelector('input[type="password"]')
-        // );
       }
 
       this.store.updateState({ position, usernameSelector, passwordSelector });
-
       // Bind Target field event
       this._initTargetBindEvents();
 
@@ -156,6 +151,14 @@ export class FieldsController extends EventEmitter {
     } else {
     }
   }
+
+  // bindingEventsAndSubcribeStateChanged(){
+  //   // Bind Target field event
+  //   this._initTargetBindEvents();
+
+  //   // subcribe store
+  //   this.store.subscribe(handleStateChanged);
+  // }
 
   async fetchInitData() {}
 
@@ -253,9 +256,11 @@ export class FieldsController extends EventEmitter {
   /**
    *
    */
-  _initTargetBindEvents() {
+  async _initTargetBindEvents() {
     const targetPassword = this.targetPassword;
     const targetUserName = this.targetUserName;
+    const { usernameSelector, passwordSelector } = (await this.store.getState()) || {};
+
     const _ctx = this;
     const inputorURL = this.url;
     const addorURL = this.addorURL;
@@ -271,8 +276,17 @@ export class FieldsController extends EventEmitter {
            * 2. update this items
            * 3. check show Icon
            */
-          const _curNameVal = this.targetUserName.value;
-          const _curPassVal = this.targetPassword.value;
+
+          const _curNameVal =
+            targetUserName.value ||
+            (usernameSelector && document.querySelector(usernameSelector)
+              ? document.querySelector(usernameSelector).value
+              : '');
+          const _curPassVal =
+            targetPassword.value ||
+            (passwordSelector && document.querySelector(passwordSelector)
+              ? document.querySelector(passwordSelector).value
+              : '');
           const extIframe = exsitsSelectorIframe(inputorURL);
 
           chrome.runtime.sendMessage(
@@ -391,7 +405,7 @@ export class FieldsController extends EventEmitter {
 
       /** input changed  */
       targetPassword.addEventListener(PasswordInputEvent, (e) => e.detail.sendValToInputor());
-      targetPassword.addEventListener('input', debounce(hanldePasswordInputEvent, 200));
+      targetPassword.addEventListener('input', debounce(hanldePasswordInputEvent, 500));
 
       $(targetPassword).on('focusout', function (e) {
         $(e.target).off('click');
@@ -433,7 +447,7 @@ export class FieldsController extends EventEmitter {
 
         /** input changed  */
         targetUserName.addEventListener(FIELD_INPUTOR_EVENTNAME, (e) => e.detail.sendValToInputor());
-        targetUserName.addEventListener('input', debounce(hanldeNameInputEvent, 200));
+        targetUserName.addEventListener('input', debounce(hanldeNameInputEvent, 500));
 
         $(targetUserName).on('focusout', function (e) {
           $(e.target).off('click');
@@ -675,15 +689,22 @@ export function checkFormFieldsForChanged(mutations) {
   origin = window.location.origin;
 
   let tmpName = null;
+  let tmpPass = null;
   mutations.forEach((mutationRecord) => {
     const { addedNodes } = mutationRecord;
+    //$nameFind[0].style.display !== 'none' handle baidu.com  垃圾baidu
     if (addedNodes.length > 0) {
       const $password = $(addedNodes[0]).find(PASSWORD_SELECTOR);
-      if ($password[0]) {
+      // console.log('Check Login Form:checkFormFieldsForChanged mutationRecord in node &&& >>>>>>', addedNodes[0])
+      if ($password[0] && !targetPassword) {
         targetPassword = $password[0];
       }
+      if (!targetPassword) {
+        targetPassword = document.querySelector(PASSWORD_SELECTOR);
+        // console.log('Check Login Form:checkFormFieldsForChanged mutationRecord in node &&& >>>>>>', addedNodes[0])
+      }
       const $nameFind = $(addedNodes[0]).find(USERNAME_SELECTOR);
-      if ($nameFind[0]) {
+      if ($nameFind[0] && !tmpName) {
         tmpName = $nameFind[0];
       }
     }
@@ -694,6 +715,19 @@ export function checkFormFieldsForChanged(mutations) {
     loginForm = passwordSelector.form || null;
     targetUserName = tmpName;
   }
+
+  if (Boolean(loginForm)) {
+    //has form
+    targetUserName = loginForm.querySelector(USERNAME_SELECTOR);
+  } else {
+    if (!targetUserName && targetPassword) {
+      //no form
+      targetUserName = recursiveFindUsername(targetPassword);
+    } else {
+      targetUserName = getValidTarget(document.querySelectorAll(USERNAME_SELECTOR));
+    }
+  }
+
   if (targetUserName) {
     targetUserName.setAttribute('autocomplete', 'off');
     usernameSelector = buildUserNameSelector(targetUserName);
@@ -703,6 +737,10 @@ export function checkFormFieldsForChanged(mutations) {
     currentTarget = targetUserName || targetPassword;
     currentWidth = currentTarget.offsetWidth || 0;
     position = getElPosition(currentTarget) || {};
+  }
+
+  if (hasLoginForm) {
+    // console.log('Check Login Form:checkFormFieldsForChanged >>>>>>', usernameSelector)
   }
 
   return {
@@ -730,16 +768,31 @@ export function checkFormFields() {
     passwordSelector = null;
 
   origin = window.location.origin;
-  targetPassword = window.document.querySelector(PASSWORD_SELECTOR);
+  // targetPassword = window.document.querySelector(PASSWORD_SELECTOR);
+
+  targetPassword = getValidTarget(window.document.querySelectorAll(PASSWORD_SELECTOR));
+
+  // console.log('Check Login Form:checkFormFields password >>>>>>', targetPassword)
 
   if (targetPassword) {
     loginForm = targetPassword.form || null;
     passwordSelector = buildPasswordSelector(targetPassword);
   }
 
-  targetUserName = Boolean(loginForm)
-    ? loginForm.querySelector(USERNAME_SELECTOR)
-    : window.document.querySelector(USERNAME_SELECTOR);
+  if (Boolean(loginForm)) {
+    //has form
+    targetUserName = loginForm.querySelector(USERNAME_SELECTOR);
+    // console.log('Check Login Form:checkFormFields targetUserName in parent >>>>>>', targetUserName)
+  } else {
+    if (!targetUserName && targetPassword) {
+      //no form
+      targetUserName = recursiveFindUsername(targetPassword);
+      // console.log('Check Login Form:checkFormFields targetUserName in dom >>>>>>', targetUserName)
+    } else {
+      targetUserName = getValidTarget(document.querySelectorAll(USERNAME_SELECTOR));
+      // console.log('Check Login Form:checkFormFields password >>>>>>', targetUserName)
+    }
+  }
 
   if (targetUserName) {
     targetUserName.setAttribute('autocomplete', 'off');
@@ -753,6 +806,10 @@ export function checkFormFields() {
     currentWidth = currentTarget.offsetWidth || 0;
     position = getElPosition(currentTarget) || {};
     // console.log(`${LOG_PREFFIX} >>chrome tabs>>`, chrome.runtime);
+  }
+
+  if (hasLoginForm) {
+    console.log('Check Login Form:checkFormFields >>>>>>', targetUserName, targetPassword);
   }
 
   return {
@@ -803,6 +860,34 @@ function windowScrollObserve(controller) {
         controller.updatePosition(position);
       }
     }
+  }
+}
+
+/**
+ *
+ * @param {*} nodelist
+ */
+function getValidTarget(nodelist) {
+  let _target = null;
+  nodelist.forEach((node) => {
+    if (node.style.diplay !== 'none' && _target === null) {
+      _target = node;
+    }
+  });
+  return _target;
+}
+
+function recursiveFindUsername(targetPassword) {
+  if (!targetPassword || !targetPassword.parentElement) {
+    return null;
+  }
+  // console.log("&&&&***>>>>", targetPassword, targetPassword.parentElement)
+  const _targetUname = targetPassword.parentElement.querySelector(USERNAME_SELECTOR);
+  if (!_targetUname) {
+    return recursiveFindUsername(targetPassword.parentElement);
+  } else {
+    // console.log("&&&&***>>>>find>>>", targetPassword, _targetUname)
+    return _targetUname;
   }
 }
 

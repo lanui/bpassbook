@@ -48,7 +48,7 @@
       "exclude_matches": ["*://extensions/*"],
       "css": ["share/css/injet.css"],
       "js": ["bpjet/contentscript.js", "bpjet/bpjet.js"],
-      "run_at": "document_idle",
+      "run_at": "document_end",
       "all_frames": true
     }
   ],

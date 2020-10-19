@@ -13,7 +13,7 @@
 
         <v-list-item-avatar color="#F3F3F3">
           <v-icon dark color="#a3c5fb">
-            {{ item.isblocker ? 'mdi-clipboard-text-outline' : 'mdi-cloud' }}
+            {{ item.isblocker ? 'mdi-cloud' : 'mdi-clipboard-text-outline' }}
           </v-icon>
         </v-list-item-avatar>
 

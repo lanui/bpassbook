@@ -411,9 +411,10 @@ async function setupController(initState) {
   }
 
   //auto  load test
-  setTimeout(() => {
-    // controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
-  }, 1000);
+  setTimeout(async () => {
+    const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+    console.warn('development auto login>>>>', rsp);
+  }, 2000);
 }
 
 function portMessageListener(controller, remotePort) {
