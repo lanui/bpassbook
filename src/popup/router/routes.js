@@ -22,7 +22,7 @@ export default [
       {
         path: 'index',
         alias: '/',
-        component: PopupIndex,
+        component: PopupIndex, //PopupIndex
         meta: {
           auth: true,
         },

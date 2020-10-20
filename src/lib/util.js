@@ -12,6 +12,11 @@ export const getExtensionUrl = (part) => {
   return extension.runtime.getURL(part);
 };
 
+export const extVersion = () => {
+  const manifest = extension.runtime.getManifest();
+  return manifest ? manifest.version : '';
+};
+
 /**
  *
  */

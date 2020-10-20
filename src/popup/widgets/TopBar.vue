@@ -2,9 +2,9 @@
   <v-app-bar app :dense="dense" clipped-right light>
     <menu-logo />
     <v-container :dense="dense" align="center" class="networks-wrapper">
-      <v-row class="my-0 py-0">
+      <v-row class="fill-height my-auto py-auto">
         <v-spacer></v-spacer>
-        <v-select
+        <!-- <v-select
           rounded
           outlined
           dense
@@ -20,7 +20,36 @@
           <v-icon slot="prepend-inner" size="22px" :color="networkColor" dense>
             mdi-checkbox-blank-circle
           </v-icon>
-        </v-select>
+        </v-select> -->
+
+        <v-menu offset-y content-class="network-pop-menu">
+          <template v-slot:activator="{ attrs, on }">
+            <v-chip v-bind="attrs" v-on="on" small filter pill class="network-chiper">
+              <v-icon size="8" :color="networkColor">
+                mdi-checkbox-blank-circle
+              </v-icon>
+              <span class="ms-2">Ropsten</span>
+            </v-chip>
+          </template>
+          <v-list item-height="16" v-for="(nw, idx) in networks" :key="idx" class="py-0">
+            <v-list-item dense @click="networkChanged(nw.value)" class="network-item py-0 my-0">
+              <!-- <v-list-item-title>
+                <v-icon size="18" :color="nw.color">
+                  mdi-checkbox-blank-circle
+                </v-icon>
+                <span>{{nw.text}}</span>
+              </v-list-item-title> -->
+              <v-list-item-content>
+                <div>
+                  <v-icon size="14" :color="nw.color">
+                    mdi-checkbox-blank-circle
+                  </v-icon>
+                  <span class="ms-1">{{ nw.text }}</span>
+                </div>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-row>
     </v-container>
     <v-btn v-if="rightMenus" icon :dense="dense" @click="togglerDrawer" class="ms-2" small>
@@ -83,7 +112,26 @@ export default {
 };
 </script>
 <style>
-.networks-wrapper {
+.network-chiper {
+  font-size: 14px;
+  border-radius: 10px;
+  background-color: rgba(243, 244, 246, 1);
+  border: 2px solid #c8cccf;
+}
+
+.network-pop-menu {
+}
+
+.network-item > div.v-list-item__content {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+}
+
+.network-item > div.v-list-item__content > div {
+  display: flex;
+}
+/* .networks-wrapper {
   height: 100%;
   display: inline-block;
   vertical-align: middle;
@@ -108,5 +156,5 @@ export default {
 .network-selector {
   width: 160px;
   height: 28px;
-}
+} */
 </style>

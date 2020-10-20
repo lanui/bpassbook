@@ -13,20 +13,23 @@
     >
       <v-list :dense="dense" class="py-0">
         <v-list-item v-for="(nav, idx) in navMenus" @click.stop="navMenuClick(nav)" :key="idx">
-          <v-list-item-avatar>
-            <v-icon>{{ nav.icon }}</v-icon>
+          <v-list-item-avatar size="20">
+            <v-icon v-if="!Boolean(nav.iconImg)">{{ nav.icon }}</v-icon>
+            <v-img v-if="Boolean(nav.iconImg)" :src="nav.iconImg"></v-img>
           </v-list-item-avatar>
-          <v-list-item-content>{{ nav.text }}</v-list-item-content>
+          <v-list-item-content
+            ><span class="nav-drawer-item--title">{{ nav.text }}</span></v-list-item-content
+          >
         </v-list-item>
         <v-divider></v-divider>
         <v-list-item @click="lockedHandle">
-          <v-list-item-avatar>
-            <v-icon>
-              {{ isUnlocked ? unlockedIcon : lockedIcon }}
-            </v-icon>
+          <v-list-item-avatar size="20">
+            <v-img :src="iconLocking"></v-img>
           </v-list-item-avatar>
           <v-list-item-content>
-            {{ isUnlocked ? $t('nav.login.locking') : $t('nav.login.unlock') }}
+            <span class="nav-drawer-item--title">
+              {{ isUnlocked ? $t('nav.login.locking') : $t('nav.login.unlock') }}
+            </span>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -41,6 +44,7 @@ import { mapState, mapGetters } from 'vuex';
 
 import { LOCKED_MDI, UNLOCKED_MDI } from '@/ui/constants/icon-cnsts';
 import MessageController from '@/popup/controllers/message-controller';
+import iconLocking from '@/assets/icons/icon-locking.png';
 
 // import Whisperer from '@/lib/controllers/whisperer-controller'
 
@@ -71,6 +75,7 @@ export default {
   },
   data() {
     return {
+      iconLocking,
       lockedIcon: LOCKED_MDI,
       unlockedIcon: UNLOCKED_MDI,
       navMenus: navs.filter((nav) => nav.roles.includes('p3')),
@@ -108,5 +113,12 @@ export default {
 <style>
 aside.v-navigation-drawer {
   top: 50px;
+}
+
+.nav-drawer-item--title {
+  font-size: 14px;
+  color: rgba(25, 25, 29, 1);
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
 }
 </style>

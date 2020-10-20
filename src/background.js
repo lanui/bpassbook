@@ -412,8 +412,8 @@ async function setupController(initState) {
 
   //auto  load test
   setTimeout(async () => {
-    // const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
-    // console.warn('development auto login>>>>', rsp);
+    const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+    console.warn('development auto login>>>>', rsp);
   }, 2000);
 }
 
