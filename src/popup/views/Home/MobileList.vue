@@ -1,25 +1,27 @@
 <template>
-  <v-virtual-scroll :items="mobItemsState" item-height="58" height="276">
+  <v-virtual-scroll :items="mobItemsState" item-height="56" height="282">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
-        <v-list-item-avatar outlined color="grey lighten-4 text-center">
-          <v-img v-if="Boolean(item.favIconUrl)" :src="item.favIconUrl" />
-          <div class="deep-purple--text text--accent-2 mx-auto" style="width: 100%;" v-if="!Boolean(item.favIconUrl)">
-            {{ item.iconText > 2 ? item.iconText : item.username.substr(0, 1) }}
-          </div>
+        <v-list-item-avatar outlined color="#F3F3F3">
+          <v-icon dark color="#a3c5fb">
+            {{ item.isblocker ? 'mdi-cloud' : 'mdi-clipboard-text-outline' }}
+          </v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-content class="text-left">
-          <v-list-item-title v-text="item.tips"></v-list-item-title>
-          <v-list-item-subtitle v-text="item.username"></v-list-item-subtitle>
+        <v-list-item-content class="text-left pb-item">
+          <v-list-item-title>
+            {{ item.username }}
+          </v-list-item-title>
+          <v-list-item-subtitle class="pb-item-hostname">
+            <input :value="item.password" type="password" readonly="readonly" />
+          </v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action style="flex-direction: row;">
-          <v-btn @click="goEditItem(item)" small icon color="primary mr-2">
-            <v-icon>mdi-file-document-edit-outline</v-icon>
-          </v-btn>
-          <v-btn @click="deletItem(item)" small icon color="primary">
-            <v-icon>mdi-delete-forever-outline</v-icon>
+          <v-btn @click="goEditItem(item)" small icon color="bpgray me-2">
+            <v-icon>
+              {{ icons.ARROW_RIGHT_MDI }}
+            </v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -38,6 +40,7 @@ export default {
   name: 'BPassword',
   computed: {
     ...mapGetters('passbook', ['mobItemsState']),
+    ...mapGetters('settings', ['icons']),
   },
   data() {
     return {

@@ -1,16 +1,6 @@
 <template>
   <v-container class="px-0 py-0">
-    <v-system-bar dark color="primary" :height="40" :lights-out="false" :window="true">
-      <v-icon @click.stop="gobackHandle" larage>
-        {{ icons.left }}
-      </v-icon>
-      <span>
-        {{ $t('p.passbook.addItemTitle') }}
-      </span>
-      <v-spacer></v-spacer>
-
-      <v-icon>{{ icons.keystone }}</v-icon>
-    </v-system-bar>
+    <subnav-bar :gobackCall="gobackHandle" :title="$t('p.passbook.addItemTitle')" />
 
     <v-row justify="center">
       <v-col cols="10" class="mt-4">
@@ -94,20 +84,25 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 import { APITYPE_ADD_WEBSITE_ITEM } from '@/lib/cnst/api-cnst.js';
 import { validItem, titleSuffixRules, hostnameRules, trimProps } from '@/ui/constants/valid-rules';
 
-import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
+import SubnavBar from '@/popup/widgets/SubnavBar.vue';
+
+// import { ARROW_LEFT_MDI, LOCKED_LINK_MDI } from '@/ui/constants/icon-cnsts.js';
 
 export default {
   name: 'AddPassbookItem',
+  components: {
+    SubnavBar,
+  },
+  computed: {
+    ...mapGetters('settings', ['icons']),
+  },
   data() {
     return {
-      icons: {
-        left: ARROW_LEFT_MDI,
-        keystone: LOCKED_LINK_MDI,
-      },
       data: {
         hostname: '',
         tips: '',

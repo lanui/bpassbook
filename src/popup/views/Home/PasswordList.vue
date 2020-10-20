@@ -1,5 +1,5 @@
 <template>
-  <v-virtual-scroll :items="webItems" item-height="58" height="286">
+  <v-virtual-scroll :items="webItems" item-height="70" height="282">
     <template v-slot="{ item }">
       <v-list-item @click="selectItem" dense>
         <!-- <v-list-item-avatar color="#F3F3F3"> -->
@@ -17,17 +17,21 @@
           </v-icon>
         </v-list-item-avatar>
 
-        <v-list-item-content class="text-left">
-          <v-list-item-title v-text="item.tips"></v-list-item-title>
-          <v-list-item-subtitle v-text="item.username"></v-list-item-subtitle>
+        <v-list-item-content class="text-left pb-item">
+          <v-list-item-title>
+            {{ item.username }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <input :value="item.password" type="password" readonly="readonly" />
+          </v-list-item-subtitle>
+          <v-list-item-subtitle class="pb-item-hostname">
+            {{ item.hostname }}
+          </v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action style="flex-direction: row;">
-          <v-btn @click="goEditItem(item)" small icon color="primary mr-2">
-            <v-icon>mdi-file-document-edit-outline</v-icon>
-          </v-btn>
-          <v-btn @click="deletItem(item)" small icon color="primary ">
-            <v-icon>mdi-delete-forever-outline</v-icon>
+          <v-btn @click="goEditItem(item)" small icon color="bpgray me-2">
+            <v-icon>{{ icons.ARROW_RIGHT_MDI }}</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>
@@ -46,6 +50,7 @@ export default {
   name: 'BPassword',
   computed: {
     ...mapGetters('passbook', ['webItems']),
+    ...mapGetters('settings', ['icons']),
   },
   data() {
     return {

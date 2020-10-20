@@ -8,7 +8,7 @@
           </v-icon>
         </div>
         <div class="item-line balance">
-          {{ ethBalText }}
+          {{ diamondsBalText }}
         </div>
         <div class="item-line symbol">
           Diamonds
@@ -77,7 +77,7 @@ export default {
   computed: {
     ...mapState(['dense', 'wallet', 'nickname']),
     ...mapGetters(['shortAddress', 'networkColor']),
-    ...mapGetters('acc', ['ethBalText', 'btsBalText']),
+    ...mapGetters('acc', ['diamondsBalText', 'ethBalText', 'btsBalText']),
   },
   data() {
     return {

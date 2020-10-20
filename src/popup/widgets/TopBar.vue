@@ -1,32 +1,29 @@
 <template>
   <v-app-bar app :dense="dense" clipped-right light>
     <menu-logo />
-
     <v-container :dense="dense" align="center" class="networks-wrapper">
-      <row class="my-0 py-0" justify="right">
-        <v-col cols="10" class="text-right my-0 py-0">
-          <v-spacer></v-spacer>
-          <v-select
-            rounded
-            outlined
-            dense
-            :height="20"
-            :color="networkColor"
-            v-model="chainId"
-            light
-            item-color="grey"
-            @change="networkChanged"
-            :items="networks"
-            class="network-selector"
-          >
-            <v-icon slot="prepend-inner" size="22px" :color="networkColor" dense>
-              mdi-checkbox-blank-circle
-            </v-icon>
-          </v-select>
-        </v-col>
-      </row>
+      <v-row class="my-0 py-0">
+        <v-spacer></v-spacer>
+        <v-select
+          rounded
+          outlined
+          dense
+          :height="20"
+          :color="networkColor"
+          v-model="chainId"
+          light
+          item-color="grey"
+          @change="networkChanged"
+          :items="networks"
+          class="network-selector"
+        >
+          <v-icon slot="prepend-inner" size="22px" :color="networkColor" dense>
+            mdi-checkbox-blank-circle
+          </v-icon>
+        </v-select>
+      </v-row>
     </v-container>
-    <v-btn v-if="rightMenus" icon :dense="dense" @click="togglerDrawer" class="ma-0" small>
+    <v-btn v-if="rightMenus" icon :dense="dense" @click="togglerDrawer" class="ms-2" small>
       <v-icon color="light-blue accent-4" dense>
         mdi-menu
       </v-icon>
