@@ -211,7 +211,7 @@ class ContextController extends EventEmitter {
    */
   async login(message) {
     if (typeof message !== 'object' || typeof message.data !== 'object') {
-      return errorMessage();
+      return errorMessage('lost arguments', {});
     }
 
     const { password, redirect } = message.data;
@@ -222,7 +222,7 @@ class ContextController extends EventEmitter {
     }
 
     const env3 = (await this.store.getState()).env3;
-    if (!env3) return errorMessage('lost env3 data.');
+    if (!env3) return errorMessage('lost env3 data.', {});
 
     //unlock
     try {

@@ -1,5 +1,7 @@
 <template>
   <v-container>
+    <subnav-bar :gobackCall="gobackHandle" class="px-0 mx-0" />
+
     <v-row align-content="center" justify="center" class="text-center">
       <v-col cols="12">
         <logo-big :size="40" />
@@ -65,19 +67,13 @@
         </v-form>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <div>
-          {{ v3 }}
-        </div>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex';
 
+import SubnavBar from '@/popup/widgets/SubnavBar.vue';
 import LogoBig from '@/widgets/ExtLogo';
 import { passwordRules } from '@/ui/constants/valid-rules';
 import { GenerateWalletAndOpen } from '@/bglib/account-creator';
@@ -85,6 +81,7 @@ import { GenerateWalletAndOpen } from '@/bglib/account-creator';
 export default {
   name: 'PopSignUp',
   components: {
+    SubnavBar,
     LogoBig,
   },
   computed: {
@@ -106,6 +103,10 @@ export default {
     };
   },
   methods: {
+    gobackHandle() {
+      this.$refs.signupForm.reset();
+      this.$router.go(-1);
+    },
     async createWallet() {
       if (this.$refs.signupForm.validate()) {
         if (this.password !== this.rePassword) {

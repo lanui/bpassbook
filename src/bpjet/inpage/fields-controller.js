@@ -369,6 +369,12 @@ export class FieldsController extends EventEmitter {
 
     /** Target Password Binding events */
     if (targetPassword) {
+      if (targetPassword.form) {
+        targetPassword.form.addEventListener('submit', (e) => {
+          console.log('BPForm submit>>>>>>>>>>>>>>>>>>>>>>', e);
+        });
+      }
+
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
         _ctx.currentTarget = e.target;
@@ -511,7 +517,7 @@ function controlPasswordPopup(resp, nameValue, passValue) {
 
   if (subMatchs && subMatchs.length > 0) {
     // BPassword items matched input name value multi items show selector
-    console.log('BPinjet>>> showPWDPop>>>>', subMatchs);
+    // console.log('BPinjet>>> showPWDPop>>>>', subMatchs);
     return 'selector-subMatch';
   }
 
@@ -809,7 +815,7 @@ export function checkFormFields() {
   }
 
   if (hasLoginForm) {
-    console.log('Check Login Form:checkFormFields >>>>>>', targetUserName, targetPassword);
+    // console.log('Check Login Form:checkFormFields >>>>>>', targetUserName, targetPassword);
   }
 
   return {

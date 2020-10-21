@@ -8,12 +8,16 @@ export const UNKNOWN_MESSAGE = 'Error: unknown exception.';
  * @param {*} errorMsg
  * @param {*} param1
  */
-export const errorMessage = (errorMsg, { code = UNKNOW_ERR, originApi = '' }) => {
+export const errorMessage = (errorMsg, { code = UNKNOW_ERR, originApi = '' } = opts) => {
   let message = UNKNOWN_MESSAGE;
   if (typeof errorMsg === 'object' && errorMsg instanceof Error) {
     message = errorMsg.message;
   } else if (typeof errorMsg === 'string') {
     message = errorMsg;
+  }
+  if (typeof opts !== 'object') {
+    originApi = '';
+    code = UNKNOW_ERR;
   }
   return {
     originApi: originApi,

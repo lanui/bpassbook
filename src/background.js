@@ -399,7 +399,15 @@ async function setupController(initState) {
         } else {
           return false;
         }
-
+        break;
+      case APITYPE_CREAT_IMPORT_BPWALLET:
+        const imWalletRespState = await controller.createOrImportBPWallet(message);
+        if (isFn) {
+          sendResponse(imWalletRespState);
+        } else {
+          return false;
+        }
+        break;
       default:
         break;
     }
@@ -411,10 +419,10 @@ async function setupController(initState) {
   }
 
   //auto  load test
-  setTimeout(async () => {
-    const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
-    console.warn('development auto login>>>>', rsp);
-  }, 2000);
+  //   setTimeout(async () => {
+  //     const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+  //     console.warn('development auto login>>>>', rsp);
+  //   }, 2000);
 }
 
 function portMessageListener(controller, remotePort) {
@@ -428,7 +436,7 @@ function portMessageListener(controller, remotePort) {
       console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
         case APITYPE_CREATE_BPWALLET:
-        case APITYPE_CREAT_IMPORT_BPWALLET:
+          // case APITYPE_CREAT_IMPORT_BPWALLET:
           respInitState = await controller.createOrImportBPWallet(msg);
           console.log('>>>>>>>>APITYPE_IMPORT_NEWBPWALLET>>', msg.data, respInitState);
           sender.postMessage(respInitState);

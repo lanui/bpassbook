@@ -29,8 +29,8 @@
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+K",
-        "mac": "Command+Shift+K"
+        "default": "Ctrl+Shift+9",
+        "mac": "Command+Shift+9"
       }
     },
     "lock": {

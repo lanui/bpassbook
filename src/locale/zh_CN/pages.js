@@ -25,6 +25,7 @@ const page = {
     exportTitle: '导出钱包',
     importTitle: '导入钱包',
     replaceImportTip: '导入将会覆盖现有钱包，建议先备份现有钱包',
+    keystorePasswordNotMatched: 'keystore 与密码不匹配',
   },
 };
 

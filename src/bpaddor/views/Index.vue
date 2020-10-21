@@ -18,9 +18,9 @@
     <v-card-actions class="v-card-top-border">
       <div class="key-commands" v-if="!isUnlocked">
         <span>快捷键</span>
-        <span>control+shif+K</span>
+        <span>control+shif+9</span>
         <span>/</span>
-        <span>command+shif+K (mac) </span>
+        <span>command+shif+9 (mac) </span>
       </div>
 
       <bpass-icon v-if="isUnlocked" />

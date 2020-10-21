@@ -32,7 +32,6 @@
             v-if="importType === 'json'"
             dense
             outlined
-            clearable
             placeholder="Please entry wallet keystore json string"
             name="v3json"
             rows="5"
@@ -70,6 +69,7 @@
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
         <v-btn @click="importHandle" rounded larage dark block color="primary" class="mx-0">
+          <v-progress-circular v-if="loading" indeterminate :size="22" :width="2" color="white"></v-progress-circular>
           导入钱包
         </v-btn>
       </v-col>
@@ -82,9 +82,10 @@ import { mapGetters, mapState } from 'vuex';
 import SubnavBar from '@/popup/widgets/SubnavBar.vue';
 
 import { passwordRules } from '@/ui/constants/valid-rules';
-import { APITYPE_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
+import { APITYPE_CREAT_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
 import { OpenWallet } from '@/bglib/account-creator';
 import WhispererController from '@/lib/controllers/whisperer-controller';
+
 export default {
   name: 'PopupImportWallet',
   components: {
@@ -112,7 +113,7 @@ export default {
   },
   methods: {
     gotoIndex() {
-      this.$resetForm();
+      this.resetForm();
       this.$router.push({ path: '/index' });
     },
     resetForm() {
@@ -129,13 +130,37 @@ export default {
           this.loading = true;
           const keystore = this.v3json;
           const password = this.password;
-          await this.$store.dispatch('importNewWalletFormKeyStore', { keystore, password });
+          if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
+          const env3 = JSON.parse(keystore);
+          const dev3 = OpenWallet(env3, password);
+
+          const data = { env3, dev3, password };
+          const whisperer = new WhispererController({ name: 'Importor-Whisperer' });
+
+          whisperer
+            .sendSimpleMsg(APITYPE_CREAT_IMPORT_BPWALLET, data)
+            .then(async (resp) => {
+              console.log('Import Wallet>>>>', resp);
+              this.loading = false;
+              await this.$store.dispatch('updateInitState', resp.data);
+              this.gotoIndex();
+            })
+            .catch(async (error) => {
+              console.log('>>>>keystore>>>>>>>>', error);
+              this.loading = false;
+              throw { type: 'keystore', message: 'parse keystore fail,please retry.' };
+            });
+          // await this.$store.dispatch('importNewWalletFormKeyStore', { keystore, password });
         } catch (err) {
+          console.warn('Unknow Error>>>>', err);
           this.loading = false;
-          if (err.type === 'password') {
-            this.error = err.message;
-          } else {
+          if (typeof err === 'string') {
+            this.jsonError = err.toString();
+          } else if (typeof err === 'object' && err.message) {
             this.jsonError = err.message;
+          } else {
+            console.warn('Unknow Error>>>>', err);
+            this.jsonError = 'import error.';
           }
         }
       }
@@ -148,9 +173,9 @@ export default {
     password: function (val) {
       this.error = '';
     },
-    isUnlocked: function (val, old) {
-      if (val === true) {
-        this.gotoIndex();
+    isUnlocked: function (val) {
+      if (val) {
+        // this.gotoIndex();
       }
     },
   },
