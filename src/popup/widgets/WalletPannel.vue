@@ -4,7 +4,7 @@
       <div class="wallet-item--wrap">
         <div class="item-line">
           <v-icon color="white">
-            mdi-diamond-stone
+            {{ icons.DIAMOND_MDI }}
           </v-icon>
         </div>
         <div class="item-line balance">
@@ -17,7 +17,7 @@
       <div class="wallet-item--wrap">
         <div class="item-line">
           <v-icon color="white">
-            mdi-database
+            {{ icons.BTS_MDI }}
           </v-icon>
         </div>
         <div class="item-line balance">
@@ -28,53 +28,17 @@
         </div>
       </div>
     </div>
-    <!--
-    <v-row justify="center"
-      class="flex-column fill-height">
-      <v-col class="px-0 py-1">
-        <div class="inner inner-nickname">
-          {{ defToken ? 'BTs Balance' : 'ETH Balance' }}
-        </div>
-      </v-col>
-      <v-col class="px-0 py-0">
-        <div class="inner inner-wallet">
-          {{ shortAddress }}
-        </div>
-      </v-col>
-      <v-col class="px-0 py-2">
-        <v-btn @click.stop="toggleToken" icon color="grey lighten-5" outlined rounded ripple x-large>
-          <v-icon>
-            {{ defToken ? 'mdi-diamond-stone' : 'mdi-ethereum' }}
-          </v-icon>
-        </v-btn>
-      </v-col>
-      <v-col class="px-0 py-1">
-        <div class="balance">
-          <h2>{{ defToken ? btsBalText : ethBalText }}</h2>
-        </div>
-      </v-col>
-    </v-row>
-    -->
-    <!-- <div v-if="true" class="float-right mb-2 mr-2">
-      <v-btn icon ripple @click.stop="locking" color="white">
-        <v-icon>
-          mdi-shield-key-outline
-        </v-icon>
-      </v-btn>
-    </div> -->
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-
 import MessageController from '@/popup/controllers/message-controller';
-
-import { ETH_MDI, LOCKED_MDI } from '@/ui/constants/icon-cnsts';
 
 export default {
   name: 'WGWalletPannel',
   computed: {
+    ...mapGetters('settings', ['icons']),
     ...mapState(['dense', 'wallet', 'nickname']),
     ...mapGetters(['shortAddress', 'networkColor']),
     ...mapGetters('acc', ['diamondsBalText', 'ethBalText', 'btsBalText']),
@@ -82,8 +46,6 @@ export default {
   data() {
     return {
       defToken: true,
-      ethIcon: ETH_MDI,
-      lockIcon: LOCKED_MDI,
     };
   },
   methods: {

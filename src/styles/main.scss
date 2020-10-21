@@ -1,0 +1,11 @@
+@import './variables.scss';
+
+label.bp-label {
+  font-size: $font-size-roots;
+  padding: 0.25rem 0.5rem;
+}
+
+.keystore-tips {
+  font-size: 12px;
+  padding: 0.25rem 0.5rem;
+}

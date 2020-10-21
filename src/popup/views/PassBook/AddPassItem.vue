@@ -3,8 +3,8 @@
     <subnav-bar :gobackCall="gobackHandle" :title="$t('p.passbook.addItemTitle')" />
 
     <v-row justify="center">
-      <v-col cols="10" class="mt-4">
-        <div class="title-show text-center my-2">
+      <v-col cols="10" class="my-0 mt-4 py-0">
+        <div class="title-show text-center my-0">
           <span class="mr-2">{{ $t('l.title') }}:</span>{{ data.tips }}
         </div>
         <v-form ref="addSiteItemForm">

@@ -1,7 +1,7 @@
 <template>
   <v-list-item>
     <v-list-item-avatar>
-      <v-icon>mdi-diamond-stone</v-icon>
+      <v-icon>{{ icons.BTS_MDI }}</v-icon>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>
@@ -16,7 +16,12 @@
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-action class="py-1">
-      <loading-button :clickFn="buyHandle" text="Buy" outlined xsmall rounded btnClass="my-1"></loading-button>
+      <v-btn @click="balanceHandle" icon :loading="ctrl.refreshing">
+        <v-icon>
+          mdi-refresh
+        </v-icon>
+      </v-btn>
+      <!-- <loading-button :clickFn="buyHandle" text="Buy" outlined xsmall rounded btnClass="my-1"></loading-button>
 
       <loading-button
         :clickFn="balanceHandle"
@@ -26,7 +31,7 @@
         xsmall
         rounded
         btnClass="my-1"
-      ></loading-button>
+      ></loading-button> -->
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -41,6 +46,7 @@ export default {
     LoadingButton,
   },
   computed: {
+    ...mapGetters('settings', ['icons']),
     ...mapGetters('acc', ['btsBalText']),
   },
   data() {

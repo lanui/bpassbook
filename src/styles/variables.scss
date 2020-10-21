@@ -1,7 +1,11 @@
 // Override Globals Variables
 @charset "utf-8";
+$body-font-family: PingFangSC-Medium, PingFang SC, 'Avenir', Helvetica, Arial, sans-serif;
 $font-size-root: 14px;
 $blockquote-font-size: 16px;
+
+// input text-field
+$text-field-border-radius: 16px !default;
 
 //v-list
 $list-item-padding: 0 12px !default;

@@ -28,3 +28,14 @@
   font-size: 12px !important;
   color: rgba(140, 144, 146, 1);
 }
+
+label.bp-label {
+  font-size: 14px;
+  padding: 0.25rem 0.5rem;
+}
+
+.keystore-tips {
+  color: rgba(140, 144, 146, 1);
+  font-size: 12px;
+  padding: 0.25rem 0.5rem;
+}

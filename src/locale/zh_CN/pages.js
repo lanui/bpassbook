@@ -20,6 +20,12 @@ const page = {
     skipVerify: '跳过验证',
     congratulations: '恭喜',
   },
+  wallet: {
+    indexTitle: '钱包',
+    exportTitle: '导出钱包',
+    importTitle: '导入钱包',
+    replaceImportTip: '导入将会覆盖现有钱包，建议先备份现有钱包',
+  },
 };
 
 export default page;

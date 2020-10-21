@@ -73,6 +73,7 @@ const config = {
               },
               // prependData: "@import '@/styles/variables.scss'"
               additionalData: "@import '@/styles/variables.scss'",
+              // additionalData: "@import '@/styles/main.scss'",
             },
           },
         ],

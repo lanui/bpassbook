@@ -2,7 +2,7 @@
   <v-container class="head-card--wrapper">
     <v-row class="text-center">
       <v-col cols="12">
-        <h3 class="text-h4">{{ currentNickname }}</h3>
+        <h3 class="text-h5">{{ currentNickname }}</h3>
       </v-col>
     </v-row>
     <v-img :src="qrcode" width="100" class="mx-auto"></v-img>
@@ -41,8 +41,6 @@ import QRCode from 'qrcode';
 import { mapGetters, mapState } from 'vuex';
 
 import { compressAddress } from '@/utils';
-
-import DemoQrCode from '@/assets/icons/demo-qrcode.png';
 
 export default {
   name: 'WalletHeadCard',

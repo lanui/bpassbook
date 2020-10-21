@@ -10,6 +10,7 @@ const btns = {
   previous: '上一步',
   generate: '生成',
   completed: '完成',
+  expqrcode: '导出二维码',
 };
 
 export default btns;

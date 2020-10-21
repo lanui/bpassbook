@@ -1,10 +1,18 @@
 <template>
   <v-container class="fill-height">
+    <subnav-bar :gobackCall="gobackHandle" :title="$t('p.wallet.importTitle')" />
+
     <v-row justify="center">
-      <v-col cols="10" class="text-center">
-        <div class="text-h4">导入钱包</div>
-      </v-col>
       <v-col cols="10">
+        <v-sheet color="white" elevation="0" width="100%">
+          <div class="my-1">
+            <label class="bp-label">
+              {{ $t('l.jsonKeystore') }}
+            </label>
+          </div>
+          <!-- <div class="keystore-tips">
+          </div> -->
+        </v-sheet>
         <v-form ref="importForm">
           <v-textarea
             v-if="importType !== 'json'"
@@ -25,7 +33,7 @@
             dense
             outlined
             clearable
-            placeholder="Please entry wallet json string"
+            placeholder="Please entry wallet keystore json string"
             name="v3json"
             rows="5"
             color="indigo"
@@ -33,17 +41,18 @@
             :value="v3json"
             :error="Boolean(jsonError)"
             :error-messages="jsonError"
-            :label="$t('l.jsonKeystore')"
             type="text"
+            filled
             :rules="rules.json"
           ></v-textarea>
           <v-text-field
             dense
             outlined
+            rounded
             clearable
             counter
+            filled
             :label="$t('l.password')"
-            prepend-inner-icon="mdi-key"
             :append-icon="pwdHide ? 'mdi-eye-off' : 'mdi-eye'"
             :type="pwdHide ? 'password' : 'text'"
             @click:append="pwdHide = !pwdHide"
@@ -60,7 +69,7 @@
     </v-row>
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
-        <v-btn @click="importHandle" block larage color="light-blue darken-1" dark>
+        <v-btn @click="importHandle" rounded larage dark block color="primary" class="mx-0">
           导入钱包
         </v-btn>
       </v-col>
@@ -70,12 +79,17 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import SubnavBar from '@/popup/widgets/SubnavBar.vue';
+
 import { passwordRules } from '@/ui/constants/valid-rules';
 import { APITYPE_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
 import { OpenWallet } from '@/bglib/account-creator';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 export default {
   name: 'PopupImportWallet',
+  components: {
+    SubnavBar,
+  },
   computed: {
     ...mapGetters(['env3']),
     ...mapState(['isUnlocked']),
@@ -98,10 +112,16 @@ export default {
   },
   methods: {
     gotoIndex() {
-      this.loading = false;
-      this.password = '';
-      this.v3json = '';
+      this.$resetForm();
       this.$router.push({ path: '/index' });
+    },
+    resetForm() {
+      this.loading = false;
+      this.$refs.importForm.reset();
+    },
+    gobackHandle() {
+      this.resetForm();
+      this.$router.go(-1);
     },
     async importHandle() {
       if (this.$refs.importForm.validate()) {

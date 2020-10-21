@@ -64,6 +64,8 @@ export default {
 </script>
 <style>
 .subnav-bar {
+  display: flex;
+  flex: 1 1 100%;
   border-bottom-color: rgba(243, 244, 246, 1);
   border-bottom: 1px solid #f3f4f6 !important;
 }

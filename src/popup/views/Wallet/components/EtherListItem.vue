@@ -1,23 +1,28 @@
 <template>
   <v-list-item>
     <v-list-item-avatar>
-      <v-icon>mdi-ethereum</v-icon>
+      <v-icon>{{ icons.ETHEREUMN_MDI }}</v-icon>
     </v-list-item-avatar>
     <v-list-item-content>
       <v-list-item-title>
         ETH
-        <span class="amber--text text--lighten-1" style="font-size:6px">
-          1ETH=1000钻石
+        <span class="amber--text text--lighten-1" style="font-size: 6px;">
+          1ETH=10000钻石
         </span>
       </v-list-item-title>
       <v-divider></v-divider>
       <v-list-item-subtitle>
-        {{ethBalText}}
+        {{ ethBalText }}
       </v-list-item-subtitle>
     </v-list-item-content>
 
     <v-list-item-action class="py-1">
-      <loading-button
+      <v-btn @click="balanceHandle" icon :loading="ctrl.refreshing">
+        <v-icon>
+          mdi-refresh
+        </v-icon>
+      </v-btn>
+      <!-- <loading-button v-if="false"
         :clickFn="sendHandle"
         :loading="ctrl.sending"
         text="Send"
@@ -34,7 +39,7 @@
         xsmall
         rounded
         btnClass="my-1"
-      ></LoadingButton>
+      ></LoadingButton> -->
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -50,7 +55,8 @@ export default {
     LoadingButton,
   },
   computed: {
-    ...mapGetters('acc', ['ethBalText']),
+    ...mapGetters('settings', ['icons']),
+    ...mapGetters('acc', ['ethBalText', 'diamondsBalText']),
   },
   data() {
     return {
@@ -84,5 +90,4 @@ export default {
   props: {},
 };
 </script>
-<style>
-</style>
+<style></style>
