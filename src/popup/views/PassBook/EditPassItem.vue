@@ -78,9 +78,7 @@
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
         <v-sheet outlined elevation="2" class="px-4 py-4 rounded-lg">
-          <div class="size-xsmall">
-            温馨提示:为了你的数据安全,不建议在提示信息里出现账号或密码信息.
-          </div>
+          <div class="size-xsmall">温馨提示:为了你的数据安全,不建议在提示信息里出现账号或密码信息.</div>
         </v-sheet>
       </v-col>
     </v-row>
@@ -139,7 +137,7 @@ export default {
       try {
         const item = trimProps(this.passbook);
 
-        const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: false });
+        const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: true });
         whisperer
           .sendSimpleMsg(APITYPE_EDIT_WEBSITE_ITEM, item)
           .then(async (initState) => {
@@ -180,7 +178,7 @@ export default {
         const item = this.passbook;
         if (!item || !item.tips) return;
         this.ctrl.loading = true;
-        const whisperer = new WhispererController({ name: 'Website-whisperer', includeTlsChannelId: false });
+        const whisperer = new WhispererController({ name: 'Website-whisperer', includeTlsChannelId: true });
         whisperer
           .sendSimpleMsg(APITYPE_DELETE_WEBSITE_ITEM, item)
           .then(async (initState) => {

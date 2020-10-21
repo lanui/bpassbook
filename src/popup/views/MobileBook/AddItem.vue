@@ -62,9 +62,7 @@
     <v-row justify="center" class="fill-height">
       <v-col cols="10">
         <v-sheet outlined elevation="2" class="px-4 py-4 rounded-lg">
-          <div class="size-xsmall">
-            温馨提示:为了你的数据安全,不建议在提示信息里出现账号或密码信息.
-          </div>
+          <div class="size-xsmall">温馨提示:为了你的数据安全,不建议在提示信息里出现账号或密码信息.</div>
         </v-sheet>
       </v-col>
     </v-row>
@@ -118,7 +116,7 @@ export default {
           item = trimProps(item);
           validMobItem(item);
 
-          const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: false });
+          const whisperer = new WhispererController({ name: 'MobileItem-whisperer', includeTlsChannelId: true });
 
           this.ctrl.loading = true;
           const that = this;

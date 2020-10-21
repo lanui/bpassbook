@@ -4,9 +4,7 @@
       <v-col cols="10" class="fill-height bg-container px-0 py-0">
         <v-container>
           <v-row justify="center" class="text-center">
-            <div v-if="isUnlocked">
-              已保存的密码
-            </div>
+            <div v-if="isUnlocked">已保存的密码</div>
             <v-btn v-if="!isUnlocked" @click="showUnlockDialog" text color="bpgray" class="btn-unlock">
               请先解锁BPassword
             </v-btn>
@@ -16,15 +14,9 @@
               <v-simple-table>
                 <thead>
                   <tr>
-                    <th class="text-left">
-                      网站
-                    </th>
-                    <th class="text-left">
-                      用户名
-                    </th>
-                    <th class="text-left">
-                      密码
-                    </th>
+                    <th class="text-left">网站</th>
+                    <th class="text-left">用户名</th>
+                    <th class="text-left">密码</th>
                     <th class="text-center"></th>
                   </tr>
                 </thead>
@@ -62,9 +54,7 @@
     <v-snackbar :timeout="4000" v-model="showNotify" absolute centered :color="notifyColor" outlined>
       {{ notifyMessage }}
       <template v-slot:action="{ attrs }">
-        <v-btn :color="notifyColor" text v-bind="attrs" @click="showNotify = false">
-          Close
-        </v-btn>
+        <v-btn :color="notifyColor" text v-bind="attrs" @click="showNotify = false"> Close </v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -104,7 +94,7 @@ export default {
       try {
         if (!item || !item.tips) return;
         this.processing = true;
-        const whisperer = new WhispererController({ name: 'Website-whisperer', includeTlsChannelId: false });
+        const whisperer = new WhispererController({ name: 'Website-whisperer', includeTlsChannelId: true });
         whisperer
           .sendSimpleMsg(APITYPE_DELETE_WEBSITE_ITEM, item)
           .then(async (initState) => {
