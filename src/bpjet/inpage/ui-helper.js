@@ -50,6 +50,7 @@ export function createBPIcon(el, url) {
   const { document } = _win;
   // if (window.document.querySelector('#'))
   const exsitsIframe = exsitsSelectorIframe(url);
+  if (Boolean(exsitsIframe)) return;
   removeIcon(!exsitsIframe);
 
   const wrapper = window.document.createElement(ICON_WRAP_TAG);
@@ -204,6 +205,31 @@ export function getElPosition($target) {
     offsetHeight: $target.offsetHeight,
     clientHeight: $target.clientHeight,
     clientWidth: $target.clientWidth,
+    iconSize,
+  };
+}
+
+/**
+ * Dom
+ * @param {Object} target
+ */
+export function getDomElPosition(target) {
+  if (!target || !target.getClientRects()[0]) return false;
+  const rects = target.getClientRects();
+  const iconSize = getIconSize(rects[0]?.height || target.offsetHeight || target.clientHeight);
+  return {
+    x: rects[0]?.x || 0,
+    y: rects[0]?.y || 0,
+    height: rects[0]?.height || 0,
+    width: rects[0]?.width || 0,
+    top: rects[0]?.top || 0,
+    right: rects[0]?.right || 0,
+    left: rects[0]?.left || 0,
+    bottom: rects[0]?.bottom || 0,
+    offsetWidth: target.offsetWidth,
+    offsetHeight: target.offsetHeight,
+    clientHeight: target.clientHeight,
+    clientWidth: target.clientWidth,
     iconSize,
   };
 }

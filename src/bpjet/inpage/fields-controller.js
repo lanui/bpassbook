@@ -8,6 +8,7 @@ import { APITYPE_FETCH_MATCH_ITEMS } from '@/lib/cnst/api-cnst';
 
 import {
   ICON_WRAPPER_ID,
+  getDomElPosition,
   getElPosition,
   createBPIcon,
   removeIcon,
@@ -27,7 +28,8 @@ const FAVICON_SELECTOR = '';
 
 export const POSITION_CHANGED_EVENT = 'abs:position-changed';
 
-export const FIELD_INPUTOR_EVENTNAME = 'loginel:input';
+export const FIELD_INPUTOR_NAME_EVENTNAME = 'loginel:input:username';
+export const FIELD_INPUTOR_PWD_EVENTNAME = 'loginel:input:password';
 
 export const FORM_SUBMIT_EVENTNAME = 'loginform:submit';
 
@@ -172,6 +174,20 @@ export class FieldsController extends EventEmitter {
     }
   }
 
+  /**
+   *
+   * @param {*} target
+   */
+  updatePositionByCurrentTarget(target) {
+    if (target && typeof target === 'object') {
+      const position = getDomElPosition(target);
+      if (typeof position === 'object') {
+        this.currentTarget = target;
+        this.store.updateState({ position: position });
+      }
+    }
+  }
+
   fillInputField(data) {
     const { username, password } = data;
 
@@ -265,7 +281,7 @@ export class FieldsController extends EventEmitter {
     const inputorURL = this.url;
     const addorURL = this.addorURL;
 
-    let UsernameInputEvent = new CustomEvent(FIELD_INPUTOR_EVENTNAME, {
+    let UsernameInputEvent = new CustomEvent(FIELD_INPUTOR_NAME_EVENTNAME, {
       bubbles: false,
       cancelable: true,
       detail: {
@@ -287,7 +303,6 @@ export class FieldsController extends EventEmitter {
             (passwordSelector && document.querySelector(passwordSelector)
               ? document.querySelector(passwordSelector).value
               : '');
-          const extIframe = exsitsSelectorIframe(inputorURL);
 
           chrome.runtime.sendMessage(
             _ctx.extid,
@@ -299,10 +314,14 @@ export class FieldsController extends EventEmitter {
               const showPop = controlNameChanged(resp, _curNameVal, _curPassVal);
               // console.log('BPinjet>>> targetUserName>> changed>>', showPop, _curNameVal, _curPassVal, extIframe);
               if (showPop === 'addor') {
-                createBPIcon(this.targetUserName, addorURL);
+                const extIframe = Boolean(exsitsSelectorIframe(addorURL));
+                if (!extIframe) {
+                  createBPIcon(this.targetUserName, addorURL);
+                }
               } else if (showPop === 'remove') {
                 removeIcon();
               } else if (showPop === 'selector') {
+                const extIframe = Boolean(exsitsSelectorIframe(inputorURL));
                 //selector don't remove it,because remove cause connection disconnect and messages lost
                 if (extIframe) {
                   //TODO send message to extension selector
@@ -322,7 +341,7 @@ export class FieldsController extends EventEmitter {
     /**
      * password changed handle
      */
-    let PasswordInputEvent = new CustomEvent(FIELD_INPUTOR_EVENTNAME, {
+    let PasswordInputEvent = new CustomEvent(FIELD_INPUTOR_PWD_EVENTNAME, {
       bubbles: false,
       cancelable: true,
       detail: {
@@ -336,8 +355,6 @@ export class FieldsController extends EventEmitter {
           const _curNameVal = this.targetUserName.value;
           const _curPassVal = this.targetPassword.value;
 
-          const extIframe = exsitsSelectorIframe(inputorURL);
-
           chrome.runtime.sendMessage(
             _ctx.extid,
             { apiType: APITYPE_FETCH_MATCH_ITEMS, hostname: this.hostname },
@@ -348,13 +365,17 @@ export class FieldsController extends EventEmitter {
               const showPop = controlPasswordChanged(resp, _curNameVal, _curPassVal);
               // console.log('BPinjet>>> targetPassword>> changed>>', showPop, _curPassVal, _curNameVal, extIframe);
               if (showPop === 'addor') {
-                createBPIcon(this.targetUserName, addorURL);
+                const extIframe = Boolean(exsitsSelectorIframe(addorURL));
+                if (!extIframe) {
+                  createBPIcon(this.targetPassword, addorURL);
+                }
               } else if (showPop === 'remove') {
                 removeIcon();
               } else if (showPop === 'selector') {
+                const extIframe = Boolean(exsitsSelectorIframe(inputorURL));
                 //selector don't remove it,because remove cause connection disconnect and messages lost
                 if (!extIframe) {
-                  createBPIcon(this.targetUserName, inputorURL);
+                  createBPIcon(this.targetPassword, inputorURL);
                 } else {
                 }
               } else {
@@ -377,11 +398,10 @@ export class FieldsController extends EventEmitter {
 
       $(targetPassword).on('focusin', function (e) {
         e.stopPropagation();
-        _ctx.currentTarget = e.target;
+        _ctx.updatePositionByCurrentTarget(e.target);
 
         const _curNameVal = targetUserName ? targetUserName.value : '';
         const _curPassVal = targetPassword.value;
-        const extIframe = exsitsSelectorIframe(inputorURL);
 
         chrome.runtime.sendMessage(
           _ctx.extid,
@@ -392,8 +412,12 @@ export class FieldsController extends EventEmitter {
             // console.log('BPinjet>>> targetPassword>> focusin>>', showPop, _curPassVal, _curNameVal, extIframe);
 
             if (showPop === 'addor') {
-              createBPIcon(this, addorURL);
+              const extIframe = Boolean(exsitsSelectorIframe(addorURL));
+              if (!extIframe) {
+                createBPIcon(this, addorURL);
+              }
             } else if (showPop && showPop.startsWith('selector')) {
+              const extIframe = Boolean(exsitsSelectorIframe(inputorURL));
               if (!extIframe) {
                 createBPIcon(this, inputorURL);
               }
@@ -410,7 +434,7 @@ export class FieldsController extends EventEmitter {
       });
 
       /** input changed  */
-      targetPassword.addEventListener(PasswordInputEvent, (e) => e.detail.sendValToInputor());
+      targetPassword.addEventListener(FIELD_INPUTOR_PWD_EVENTNAME, (e) => e.detail.sendValToInputor());
       targetPassword.addEventListener('input', debounce(hanldePasswordInputEvent, 500));
 
       $(targetPassword).on('focusout', function (e) {
@@ -422,7 +446,7 @@ export class FieldsController extends EventEmitter {
       if (targetUserName) {
         $(targetUserName).on('focusin', function (e) {
           e.stopPropagation();
-          _ctx.currentTarget = e.target;
+          _ctx.updatePositionByCurrentTarget(e.target);
           const _curNameVal = targetUserName.value;
           const _curPassVal = targetPassword.value;
 
@@ -434,9 +458,15 @@ export class FieldsController extends EventEmitter {
               const showPop = controlNamePopup(resp, _curNameVal, _curPassVal);
               // console.log('BPinjet>>> targetUserName>> focusin>>', _curNameVal, _curPassVal, showPop);
               if (showPop === 'addor') {
-                createBPIcon(this, addorURL);
+                const extIframe = Boolean(exsitsSelectorIframe(addorURL));
+                if (!extIframe) {
+                  createBPIcon(this, addorURL);
+                }
               } else if (showPop && showPop.startsWith('selector')) {
-                createBPIcon(this, inputorURL);
+                const extIframe = Boolean(exsitsSelectorIframe(inputorURL));
+                if (!extIframe) {
+                  createBPIcon(this, inputorURL);
+                }
               } else if (showPop === 'remove') {
                 //remove
                 removeIcon();
@@ -452,7 +482,7 @@ export class FieldsController extends EventEmitter {
         });
 
         /** input changed  */
-        targetUserName.addEventListener(FIELD_INPUTOR_EVENTNAME, (e) => e.detail.sendValToInputor());
+        targetUserName.addEventListener(FIELD_INPUTOR_NAME_EVENTNAME, (e) => e.detail.sendValToInputor());
         targetUserName.addEventListener('input', debounce(hanldeNameInputEvent, 500));
 
         $(targetUserName).on('focusout', function (e) {
@@ -617,7 +647,7 @@ function controlNamePopup(resp, nameValue, passValue) {
     return 'selector-subMatch';
   }
 
-  if (domainMatched && Boolean(nameValue)) {
+  if (domainMatched && !Boolean(nameValue)) {
     // BPassword domain has accounts ,and username no input value show selector
     return 'selector-domainMatch';
   }
