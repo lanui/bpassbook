@@ -617,7 +617,7 @@ function controlNamePopup(resp, nameValue, passValue) {
     return 'selector-subMatch';
   }
 
-  if (domainMatched && !Boolean(nameValue)) {
+  if (domainMatched && Boolean(nameValue)) {
     // BPassword domain has accounts ,and username no input value show selector
     return 'selector-domainMatch';
   }

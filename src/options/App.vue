@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <p>Hello world sfds!</p>
+  <div class="text-center">
+    <p>Welcome BPassword</p>
   </div>
 </template>
 

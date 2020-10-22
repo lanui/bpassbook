@@ -41,3 +41,25 @@
 
 > contentscript hold website items
 > contentscript communication with backend items changed
+
+# 网站登录页面,弹出 BPassword 规则 (v0.4.0)
+
+## 不弹出 BPassword
+
+1. 登录框 name,password 输入值与 BPassword 存储记录中某条完全匹配时,不弹出
+2. BPassword 中没有记录,且 name 或 password 为空时,不弹出
+
+## 弹出 BPassword
+
+1. BPassword 存储有记录,name 匹配时弹出
+2. BPassword 中没有记录,name 和 password 不为空时弹出
+
+### 弹出页面内容显示规则
+
+> 显示添加按钮
+
+## focusin
+
+> > has name value and password value and exactMatched [popup-add]
+
+> > has name value and subMatched [popup-select]

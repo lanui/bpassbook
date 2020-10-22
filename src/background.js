@@ -44,6 +44,7 @@ import {
 } from '@/lib/cnst/api-cnst';
 
 import { responseError, responseInitState, responseMessage } from '@/lib/message-utils';
+import { stopAutofillEnabled, stopPasswordSaving, openFirstInstallPage } from '@/bglib/chrome-utils';
 
 const LOG_PREFFIX = 'background';
 
@@ -58,7 +59,6 @@ global.extension = extension;
 
 global.$local = new LocalStore();
 
-// alert(`Hello ${store.getters.foo}!`);
 /** global variables */
 let popupIsOpen = false;
 
@@ -418,27 +418,22 @@ async function setupController(initState) {
     }
   }
 
-  //auto  load test
-  //   setTimeout(async () => {
-  //     const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
-  //     console.warn('development auto login>>>>', rsp);
-  //   }, 2000);
+  autoLoginTest(controller);
 }
 
 function portMessageListener(controller, remotePort) {
   // console.log(`${LOG_PREFFIX}-runtime Msg`, remotePort);
 
   remotePort.onMessage.addListener(async (msg, sender) => {
-    let sendInitState = await controller.getInitState();
     let respInitState;
     if (msg && msg.apiType) {
       log.warn(`recive --type:${msg.apiType}`, msg.data);
-      console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
+      // console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
         case APITYPE_CREATE_BPWALLET:
           // case APITYPE_CREAT_IMPORT_BPWALLET:
           respInitState = await controller.createOrImportBPWallet(msg);
-          console.log('>>>>>>>>APITYPE_IMPORT_NEWBPWALLET>>', msg.data, respInitState);
+          // console.log('>>>>>>>>APITYPE_IMPORT_NEWBPWALLET>>', msg.data, respInitState);
           sender.postMessage(respInitState);
           break;
         case APITYPE_CREATE_ENV3:
@@ -501,4 +496,25 @@ function handleSender(sender) {
     filterHost: url.hostname,
     favIconUrl: tab.favIconUrl || '',
   };
+}
+
+chrome.runtime.onInstalled.addListener(async (details) => {
+  const { previousVersion, reason } = details;
+  console.log('Installed>>>previousVersion>>', previousVersion);
+
+  // stopAutofillEnabled();
+  stopPasswordSaving();
+  if (reason === 'install') {
+    //open
+    // openFirstInstallPage().then(tab=>{console.log(tab)}).catch(e=>{})
+  }
+});
+
+function autoLoginTest(controller) {
+  //auto  load test
+  if (chrome.runtime.id === 'beobdgahalpbmiohplgchnjjhppfmmnp') {
+    setTimeout(async () => {
+      const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+    }, 1000);
+  }
 }

@@ -3,8 +3,6 @@ import VueRouter from 'vue-router';
 import routes from './routes';
 import store from '@/store';
 
-import { getData } from '@/lib/storage';
-
 Vue.use(VueRouter);
 
 const VueRouterPush = VueRouter.prototype.push;
@@ -19,9 +17,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const ret = await getData();
-  const env3 = store.getters['env3'] || (ret.data ? ret.data.env3 : null);
-  // console.log("ret>>>>>>>>>>>>>>>>>>>", env3)
+  const env3 = store.getters['env3'];
   const isUnlocked = store.state.isUnlocked;
   if (to.matched.some((rec) => rec.meta.auth)) {
     //welcome ,signup
