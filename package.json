@@ -1,6 +1,6 @@
 {
   "name": "bpassword",
-  "version": "0.3.2",
+  "version": "1.0.0",
   "description": "BPassword extension for chrome",
   "author": "lanbery",
   "license": "MIT",
@@ -16,7 +16,8 @@
     "build-zip": "node scripts/build-zip.js",
     "watch": "npm run build -- --watch",
     "watch:dev": "cross-env HMR=true npm run build:dev -- --watch",
-    "clean": "rm -rf dist/**"
+    "clean": "rm -rf dist/**",
+    "init:dev": "node ci/init-develop-env.js"
   },
   "husky": {
     "hooks": {

@@ -167,6 +167,13 @@ if (config.mode === 'production') {
     }),
   ]);
 } else {
+  config.plugins = (config.plugins || []).concat([
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: '"development"',
+      },
+    }),
+  ]);
   config.devtool = 'cheap-module-source-map';
 }
 

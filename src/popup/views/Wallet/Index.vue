@@ -1,9 +1,8 @@
 <template>
-  <v-container class="fill-height">
-    <subnav-bar :gobackCall="gobackHandle" :title="$t('p.wallet.indexTitle')" />
-
+  <v-container class="px-0 py-0">
+    <subnav-bar navColor="rgba(249, 249, 249, 1)" :gobackCall="gobackHandle" :title="$t('p.wallet.indexTitle')" />
     <wallet-head-card />
-    <token-pannel />
+    <tokens-pannel />
   </v-container>
 </template>
 
@@ -11,13 +10,14 @@
 import SubnavBar from '@/popup/widgets/SubnavBar.vue';
 import WalletHeadCard from './WalletHeadCard.vue';
 import TokenPannel from './TokenPannel';
+import TokensPannel from './components/TokensPannel';
 
 export default {
   name: 'PopupWalletIndex',
   components: {
     SubnavBar,
     WalletHeadCard,
-    TokenPannel,
+    TokensPannel,
   },
   computed: {},
   data() {

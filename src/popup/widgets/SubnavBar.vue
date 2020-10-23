@@ -1,5 +1,5 @@
 <template>
-  <v-system-bar light color="#FFFFFF" :height="40" :lights-out="false" :window="true" class="subnav-bar">
+  <v-system-bar light :color="navColor" :height="40" :lights-out="false" :window="true" class="subnav-bar">
     <v-btn @click="navbackHandle" icon small class="mx-1">
       <v-icon>
         {{ icons.ARROW_LEFT_MDI }}
@@ -42,6 +42,11 @@ export default {
       default: () => {
         this.$router.go(-1);
       },
+      required: false,
+    },
+    navColor: {
+      default: '#FFFFFF',
+      type: String,
       required: false,
     },
     hasDelete: {

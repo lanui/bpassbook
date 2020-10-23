@@ -1,37 +1,24 @@
 <template>
   <v-container class="head-card--wrapper">
-    <v-row class="text-center">
-      <v-col cols="12">
-        <h3 class="text-h5">{{ currentNickname }}</h3>
-      </v-col>
-    </v-row>
-    <v-img :src="qrcode" width="100" class="mx-auto"></v-img>
-    <v-row>
-      <v-col cols="12">
-        <v-card :elevation="0" class="d-flex justify-center">
-          <v-card :elevation="0" class="pa-2">
-            <p class="body-2">{{ shortAddress }}</p>
-          </v-card>
-          <v-card :elevation="0">
-            <v-btn ref="clipboardIcon" :data-clipboard-text="selectedAddress" icon x-small>
-              <v-icon color="primary">
-                mdi-content-copy
-              </v-icon>
-            </v-btn>
-          </v-card>
-          <v-snackbar width="220px" :timeout="4000" v-model="showNotifier" centered :elevation="1">
-            {{ 'Address copied.' }}
-            <template v-slot:action="{ attrs }">
-              <v-btn color="pink" text icon v-bind="attrs" @click="showNotifier = false">
-                <v-icon>
-                  mdi-close
-                </v-icon>
-              </v-btn>
-            </template>
-          </v-snackbar>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-img :src="qrcode" width="100" class="mx-auto my-2"></v-img>
+    <div class="d-flex justify-center elevation-0">
+      <p class="body-2">{{ shortAddress }}</p>
+      <v-btn ref="clipboardIcon" :data-clipboard-text="selectedAddress" icon x-small>
+        <v-icon color="primary">
+          mdi-content-copy
+        </v-icon>
+      </v-btn>
+    </div>
+    <v-snackbar width="220px" :timeout="4000" v-model="showNotifier" centered :elevation="1">
+      {{ 'Address copied.' }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="pink" text icon v-bind="attrs" @click="showNotifier = false">
+          <v-icon>
+            mdi-close
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -88,5 +75,7 @@ export default {
 .head-card--wrapper {
   width: 100%;
   justify-content: center;
+  padding: 0;
+  background: rgba(249, 249, 249, 1);
 }
 </style>
