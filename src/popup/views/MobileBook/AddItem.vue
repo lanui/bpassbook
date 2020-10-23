@@ -124,12 +124,12 @@ export default {
             .sendSimpleMsg(APITYPE_ADD_MOBILE_ITEM, item)
             .then(async (initState) => {
               this.ctrl.loading = false;
-              console.log(`${whisperer.name}>>>>>>>>>>>>>>`, initState);
+              // console.log(`${whisperer.name}>>>>>>>>>>>>>>`, initState);
               await this.$store.dispatch('updateInitState', initState);
               this.gobackHandle();
             })
             .catch(async (error) => {
-              console.log('Ex>>>>>>>>>>>>', error);
+              // console.log('Ex>>>>>>>>>>>>', error);
               this.error = typeof error === 'object' && error.message ? error.message : error.toString();
               this.ctrl.loading = false;
               setTimeout(() => {
@@ -137,7 +137,7 @@ export default {
               }, 6000);
             });
         } catch (error) {
-          console.log('Ex>>>>>>>>>>>>', error);
+          // console.log('Ex>>>>>>>>>>>>', error);
           this.ctrl.loading = false;
           setTimeout(() => {
             this.error = error;

@@ -7,7 +7,7 @@ import { fromV3 } from 'ethereumjs-wallet';
 
 const passworder = require('browser-passworder');
 
-import { version } from '../manifest.json';
+import { extVersion } from '../lib/util';
 
 import MergeableObservableStore from '@/lib/storage/mergeable-observable-store';
 import AppStateController from './app-state';
@@ -20,7 +20,7 @@ import WebsiteController from '@/bglib/website-controller';
 import MobileController from '@/bglib/mobile-controller';
 
 import { INCORRECT_PWD, errorMessage, responseMessage, responseInitState } from '@/lib/message-utils';
-import { OpenWallet } from '@/bglib/account-creator';
+import { OpenWallet, AsyncOpenWallet } from '@/bglib/account-creator';
 
 const FIRST_TIME_INFO = 'firstTimeInfo';
 const LOG_PREFFIX = 'context-controller';
@@ -102,7 +102,7 @@ class ContextController extends EventEmitter {
   recordFirstTimeInfo(initState) {
     if (!(FIRST_TIME_INFO in initState)) {
       initState[FIRST_TIME_INFO] = {
-        version,
+        version: extVersion(),
         date: Date.now(),
       };
     }
@@ -162,7 +162,7 @@ class ContextController extends EventEmitter {
         WebsiteController.items.length && filterHost
           ? WebsiteController.items.filter((it) => it.hostname.endsWith(filterHost))
           : [];
-      console.log('&&&&&&&&&&', items);
+      // console.log('&&&&&&&&&&', items);
     }
 
     return {
@@ -226,7 +226,7 @@ class ContextController extends EventEmitter {
 
     //unlock
     try {
-      const dev3 = OpenWallet(env3, password);
+      const dev3 = await AsyncOpenWallet(env3, password);
       await this.appStateController.updateKeyPairs(dev3);
 
       const { SubPriKey } = dev3;
@@ -257,7 +257,7 @@ class ContextController extends EventEmitter {
       //
       return responseInitState(message.apiType, Object.assign({ redirect }, sendInitState));
     } catch (err) {
-      console.log('ERROR>>>>>>>>>>>>>', err);
+      // console.log('ERROR>>>>>>>>>>>>>', err);
       return errorMessage(err.message, { code: INCORRECT_PWD, originApi: message.apiType });
     }
   }
@@ -295,7 +295,7 @@ class ContextController extends EventEmitter {
     try {
       const { env3, redirect, password } = data;
       const { mainAddress } = env3;
-      const dev3 = OpenWallet(env3, password);
+      const dev3 = await AsyncOpenWallet(env3, password);
 
       const initState = Object.assign(this.store.getState(), { env3 });
       await this.store.putState(initState);

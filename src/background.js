@@ -242,6 +242,17 @@ async function setupController(initState) {
           });
 
         break;
+      case APITYPE_LOGIN:
+        console.log('Login Message', message);
+        const logResp = await controller.login(message);
+        console.log('Login Message', logResp);
+        if (isFn) {
+          sendResponse(logResp);
+        } else {
+          return false;
+        }
+
+        break;
       case APITYPE_LOGOUT:
         controller.appStateController.locked().then((resp) => {
           if (isFn) {
@@ -427,7 +438,7 @@ function portMessageListener(controller, remotePort) {
   remotePort.onMessage.addListener(async (msg, sender) => {
     let respInitState;
     if (msg && msg.apiType) {
-      log.warn(`recive --type:${msg.apiType}`, msg.data);
+      log.warn(`Lived recive --type:${msg.apiType}`, msg.data);
       // console.log('chrome-tab>>>>>>>>>>>', sendInitState, sender);
       switch (msg.apiType) {
         case APITYPE_CREATE_BPWALLET:
@@ -440,9 +451,11 @@ function portMessageListener(controller, remotePort) {
           const saveWalletResp = await controller.saveNewWalletForLived(msg);
           sender.postMessage(saveWalletResp);
           break;
+
+        // see Message
         case APITYPE_LOGIN:
           const logResp = await controller.login(msg);
-
+          // console.log(">>>>>>>>>>>>>>>>>>>>>", logResp)
           remotePort.postMessage(logResp);
           break;
         case APITYPE_SELECTED_PBITEM:
@@ -514,7 +527,11 @@ function autoLoginTest(controller) {
   //auto  load test
   if (chrome.runtime.id === 'beobdgahalpbmiohplgchnjjhppfmmnp') {
     setTimeout(async () => {
-      const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+      try {
+        const rsp = await controller.login({ apiType: APITYPE_LOGIN, data: { password: '1234', redirect: '/index' } });
+      } catch (err) {
+        console.log('auto login error:', err);
+      }
     }, 1000);
   }
 }

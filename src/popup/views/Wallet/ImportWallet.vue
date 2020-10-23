@@ -86,7 +86,6 @@ import SubnavBar from '@/popup/widgets/SubnavBar.vue';
 
 import { passwordRules } from '@/ui/constants/valid-rules';
 import { APITYPE_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
-import { OpenWallet } from '@/bglib/account-creator';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 export default {
   name: 'PopupImportWallet',

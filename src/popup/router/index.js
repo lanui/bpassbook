@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import routes from './routes';
 import store from '@/store';
+import ExtensionStore from '@/lib/storage/local-store';
 
 Vue.use(VueRouter);
 
@@ -9,7 +10,7 @@ const VueRouterPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
   return VueRouterPush.call(this, location).catch((err) => err);
 };
-
+const localState = new ExtensionStore();
 const router = new VueRouter({
   mode: 'hash',
   scrollBehavior: () => ({ y: 0 }),
@@ -17,9 +18,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const env3 = store.getters['env3'];
-  const isUnlocked = store.state.isUnlocked;
   if (to.matched.some((rec) => rec.meta.auth)) {
+    const locEnv = await localState.get();
+    const env3 = store.getters['env3'] || (locEnv && locEnv.data ? locEnv.data.env3 : null);
+    const isUnlocked = store.state.isUnlocked;
     //welcome ,signup
     if (!env3) {
       next({

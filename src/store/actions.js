@@ -1,5 +1,5 @@
 // import { fromV3 } from 'ethereumjs-wallet';
-import { OpenWallet } from '@/bglib/account-creator';
+import { OpenWallet, AsyncOpenWallet } from '@/bglib/account-creator';
 import { APITYPE_IMPORT_BPWALLET, APITYPE_IMPORT_NEWBPWALLET } from '@/lib/cnst/api-cnst';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 
@@ -83,7 +83,7 @@ export const decryptFromEnv3 = async ({ state }, password) => {
   console.log('decryptFromEnv3', env3, password);
   if (!env3) throw new Error('no found env3');
   try {
-    const dev3 = OpenWallet(env3, password);
+    const dev3 = await AsyncOpenWallet(env3, password);
 
     return {
       json: JSON.stringify(env3),
@@ -110,10 +110,10 @@ export const updateInitState = async ({ commit, dispatch }, initState) => {
   } = initState;
 
   commit(types.UPDATE_ISUNLOCKED, isUnlocked);
+  commit(types.SET_ENV3, env3);
   if (isUnlocked) {
     commit(types.SET_BIPINIT, true);
     commit(types.SET_V3, v3);
-    commit(types.SET_ENV3, env3);
   }
 
   if (AppStateController) {
@@ -147,7 +147,7 @@ export const importWalletFormKeyStore = async ({ commit }, { keystore, password 
     if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
 
     const env3 = JSON.parse(keystore);
-    const dev3 = OpenWallet(env3, password);
+    const dev3 = await AsyncOpenWallet(env3, password);
     const data = {
       env3,
       dev3,
@@ -186,7 +186,7 @@ export const importNewWalletFormKeyStore = async ({ commit }, { keystore, passwo
     if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
 
     const env3 = JSON.parse(keystore);
-    const dev3 = OpenWallet(env3, password);
+    const dev3 = await AsyncOpenWallet(env3, password);
     const data = {
       env3,
       dev3,

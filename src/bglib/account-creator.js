@@ -77,6 +77,41 @@ export function OpenWallet(pWallet, password) {
   return { MainPriKey: privateKey, SubPriKey: subPriKey };
 }
 
+/**
+ *
+ * @param {*} pWallet
+ * @param {*} password
+ */
+export async function AsyncOpenWallet(pWallet, password) {
+  return new Promise((resolve, reject) => {
+    if (!pWallet || typeof password === 'undefined') {
+      reject('arguments lost.');
+    }
+
+    //open keystore
+    try {
+      var keyObject = { crypto: pWallet.crypto };
+      var privateKey = keythereum.recover(password, keyObject);
+      //recover publicKey
+      var ed25519PublicKey = bs58.decode(pWallet.subAddress.slice(2));
+      //derive aes key
+      var determinsticSalt = ed25519PublicKey.slice(0, 8);
+      var pass = Buffer.from(password);
+      var dk = keythereum.deriveKey(Buffer.from(pass), determinsticSalt, { kdf: 'scrypt', kdfparams: { n: 32768 } });
+      //decrypt sub privateKey
+      var cipher = bs58.decode(pWallet.subCipher);
+      var iv = cipher.slice(0, 16);
+      var aesCfb = new aesjs.ModeOfOperation.cfb(dk, iv, 16);
+      var subPriKey = aesCfb.decrypt(cipher.slice(16));
+      // return { MainPriKey: privateKey, SubPriKey: subPriKey };
+      resolve({ MainPriKey: privateKey, SubPriKey: subPriKey });
+    } catch (error) {
+      console.warn('open wallet error:', typeof error === 'object' ? error.message : error?.toString());
+      reject(error);
+    }
+  });
+}
+
 function aesEncrypt(key, plainTxt) {
   var iv = getRandomBuffer(16);
   var aesCfb = new aesjs.ModeOfOperation.cfb(key, iv, 16);

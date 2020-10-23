@@ -83,7 +83,7 @@ import SubnavBar from '@/popup/widgets/SubnavBar.vue';
 
 import { passwordRules } from '@/ui/constants/valid-rules';
 import { APITYPE_CREAT_IMPORT_BPWALLET } from '@/lib/cnst/api-cnst';
-import { OpenWallet } from '@/bglib/account-creator';
+import { OpenWallet, AsyncOpenWallet } from '@/bglib/account-creator';
 import WhispererController from '@/lib/controllers/whisperer-controller';
 
 export default {
@@ -132,7 +132,7 @@ export default {
           const password = this.password;
           if (typeof keystore !== 'string') throw { type: 'keystore', message: 'Incorrect keystore format.' };
           const env3 = JSON.parse(keystore);
-          const dev3 = OpenWallet(env3, password);
+          const dev3 = await AsyncOpenWallet(env3, password);
 
           const data = { env3, dev3, password };
           const whisperer = new WhispererController({ name: 'Importor-Whisperer' });

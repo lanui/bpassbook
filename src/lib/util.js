@@ -14,7 +14,7 @@ export const getExtensionUrl = (part) => {
 
 export const extVersion = () => {
   const manifest = extension.runtime.getManifest();
-  return manifest ? manifest.version : '';
+  return manifest ? manifest.version : '0.1.0';
 };
 
 /**
