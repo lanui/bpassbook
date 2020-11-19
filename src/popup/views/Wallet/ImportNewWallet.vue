@@ -146,7 +146,6 @@ export default {
               this.gotoIndex();
             })
             .catch(async (error) => {
-              console.log('>>>>keystore>>>>>>>>', error);
               this.loading = false;
               throw { type: 'keystore', message: 'parse keystore fail,please retry.' };
             });

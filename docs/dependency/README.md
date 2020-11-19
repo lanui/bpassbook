@@ -57,3 +57,11 @@ title: www.baidu.com;username
   "value": true
 }
 ```
+
+https://blog.csdn.net/hpp24/article/details/53389849
+
+1. https://www.163.com 无法识别登录框 (2.0 版本修复)
+2. 天猫 https://login.tmall.com/ 无法自动填写 (2.0 版本修复)
+3. 百度 www.baidu.com 无法检测到登录框 ,js 后生成登录页(2.0 版本修复)
+4. 腾讯 https://graph.qq.com/ 登录框太小导致 BPassword 显示不全(2.0 版本修复)
+5. 小米商城 https://account.xiaomi.com/ 无法检测到用户名 (含有多个输入域) (2.0 版本修复)
