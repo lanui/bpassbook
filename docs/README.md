@@ -34,7 +34,7 @@ module.exports = {
 - 解决输入干扰问题
 - 解决新浪输入框动态创建未识别到的问题
 
-### V0.1.x BPassword Support Websites Test Pass
+### V1.x BPassword Support Websites Test Pass
 
 > 测试
 
